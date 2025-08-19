@@ -129,10 +129,7 @@ export class AdminAnalytics {
           const existing = userSessionMap.get(session.user_id);
           if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
             userSessionMap.set(session.user_id, session);
-          }
-        }
-      }
-      )
+      // Map unique sessions to live users
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
       const headers = {
         'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -318,8 +315,6 @@ export class AdminAnalytics {
             'Content-Type': 'application/json',
           },
         }).then(res => res.json()),
-      ]
-      )
       const { count: activeUsers } = await supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
