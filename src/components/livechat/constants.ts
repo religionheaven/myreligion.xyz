@@ -68,17 +68,6 @@ export interface AdminStats {
   recentActivity: number;
 }
 
-export const SPAM_DETECTION_CONFIG = {
-  DUPLICATE_CHECK_LIMIT: 5,
-  MIN_MESSAGE_INTERVAL: 2000, // 2 seconds
-  RATE_LIMIT_WINDOW: 35000, // 35 seconds
-  RATE_LIMIT_MAX_MESSAGES: 10, // Max messages in window
-  RATE_LIMIT_PENALTY: 5 * 60 * 1000, // 5 minute cooldown
-  MAX_CAPS_RATIO: 0.7,
-  MAX_REPEATED_CHARS: 4,
-  MAX_EMOJIS: 5,
-};
-
 export class AdminAnalytics {
   // Get live users currently on the site
   static async getLiveUsers(): Promise<LiveUser[]> {
@@ -113,7 +102,37 @@ export class AdminAnalytics {
 
       const uniqueSessions = Array.from(userSessionMap.values());
       const userIds = uniqueSessions.map(s => s.user_id);
-      
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      }
+      )
       // Map unique sessions to live users
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
       const headers = {
@@ -300,11 +319,8 @@ export class AdminAnalytics {
             'Content-Type': 'application/json',
           },
         }).then(res => res.json()),
-        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
-        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
-        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
-      ]);
-
+      ]
+      )
       const { count: activeUsers } = await supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
