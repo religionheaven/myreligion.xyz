@@ -1,4 +1,5 @@
 import { AdminAnalytics } from './adminAnalytics';
+import { supabase } from '../lib/supabase';
 
 export class SessionTracking {
   private static sessionToken: string | null = null;
