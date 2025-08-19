@@ -1,606 +1,432 @@
-import React from 'react';
-import { LogOut, User, MessageCircle, X } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { RequestsPage } from './RequestsPage';
-import { ChatInterface } from './ChatInterface';
-import { ReligionClickService, ReligionClickData } from '../services/religionClicks';
-import { ProfileModal } from './ProfileModal';
-import { UserProfileService, UserProfile } from '../services/userProfile';
-import LiveChat from './LiveChat';
+import { supabase } from '../lib/supabase';
 
-interface HomeProps {
-  showRequests?: boolean;
-  onShowRequests?: () => void;
-  onHideRequests?: () => void;
-  onShowAdmin?: () => void;
+export interface LiveUser {
+  id: string;
+  username: string;
+  email: string;
+  is_active: boolean;
+  last_activity: string;
+  location_data: {
+    country?: string;
+    city?: string;
+    region?: string;
+    ip?: string;
+  };
+  session_duration: number;
+  current_page?: string;
 }
 
-export function Home({
-  showRequests = false,
-  onShowRequests,
-  onHideRequests,
-  onShowAdmin,
-}: HomeProps) {
-  const { signOut, user } = useAuth();
-  const [selectedReligion, setSelectedReligion] = React.useState<string | null>(null);
-  const [showProfileModal, setShowProfileModal] = React.useState(false);
-  const [isTransitioning, setIsTransitioning] = React.useState(false);
-  const [isExiting, setIsExiting] = React.useState(false);
-  const [clickCounts, setClickCounts] = React.useState<ReligionClickData[]>([]);
-  const [loadingCounts, setLoadingCounts] = React.useState(true);
-  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+export interface SiteVisit {
+  id: string;
+  visitor_id: string;
+  user_id?: string;
+  username?: string;
+  page_path: string;
+  referrer?: string;
+  location_data: {
+    country?: string;
+    city?: string;
+    region?: string;
+  };
+  session_duration: number;
+  created_at: string;
+}
 
-  // Live chat visibility state
-  const [showLiveChat, setShowLiveChat] = React.useState(false);
+export interface MessageAnalytics {
+  id: string;
+  user_id: string;
+  username: string;
+  religion: string;
+  message_length: number;
+  response_time_ms?: number;
+  sentiment_score: number;
+  contains_sensitive: boolean;
+  location_data: {
+    country?: string;
+    city?: string;
+  };
+  created_at: string;
+}
 
-  // Load click counts on component mount
-  React.useEffect(() => {
-    const loadClickCounts = async () => {
-      setLoadingCounts(true);
+export interface UserRequest {
+  id: string;
+  user_id: string;
+  username: string;
+  request_type: string;
+  request_text: string;
+  created_at: string;
+}
 
-      // Initialize click counts if they don't exist
-      await ReligionClickService.initializeClickCounts();
+export interface AdminStats {
+  totalUsers: number;
+  activeUsers: number;
+  totalVisits: number;
+  totalMessages: number;
+  totalRequests: number;
+  topCountries: Array<{ country: string; count: number }>;
+  topReligions: Array<{ religion: string; count: number }>;
+  recentActivity: number;
+}
 
-      // Load current counts
-      const counts = await ReligionClickService.getAllClickCounts();
-      setClickCounts(counts);
-      setLoadingCounts(false);
-    };
+export class AdminAnalytics {
+  // Get live users currently on the site
+  static async getLiveUsers(): Promise<LiveUser[]> {
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
+      const headers = {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      };
 
-    loadClickCounts();
-  }, []);
-
-  // Load user profile
-  React.useEffect(() => {
-    const loadUserProfile = async () => {
-      if (!user) {
-        setUserProfile(null);
-        return;
+      const response = await fetch(apiUrl, { headers });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const profile = await UserProfileService.getUserProfile(user.id);
-      if (profile) {
-        setUserProfile(profile);
-      } else {
-        // Initialize profile if it doesn't exist
-        const username = user.user_metadata?.username || 'User';
-        const newProfile = await UserProfileService.initializeUserProfile(user.id, username);
-        setUserProfile(newProfile);
-      }
-    };
-
-    loadUserProfile();
-  }, [user]);
-
-  // Reset state when user signs out
-  React.useEffect(() => {
-    if (!user) {
-      setSelectedReligion(null);
-      setIsTransitioning(false);
-      setIsExiting(false);
-      setShowProfileModal(false);
-      setUserProfile(null);
+      
+      const liveUsers = await response.json();
+      return liveUsers;
+    } catch (error) {
+      console.error('Error in getLiveUsers:', error);
+      return [];
     }
-  }, [user]);
-
-  const handleProfileUpdate = async () => {
-    if (!user) return;
-
-    // Reload profile after update
-    const updatedProfile = await UserProfileService.getUserProfile(user.id);
-    setUserProfile(updatedProfile);
-  };
-
-  const handleSignOut = () => {
-    signOut();
-  };
-
-  const handleReligionClick = (religion: string) => {
-    // Increment click count
-    ReligionClickService.incrementClickCount(religion).then((success) => {
-      if (success) {
-        // Update local state
-        setClickCounts((prev) =>
-          prev.map((item) =>
-            item.religion === religion ? { ...item, click_count: item.click_count + 1 } : item,
-          ),
-        );
-      }
-    });
-
-    setIsTransitioning(true);
-    setIsExiting(false);
-    // Immediate transition to chat with morphing effect
-    setSelectedReligion(religion);
-    // Small delay to allow the morph to complete
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 1200);
-  };
-
-  const handleBackFromChat = () => {
-    setIsTransitioning(true);
-    setIsExiting(true);
-    // Small delay for smooth transition back
-    setTimeout(() => {
-      setSelectedReligion(null);
-      setIsTransitioning(false);
-    }, 1200);
-  };
-
-  if (showRequests) {
-    return <RequestsPage onBack={onHideRequests || (() => {})} />;
   }
 
-  if (selectedReligion) {
-    return (
-      <div className="relative">
-        {/* Keep home screen rendered but hidden during transition */}
-        <div
-          className={`transition-all duration-700 ease-in-out ${
-            isTransitioning ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'
-          }`}
-        >
-          <HomeContent
-            onReligionClick={handleReligionClick}
-            onShowRequests={onShowRequests}
-            onSignOut={handleSignOut}
-            isTransitioning={false}
-            clickCounts={clickCounts}
-            loadingCounts={loadingCounts}
-            showProfileModal={showProfileModal}
-            setShowProfileModal={setShowProfileModal}
-            userProfile={userProfile}
-          />
-        </div>
+  // Get all site visits with analytics
+  static async getSiteVisits(limit: number = 100): Promise<SiteVisit[]> {
+    try {
+      const { data: visits, error } = await supabase
+        .from('site_visits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-        {/* Transition overlay - shows during morphing */}
-        <div
-          className={`absolute inset-0 z-30 flex items-end justify-center pb-32 transition-all duration-500 ease-in-out ${
-            isTransitioning ? 'opacity-100 delay-2000' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="text-center">
-            {/* Animated logo during transition */}
-            <div className="relative mb-4">
-              <img
-                src="https://i.imgur.com/PlWBSjs.gif"
-                alt="Religion Logo"
-                className="w-24 h-auto mx-auto animate-pulse"
-              />
-              {/* Radial glow effect */}
-              <div className="absolute inset-0 bg-white/20 rounded-full blur-xl animate-ping"></div>
-            </div>
+      if (error) {
+        console.error('Error fetching site visits:', error);
+        return [];
+      }
 
-            {/* Loading text */}
-            <p
-              className="text-white/80 text-sm animate-fade-in"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              {isExiting ? 'Exiting chat...' : `Opening ${selectedReligion} chat...`}
-            </p>
+      if (!visits || visits.length === 0) {
+        return [];
+      }
 
-            {/* Animated dots */}
-            <div className="flex justify-center space-x-1 mt-2">
-              <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-              <div
-                className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.1s' }}
-              ></div>
-              <div
-                className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.2s' }}
-              ></div>
-            </div>
-          </div>
-        </div>
+      // Deduplicate by visitor_id, keeping the most recent visit
+      const visitorMap = new Map();
+      visits.forEach(visit => {
+        const existing = visitorMap.get(visit.visitor_id);
+        if (!existing || new Date(visit.created_at) > new Date(existing.created_at)) {
+          visitorMap.set(visit.visitor_id, visit);
+        }
+      });
 
-        {/* Chat interface */}
-        <div
-          className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-            isTransitioning ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'
-          }`}
-        >
-          <ChatInterface
-            religion={selectedReligion}
-            onBack={handleBackFromChat}
-            isTransitioning={isTransitioning}
-          />
-        </div>
-      </div>
-    );
+      const uniqueVisits = Array.from(visitorMap.values());
+
+      // Get unique user IDs
+      const userIds = [...new Set(uniqueVisits.map(v => v.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return uniqueVisits.map((visit) => ({
+        id: visit.id,
+        visitor_id: visit.visitor_id,
+        user_id: visit.user_id,
+        username: visit.user_id ? (usernameMap.get(visit.user_id) || 'Unknown User') : 'Anonymous',
+        page_path: visit.page_path,
+        referrer: visit.referrer,
+        location_data: visit.location_data || {},
+        session_duration: visit.session_duration,
+        created_at: visit.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getSiteVisits:', error);
+      return [];
+    }
   }
 
-  return (
-    <HomeContent
-      onReligionClick={handleReligionClick}
-      onShowRequests={onShowRequests}
-      onShowAdmin={onShowAdmin}
-      onSignOut={handleSignOut}
-      isTransitioning={isTransitioning}
-      clickCounts={clickCounts}
-      loadingCounts={loadingCounts}
-      showProfileModal={showProfileModal}
-      setShowProfileModal={setShowProfileModal}
-      userProfile={userProfile}
-      onProfileUpdate={handleProfileUpdate}
-      showLiveChat={showLiveChat}
-      setShowLiveChat={setShowLiveChat}
-    />
-  );
-}
+  // Get message analytics
+  static async getMessageAnalytics(limit: number = 100): Promise<MessageAnalytics[]> {
+    try {
+      const { data: messages, error } = await supabase
+        .from('message_analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-interface HomeContentProps {
-  onReligionClick: (religion: string) => void;
-  onShowRequests?: () => void;
-  onShowAdmin?: () => void;
-  onSignOut: () => void;
-  isTransitioning: boolean;
-  clickCounts: ReligionClickData[];
-  loadingCounts: boolean;
-  showProfileModal: boolean;
-  setShowProfileModal: (show: boolean) => void;
-  userProfile: UserProfile | null;
-  onProfileUpdate: () => Promise<void>;
-  showLiveChat: boolean;
-  setShowLiveChat: (show: boolean) => void;
-}
+      if (error) {
+        console.error('Error fetching message analytics:', error);
+        return [];
+      }
 
-interface MobileReligionCardsProps {
-  onReligionClick: (religion: string) => void;
-  getClickCount: (religion: string) => string | number;
-  isTransitioning: boolean;
-}
+      if (!messages || messages.length === 0) {
+        return [];
+      }
 
-function MobileReligionCards({
-  onReligionClick,
-  getClickCount,
-  isTransitioning,
-}: MobileReligionCardsProps) {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [touchStart, setTouchStart] = React.useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = React.useState<number | null>(null);
+      // Get unique user IDs
+      const userIds = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
 
-  const religions = [
-    { name: 'Christianity', image: 'https://i.imgur.com/KLkXhhW.png' },
-    { name: 'Judaism', image: 'https://i.imgur.com/WaBoB1X.png' },
-    { name: 'Islam', image: 'https://i.imgur.com/JkLEbS3.png' },
-    { name: 'Hinduism', image: 'https://i.imgur.com/fhaXuTH.png' },
-  ];
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
 
-  const minSwipeDistance = 50;
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe && currentIndex < religions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      return messages.map((msg) => ({
+        id: msg.id,
+        user_id: msg.user_id,
+        username: usernameMap.get(msg.user_id) || 'Unknown User',
+        religion: msg.religion,
+        message_length: msg.message_length,
+        response_time_ms: msg.response_time_ms,
+        sentiment_score: msg.sentiment_score,
+        contains_sensitive: msg.contains_sensitive,
+        location_data: msg.location_data || {},
+        created_at: msg.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getMessageAnalytics:', error);
+      return [];
     }
-    if (isRightSwipe && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+  }
+
+  // Get all user requests
+  static async getUserRequests(): Promise<UserRequest[]> {
+    try {
+      const { data: requests, error } = await supabase
+        .from('user_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching user requests:', error);
+        return [];
+      }
+
+      if (!requests || requests.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(requests.map(r => r.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return requests.map((request) => ({
+        id: request.id,
+        user_id: request.user_id,
+        username: usernameMap.get(request.user_id) || 'Unknown User',
+        request_type: request.request_type,
+        request_text: request.request_text,
+        created_at: request.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getUserRequests:', error);
+      return [];
     }
-  };
+  }
 
-  return (
-    <div
-      className={`absolute inset-0 z-10 md:hidden flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
-    >
-      <div className="w-full h-full flex items-center justify-center px-8">
-        <div
-          className="relative w-full max-w-xs h-80 overflow-hidden"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        >
-          {/* Cards container */}
-          <div
-            className="flex transition-transform duration-300 ease-out h-full"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {religions.map((religion, index) => (
-              <div
-                key={religion.name}
-                className="w-full flex-shrink-0 h-full flex items-center justify-center"
-              >
-                <div className="relative w-3/4 h-3/4">
-                  <img
-                    src={religion.image}
-                    alt={religion.name}
-                    className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
-                    onClick={() => onReligionClick(religion.name)}
-                  />
-                  <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
-                    {getClickCount(religion.name)}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+  // Get comprehensive admin statistics
+  static async getAdminStats(): Promise<AdminStats> {
+    try {
+      const [usersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getTotalUserCount`, {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }).then(res => res.json()),
+        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
+        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
+        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
+      ]);
 
-          {/* Dots indicator */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {religions.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'bg-white shadow-lg scale-110'
-                    : 'bg-white/50 hover:bg-white/70'
-                }`}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
-          </div>
+      const { count: activeUsers } = await supabase
+        .from('user_sessions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true)
+        .gte('last_activity', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
-          {/* Swipe indicators */}
-          {currentIndex > 0 && (
-            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white/60 text-xs">
-              ←
-            </div>
-          )}
-          {currentIndex < religions.length - 1 && (
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/60 text-xs">
-              →
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-function HomeContent({
-  onReligionClick,
-  onShowRequests,
-  onShowAdmin,
-  onSignOut,
-  isTransitioning,
-  clickCounts,
-  loadingCounts,
-  showProfileModal,
-  setShowProfileModal,
-  userProfile,
-  onProfileUpdate,
-  showLiveChat,
-  setShowLiveChat,
-}: HomeContentProps) {
-  const getClickCount = (religion: string) => {
-    if (loadingCounts) return '...';
-    const found = clickCounts.find((item) => item.religion === religion);
-    return found?.click_count || 0;
-  };
+      // Get top countries
+      const { data: countryData } = await supabase
+        .from('site_visits')
+        .select('location_data')
+        .not('location_data->country', 'is', null);
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-white">
-      {/* Desktop background */}
-      <div
-        className="absolute inset-0 hidden md:block"
-        style={{
-          backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
+      const countryCount: Record<string, number> = {};
+      countryData?.forEach((visit) => {
+        const country = visit.location_data?.country;
+        if (country) {
+          countryCount[country] = (countryCount[country] || 0) + 1;
+        }
+      });
 
-      {/* Mobile background */}
-      <div
-        className="absolute inset-0 block md:hidden"
-        style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
+      const topCountries = Object.entries(countryCount)
+        .map(([country, count]) => ({ country, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
 
-      {/* Sign out button at top left */}
-      <div className="absolute top-8 left-8 z-30">
-        <button
-          onClick={onSignOut}
-          className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="text-sm font-medium">Sign Out</span>
-        </button>
-      </div>
+      // Get top religions
+      const { data: religionData } = await supabase.from('message_analytics').select('religion');
 
-      {/* Profile button at top right */}
-      <div className="absolute top-8 right-8 z-30">
-        <button
-          onClick={() => setShowProfileModal(true)}
-          className="w-10 h-10 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-105 overflow-hidden"
-        >
-          {userProfile?.profile_photo_url ? (
-            <img
-              src={userProfile.profile_photo_url}
-              alt="Profile"
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            <User className="w-5 h-5 text-white" />
-          )}
-        </button>
-      </div>
+      const religionCount: Record<string, number> = {};
+      religionData?.forEach((msg) => {
+        const religion = msg.religion;
+        if (religion) {
+          religionCount[religion] = (religionCount[religion] || 0) + 1;
+        }
+      });
 
-      {/* Logo at top middle */}
-      <div className="relative z-20 pt-8 flex justify-center">
-        <div className="relative">
-          <img src="https://i.imgur.com/PlWBSjs.gif" alt="Religion Logo" className="w-32 h-auto" />
-          <a
-            href="https://heaven.xyz"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-2 bg-transparent cursor-pointer hover:bg-white/5 transition-all duration-300 rounded-lg"
-            aria-label="Visit Heaven.xyz"
-          />
-        </div>
-      </div>
+      const topReligions = Object.entries(religionCount)
+        .map(([religion, count]) => ({ religion, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 4);
 
-      {/* Powered by heaven text */}
-      <div className="relative z-10 flex justify-center mt-2">
-        <p className="text-white/60 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-          powered by heaven
-        </p>
-      </div>
+      // Get recent activity (last hour)
+      const { count: recentActivity } = await supabase
+        .from('site_visits')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
-      {/* Center image in true middle of page */}
-      {/* Desktop: Center images in grid */}
-      <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
-      >
-        <div className="flex items-center gap-8">
-          <div className="relative">
-            <img
-              src="https://i.imgur.com/KLkXhhW.png"
-              alt="Christianity"
-              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
-              onClick={() => onReligionClick('Christianity')}
-            />
-            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
-              {getClickCount('Christianity')}
-            </div>
-          </div>
-          <div className="relative">
-            <img
-              src="https://i.imgur.com/WaBoB1X.png"
-              alt="Judaism"
-              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
-              onClick={() => onReligionClick('Judaism')}
-            />
-            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
-              {getClickCount('Judaism')}
-            </div>
-          </div>
-          <div className="relative">
-            <img
-              src="https://i.imgur.com/JkLEbS3.png"
-              alt="Islam"
-              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
-              onClick={() => onReligionClick('Islam')}
-            />
-            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
-              {getClickCount('Islam')}
-            </div>
-          </div>
-          <div className="relative">
-            <img
-              src="https://i.imgur.com/fhaXuTH.png"
-              alt="Hinduism"
-              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
-              onClick={() => onReligionClick('Hinduism')}
-            />
-            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
-              {getClickCount('Hinduism')}
-            </div>
-          </div>
-        </div>
-      </div>
+      return {
+        totalUsers: usersResult?.count || 0,
+        activeUsers: activeUsers || 0,
+        totalVisits: visitsResult.count || 0,
+        totalMessages: messagesResult.count || 0,
+        totalRequests: requestsResult.count || 0,
+        topCountries,
+        topReligions,
+        recentActivity: recentActivity || 0,
+      };
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      return {
+        totalUsers: 0,
+        activeUsers: 0,
+        totalVisits: 0,
+        totalMessages: 0,
+        totalRequests: 0,
+        topCountries: [],
+        topReligions: [],
+        recentActivity: 0,
+      };
+    }
+  }
 
-      {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-20">
-        <button
-          onClick={() => setShowLiveChat(true)}
-          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            heaven, live
-          </span>
-        </button>
-      </div>
+  // Track user session
+  static async trackUserSession(
+    userId: string,
+    sessionToken: string,
+    locationData?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('user_sessions').upsert({
+        user_id: userId,
+        session_token: sessionToken,
+        location_data: locationData || {},
+        is_active: true,
+        last_activity: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error tracking user session:', error);
+    }
+  }
 
-      {/* Profile Modal */}
-      <ProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        onProfileUpdate={onProfileUpdate}
-      />
+  // Track site visit
+  static async trackSiteVisit(
+    visitorId: string,
+    userId?: string,
+    pagePath: string = '/',
+    locationData?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('site_visits').insert({
+        visitor_id: visitorId,
+        user_id: userId,
+        page_path: pagePath,
+        referrer: document.referrer || null,
+        location_data: locationData || {},
+      });
+    } catch (error) {
+      console.error('Error tracking site visit:', error);
+    }
+  }
 
-      {/* Live Chat */}
-      {showLiveChat && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="relative flex flex-col items-center">
-            <div className="w-full max-w-5xl px-4">
-              <LiveChat isVisible={true} />
-            </div>
-            <button
-              onClick={() => setShowLiveChat(false)}
-              className="mt-4 bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              Close Chat
-            </button>
-          </div>
-        </div>
-      )}
+  // Track message analytics
+  static async trackMessage(
+    messageId: string,
+    userId: string,
+    sessionId: string,
+    religion: string,
+    messageLength: number,
+    responseTimeMs?: number,
+  ): Promise<void> {
+    try {
+      await supabase.from('message_analytics').insert({
+        message_id: messageId,
+        user_id: userId,
+        session_id: sessionId,
+        religion: religion.toLowerCase(),
+        message_length: messageLength,
+        response_time_ms: responseTimeMs,
+        sentiment_score: 0, // Could be enhanced with sentiment analysis
+        contains_sensitive: false, // Could be enhanced with content analysis
+      });
+    } catch (error) {
+      console.error('Error tracking message analytics:', error);
+    }
+  }
 
-      {/* Mobile: Swipeable full-screen cards */}
-      <MobileReligionCards
-        onReligionClick={onReligionClick}
-        getClickCount={getClickCount}
-        isTransitioning={isTransitioning}
-      />
-
-      {/* Requests button at bottom */}
-      <div className="absolute bottom-8 left-8 z-20">
-        <div className="flex gap-3">
-          <button
-            onClick={onShowRequests || (() => {})}
-            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
-          >
-            <span
-              className="text-base font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              requests
-            </span>
-          </button>
-
-          {onShowAdmin && (
-            <button
-              onClick={onShowAdmin}
-              className="bg-red-500/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-red-400/20 hover:bg-red-500/40 transition-all duration-300 hover:scale-105"
-            >
-              <span
-                className="text-base font-medium"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
-              >
-                admin
-              </span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Image at bottom right */}
-      <div className="absolute bottom-8 right-8 z-20">
-        <a
-          href="https://x.com/religionheaven"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block transition-all duration-300 hover:scale-105"
-        >
-          <img
-            src="https://i.imgur.com/HIhlm3m.png"
-            alt="Religion Heaven Twitter"
-            className="w-auto h-12"
-          />
-        </a>
-      </div>
-    </div>
-  );
+  // Log admin action
+  static async logAdminAction(
+    adminUserId: string,
+    action: string,
+    targetType?: string,
+    targetId?: string,
+    details?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('admin_logs').insert({
+        admin_user_id: adminUserId,
+        action,
+        target_type: targetType,
+        target_id: targetId,
+        details: details || {},
+      });
+    } catch (error) {
+      console.error('Error logging admin action:', error);
+    }
+  }
 }
