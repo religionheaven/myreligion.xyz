@@ -131,21 +131,6 @@ export class AdminAnalytics {
     }
   }
 
-
-    return (data || []).map((session) => ({
-      id: session.user?.id || session.user_id,
-      username: session.user?.raw_user_meta_data?.username || 'Unknown',
-      email: session.user?.email || '',
-      is_active: session.is_active,
-      last_activity: session.last_activity,
-      location_data: session.location_data || {},
-      session_duration: Math.floor(
-        (new Date().getTime() - new Date(session.created_at).getTime()) / 1000 / 60,
-      ),
-      current_page: session.location_data?.current_page,
-    }));
-  }
-
   // Get all site visits with analytics
   static async getSiteVisits(limit: number = 100): Promise<SiteVisit[]> {
     const { data, error } = await supabase
