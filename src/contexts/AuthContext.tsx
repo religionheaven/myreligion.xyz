@@ -86,14 +86,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Use local scope to only clear local session storage
-      await supabase.auth.signOut({ scope: 'local' });
+      // Sign out from Supabase
+      await supabase.auth.signOut();
     } catch (error) {
       console.error('Error during sign out:', error);
     } finally {
       // Force clear Supabase auth tokens from storage
-      localStorage.removeItem('sb-nzijprktpelrarzobcwm-auth-token');
-      sessionStorage.removeItem('sb-nzijprktpelrarzobcwm-auth-token');
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {
+        console.error('Error clearing storage:', e);
+      }
 
       // Clear local state
       setUser(null);
@@ -106,11 +110,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear session tracking
       SessionTracking.initialize();
 
-      // Ensure loading is false after state cleanup
-      setLoading(false);
-
-      // Force page reload to ensure clean state
-      window.location.reload();
+      // Small delay before reload to ensure state is cleared
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
   };
 
