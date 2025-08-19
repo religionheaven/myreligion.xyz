@@ -1,92 +1,68 @@
-// Rate limiting constants
-export const RATE_LIMIT_WINDOW = 35000; // 35 seconds in milliseconds
-export const RATE_LIMIT_MAX_MESSAGES = 10; // Maximum messages allowed in the window
-export const RATE_LIMIT_PENALTY = 5 * 60 * 1000; // 5 minutes in milliseconds
+// ============================================================================
+// CONSTANTS AND CONFIGURATION
+// ============================================================================
 
-// Spam detection constants
-export const SPAM_COOLDOWN_DURATION = 30000; // 30 seconds in milliseconds
-export const MAX_MESSAGE_LENGTH = 500;
-export const MIN_MESSAGE_INTERVAL = 1000; // 1 second minimum between messages
+export const SPAM_DETECTION_CONFIG = {
+  DUPLICATE_CHECK_LIMIT: 5,
+  MIN_MESSAGE_INTERVAL: 2000, // 2 seconds
+  MAX_CAPS_RATIO: 0.7,
+  MAX_REPEATED_CHARS: 4,
+  MAX_EMOJIS: 5,
+  MAX_PUNCTUATION_RATIO: 0.3,
+  COOLDOWN_DURATION: 3000, // 3 seconds
+  RATE_LIMIT_COOLDOWN: 5000, // 5 seconds
+};
 
-// Spam patterns
-export const SPAM_PATTERNS = [
-  /(.)\1{4,}/i, // Repeated characters (5 or more)
-  /^[A-Z\s!]{10,}$/i, // All caps messages
-  /(https?:\/\/[^\s]+)/gi, // URLs
-  /(.{1,10})\1{3,}/i, // Repeated phrases
+export const LINK_PATTERNS = [
+  /https?:\/\/[^\s]+/gi,
+  /www\.[^\s]+/gi,
+  /[a-zA-Z0-9-]+\.(com|org|net|edu|gov|mil|int|co|io|me|tv|cc|ly|be|to|it|us|uk|ca|de|fr|jp|au|in|br|ru|cn|za|mx|es|nl|se|no|dk|fi|pl|cz|hu|ro|bg|hr|si|sk|lt|lv|ee|is|ie|pt|gr|tr|il|ae|sa|eg|ma|ng|ke|gh|tz|ug|zw|zm|mw|bw|sz|ls|na|ao|mz|mg|mu|sc|re|yt|km|dj|so|et|er|sd|ss|td|cf|cm|gq|ga|cg|cd|st|gw|gn|sl|lr|ci|bf|ml|ne|sn|gm|cv|mr)/gi,
+  /[a-zA-Z0-9-]+\.([a-zA-Z]{2,})/gi,
+  /bit\.ly|tinyurl|t\.co|goo\.gl|short\.link|ow\.ly|is\.gd|buff\.ly/gi,
+  /discord\.gg|discord\.com\/invite/gi,
+  /youtube\.com|youtu\.be|vimeo\.com|twitch\.tv/gi,
+  /facebook\.com|instagram\.com|twitter\.com|x\.com|tiktok\.com|snapchat\.com/gi,
+  /[^\s]*\.[a-zA-Z]{2,}[^\s]*/gi,
 ];
 
-// Profanity and inappropriate content patterns
-export const INAPPROPRIATE_PATTERNS = [
-  /\b(spam|scam|hack|cheat)\b/i,
-  /\b(buy|sell|money|cash|bitcoin|crypto)\b/i,
-  /\b(click|link|visit|website)\b/i,
+export const CRYPTO_PATTERNS = [
+  /\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b/g,
+  /\b0x[a-fA-F0-9]{40}\b/g,
+  /\b[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}\b/g,
+  /\bbc1[a-z0-9]{39,59}\b/gi,
+  /\b[rX][a-zA-Z0-9]{24,34}\b/g,
+  /\b[A-Za-z0-9]{32,44}\b/g,
+  /\bDQm[a-zA-Z0-9]{44}\b/g,
+  /\b[a-zA-Z0-9]{26,35}\.eth\b/gi,
 ];
 
-export interface LiveUser {
-  id: string;
-  username: string;
-  email: string;
-  is_active: boolean;
-  last_activity: string;
-  location_data: {
-    country?: string;
-    city?: string;
-    region?: string;
-    ip?: string;
-  };
-  session_duration: number;
-  current_page?: string;
-}
+export const CONTACT_PATTERNS = [
+  /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/gi,
+  /\b(?:\+?1[-.\s]?)?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g,
+  /\btelegram\.me\/[a-zA-Z0-9_]+/gi,
+  /\bt\.me\/[a-zA-Z0-9_]+/gi,
+  /\b@[a-zA-Z0-9_]{1,15}\b/g,
+  /\bdm\s+me\b/gi,
+  /\bcontact\s+me\b/gi,
+  /\bmessage\s+me\b/gi,
+  /\bwhatsapp\b/gi,
+  /\bskype\b/gi,
+];
 
-export interface SiteVisit {
-  id: string;
-  visitor_id: string;
-  user_id?: string;
-  username?: string;
-  page_path: string;
-  referrer?: string;
-  location_data: {
-    country?: string;
-    city?: string;
-    region?: string;
-  };
-  session_duration: number;
-  created_at: string;
-}
+export const CRYPTO_KEYWORDS = [
+  /\b(bitcoin|btc|ethereum|eth|crypto|blockchain|defi|nft|token|coin|mining|wallet|hodl|moon|lambo|diamond\s+hands|paper\s+hands|ape|degen|rugpull|pump|dump|shill|fud)\b/gi,
+  /\b(binance|coinbase|kraken|uniswap|pancakeswap|metamask|trust\s+wallet|ledger|trezor)\b/gi,
+  /\b(solana|sol|cardano|ada|polkadot|dot|chainlink|link|dogecoin|doge|shiba|inu)\b/gi,
+  /\b(yield\s+farming|liquidity\s+pool|staking|airdrop|ico|ido|presale|whitelist)\b/gi,
+  /\b(web3|dao|metaverse|gamefi|play\s+to\s+earn|p2e)\b/gi,
+];
 
-export interface MessageAnalytics {
-  id: string;
-  user_id: string;
-  username: string;
-  religion: string;
-  message_length: number;
-  response_time_ms?: number;
-  sentiment_score: number;
-  contains_sensitive: boolean;
-  location_data: {
-    country?: string;
-    city?: string;
-  };
-  created_at: string;
-}
-
-export interface UserRequest {
-  id: string;
-  user_id: string;
-  username: string;
-  request_type: string;
-  request_text: string;
-  created_at: string;
-}
-
-export interface AdminStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalVisits: number;
-  totalMessages: number;
-  totalRequests: number;
-  topCountries: Array<{ country: string; count: number }>;
-  topReligions: Array<{ religion: string; count: number }>;
-  recentActivity: number;
-}
+export const SUSPICIOUS_PATTERNS = [
+  /\b(free\s+money|easy\s+money|get\s+rich|make\s+money\s+fast)\b/gi,
+  /\b(click\s+here|visit\s+now|act\s+now|limited\s+time)\b/gi,
+  /\b(100%\s+guaranteed|risk\s+free|no\s+risk)\b/gi,
+  /\b(investment\s+opportunity|passive\s+income|financial\s+freedom)\b/gi,
+  /\b(mlm|pyramid\s+scheme|ponzi|referral\s+program)\b/gi,
+  /\b(forex|trading\s+signals|binary\s+options)\b/gi,
+  /\b(work\s+from\s+home|make\s+money\s+online|earn\s+from\s+home)\b/gi,
+];
