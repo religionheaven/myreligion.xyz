@@ -31,9 +31,17 @@ export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
       {/* Sign out button at top right */}
       <div className="absolute top-8 right-8">
         <button
-          onClick={handleSignOut}
+          onClick={(e) => {
+            console.log('Chat sign out clicked!');
+            e.preventDefault();
+            e.stopPropagation();
+            if (confirm('Are you sure you want to sign out?')) {
+              onSignOut();
+            }
+          }}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
           type="button"
+          style={{ pointerEvents: 'auto', cursor: 'pointer' }}
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>
