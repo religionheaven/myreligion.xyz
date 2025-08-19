@@ -410,7 +410,7 @@ function HomeContent({
       />
 
       {/* Sign out button at top left */}
-      <div className="absolute top-8 left-8 z-20">
+      <div className="absolute top-8 left-8 z-30">
         <button
           onClick={(e) => {
             console.log('Sign out clicked!');
