@@ -111,10 +111,10 @@ export class AdminAnalytics {
         }
       });
 
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
+      const uniqueSessions2 = Array.from(userSessionMap.values());
+      const userIds2 = uniqueSessions2.map(s => s.user_id);
       
-      if (userIds.length === 0) {
+      if (userIds2.length === 0) {
         return [];
       }
 
@@ -122,7 +122,7 @@ export class AdminAnalytics {
       const { data: profiles, error: profilesError } = await supabase
         .from('user_profiles')
         .select('user_id, username')
-        .in('user_id', userIds);
+        .in('user_id', userIds2);
 
       if (profilesError) {
         console.error('Error fetching user profiles:', profilesError);
@@ -135,6 +135,7 @@ export class AdminAnalytics {
       });
 
       // Map unique sessions to live users
+      return uniqueSessions2.map((session) => ({
         id: session.user_id || session.id,
         username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
