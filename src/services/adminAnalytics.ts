@@ -72,68 +72,6 @@ export class AdminAnalytics {
   // Get live users currently on the site
   static async getLiveUsers(): Promise<LiveUser[]> {
     try {
-      // First, get active user sessions
-      const { data: sessions, error: sessionsError } = await supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('is_active', true)
-        .gte('last_activity', new Date(Date.now() - 30 * 60 * 1000).toISOString()) // Last 30 minutes
-        .order('last_activity', { ascending: false });
-
-      if (sessionsError) {
-        console.error('Error fetching user sessions:', sessionsError);
-        return [];
-      }
-
-      if (!sessions || sessions.length === 0) {
-        return [];
-      }
-
-      // Deduplicate sessions by user_id, keeping the most recent session for each user
-      const userSessionMap = new Map();
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      }
-      )
-      // Map unique sessions to live users
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
       const headers = {
         'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -171,8 +109,19 @@ export class AdminAnalytics {
         return [];
       }
 
+      // Deduplicate by visitor_id, keeping the most recent visit
+      const visitorMap = new Map();
+      visits.forEach(visit => {
+        const existing = visitorMap.get(visit.visitor_id);
+        if (!existing || new Date(visit.created_at) > new Date(existing.created_at)) {
+          visitorMap.set(visit.visitor_id, visit);
+        }
+      });
+
+      const uniqueVisits = Array.from(visitorMap.values());
+
       // Get unique user IDs
-      const userIds = [...new Set(visits.map(v => v.user_id).filter(Boolean))];
+      const userIds = [...new Set(uniqueVisits.map(v => v.user_id).filter(Boolean))];
       
       let usernameMap = new Map();
       if (userIds.length > 0) {
@@ -189,7 +138,7 @@ export class AdminAnalytics {
         }
       }
 
-      return visits.map((visit) => ({
+      return uniqueVisits.map((visit) => ({
         id: visit.id,
         visitor_id: visit.visitor_id,
         user_id: visit.user_id,
@@ -319,8 +268,11 @@ export class AdminAnalytics {
             'Content-Type': 'application/json',
           },
         }).then(res => res.json()),
-      ]
-      )
+        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
+        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
+        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
+      ]);
+
       const { count: activeUsers } = await supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
@@ -367,8 +319,6 @@ export class AdminAnalytics {
         .from('site_visits')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
-
-      const totalUsers = usersResult.count || 0;
 
       return {
         totalUsers: usersResult?.count || 0,
