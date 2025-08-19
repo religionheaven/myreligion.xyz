@@ -419,7 +419,7 @@ function HomeContent({
       </div>
 
       {/* Profile button at top right */}
-      <div className="absolute top-8 right-8 z-20">
+      <div className="absolute top-8 right-8 z-30">
         <button
           onClick={() => setShowProfileModal(true)}
           className="w-10 h-10 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-105 overflow-hidden"
