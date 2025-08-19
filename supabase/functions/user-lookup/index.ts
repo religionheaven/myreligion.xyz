@@ -111,10 +111,21 @@ export class AdminAnalytics {
         }
       });
 
-      const uniqueSessions2 = Array.from(userSessionMap.values());
-      const userIds2 = uniqueSessions2.map(s => s.user_id);
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
       
-      if (userIds2.length === 0) {
+      if (userIds.length === 0) {
         return [];
       }
 
@@ -122,7 +133,7 @@ export class AdminAnalytics {
       const { data: profiles, error: profilesError } = await supabase
         .from('user_profiles')
         .select('user_id, username')
-        .in('user_id', userIds2);
+        .in('user_id', userIds);
 
       if (profilesError) {
         console.error('Error fetching user profiles:', profilesError);
@@ -135,8 +146,6 @@ export class AdminAnalytics {
       });
 
       // Map unique sessions to live users
-      return uniqueSessions2.map((session) => ({
-        id: session.user_id || session.id,
         username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
         is_active: session.is_active,
@@ -368,7 +377,7 @@ export class AdminAnalytics {
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
       return {
-        totalUsers: usersResult.count || 0,
+        totalUsers,
         activeUsers: activeUsers || 0,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,
