@@ -71,22 +71,66 @@ export interface AdminStats {
 export class AdminAnalytics {
   // Get live users currently on the site
   static async getLiveUsers(): Promise<LiveUser[]> {
-    const { data, error } = await supabase
-      .from('user_sessions')
-      .select(
-        `
-        *,
-        user:auth.users(id, email, raw_user_meta_data)
-      `,
-      )
-      .eq('is_active', true)
-      .gte('last_activity', new Date(Date.now() - 30 * 60 * 1000).toISOString()) // Last 30 minutes
-      .order('last_activity', { ascending: false });
+    try {
+      // First, get active user sessions
+      const { data: sessions, error: sessionsError } = await supabase
+        .from('user_sessions')
+        .select('*')
+        .eq('is_active', true)
+        .gte('last_activity', new Date(Date.now() - 30 * 60 * 1000).toISOString()) // Last 30 minutes
+        .order('last_activity', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching live users:', error);
+      if (sessionsError) {
+        console.error('Error fetching user sessions:', sessionsError);
+        return [];
+      }
+
+      if (!sessions || sessions.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(sessions.map(s => s.user_id).filter(Boolean))];
+      
+      if (userIds.length === 0) {
+        return [];
+      }
+
+      // Get user profiles for usernames
+      const { data: profiles, error: profilesError } = await supabase
+        .from('user_profiles')
+        .select('user_id, username')
+        .in('user_id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching user profiles:', profilesError);
+      }
+
+      // Create username map
+      const usernameMap = new Map();
+      (profiles || []).forEach(profile => {
+        usernameMap.set(profile.user_id, profile.username);
+      });
+
+      // Map sessions to live users
+      return sessions.map((session) => ({
+        id: session.user_id || session.id,
+        username: usernameMap.get(session.user_id) || 'Anonymous',
+        email: '', // We don't have email access in this context
+        is_active: session.is_active,
+        last_activity: session.last_activity,
+        location_data: session.location_data || {},
+        session_duration: Math.floor(
+          (new Date().getTime() - new Date(session.created_at).getTime()) / 1000 / 60,
+        ),
+        current_page: session.location_data?.current_page,
+      }));
+    } catch (error) {
+      console.error('Error in getLiveUsers:', error);
       return [];
     }
+  }
+
 
     return (data || []).map((session) => ({
       id: session.user?.id || session.user_id,
@@ -282,13 +326,21 @@ export class AdminAnalytics {
     locationData?: any,
   ): Promise<void> {
     try {
-      await supabase.from('user_sessions').upsert({
+      const { error } = await supabase.from('user_sessions').upsert({
         user_id: userId,
         session_token: sessionToken,
+        ip_address: locationData?.ip,
+        user_agent: navigator.userAgent,
         location_data: locationData || {},
         is_active: true,
         last_activity: new Date().toISOString(),
+      }, {
+        onConflict: 'session_token'
       });
+      
+      if (error) {
+        console.error('Error in trackUserSession:', error);
+      }
     } catch (error) {
       console.error('Error tracking user session:', error);
     }

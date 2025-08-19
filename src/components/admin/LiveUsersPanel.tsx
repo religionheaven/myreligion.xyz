@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Users, MapPin, Clock, Globe, Activity } from 'lucide-react';
 import { AdminAnalytics, LiveUser } from '../../services/adminAnalytics';
 
+import { Globe2 } from 'lucide-react';
+
 export function LiveUsersPanel() {
   const [liveUsers, setLiveUsers] = useState<LiveUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +75,14 @@ export function LiveUsersPanel() {
                   <Clock className="w-3 h-3" />
                   <span>{formatLastActivity(user.last_activity)}</span>
                 </div>
+
+                {/* Display IP Address */}
+                {user.location_data.ip && (
+                  <div className="flex items-center gap-2 text-white/60">
+                    <Globe2 className="w-3 h-3" />
+                    <span className="font-mono text-xs">{user.location_data.ip}</span>
+                  </div>
+                )}
 
                 {user.location_data.country && (
                   <div className="flex items-center gap-2 text-white/60">

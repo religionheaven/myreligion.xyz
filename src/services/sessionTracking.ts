@@ -60,7 +60,24 @@ export class SessionTracking {
 
     try {
       const locationData = await this.getLocationData();
-      await AdminAnalytics.trackUserSession(userId, this.sessionToken, locationData);
+      
+      // Insert or update user session with IP and location data
+      const { error } = await supabase
+        .from('user_sessions')
+        .upsert({
+          user_id: userId,
+          session_token: this.sessionToken,
+          ip_address: locationData.ip,
+          location_data: locationData,
+          is_active: true,
+          last_activity: new Date().toISOString(),
+        }, {
+          onConflict: 'session_token'
+        });
+
+      if (error) {
+        console.error('Error tracking user session:', error);
+      }
     } catch (error) {
       console.error('Error tracking user session:', error);
     }
@@ -140,16 +157,39 @@ export class SessionTracking {
 
   // Update session activity
   private static updateSessionActivity(): void {
-    if (this.sessionToken) {
-      // This would call the Supabase function to update last_activity
-      // For now, we'll just track it locally
+    if (this.sessionToken && this.isTracking) {
+      // Update last activity timestamp
+      supabase
+        .from('user_sessions')
+        .update({ 
+          last_activity: new Date().toISOString(),
+          is_active: true 
+        })
+        .eq('session_token', this.sessionToken)
+        .then(({ error }) => {
+          if (error) {
+            console.error('Error updating session activity:', error);
+          }
+        });
     }
   }
 
   // End session
   private static endSession(): void {
+    if (this.sessionToken) {
+      // Mark session as inactive
+      supabase
+        .from('user_sessions')
+        .update({ is_active: false })
+        .eq('session_token', this.sessionToken)
+        .then(({ error }) => {
+          if (error) {
+            console.error('Error ending session:', error);
+          }
+        });
+    }
+    
     this.isTracking = false;
-    // Could send final session data here
   }
 
   // Track message sent
