@@ -130,44 +130,6 @@ export class AdminAnalytics {
           if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
             userSessionMap.set(session.user_id, session);
           }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
-      
-      if (userIds.length === 0) {
-        return [];
-      }
-
-      // Get user profiles for usernames
-      const { data: profiles, error: profilesError } = await supabase
-        .from('user_profiles')
-        .select('user_id, username')
-        .in('user_id', userIds);
-
-      if (profilesError) {
-        console.error('Error fetching user profiles:', profilesError);
-      }
-
-      // Create username map
-      const usernameMap = new Map();
-      (profiles || []).forEach(profile => {
-        usernameMap.set(profile.user_id, profile.username);
-      });
-
-      // Map unique sessions to live users
-        email: '', // We don't have email access in this context
-        is_active: session.is_active,
-        last_activity: session.last_activity,
-        location_data: session.location_data || {},
-      return uniqueSessions.map((session) => ({
-        id: session.user_id || session.id,
-        username: usernameMap.get(session.user_id) || 'Anonymous',
-        email: '', // We don't have email access in this context
-      }
-      )
-      )
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
       const headers = {
         'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -353,8 +315,6 @@ export class AdminAnalytics {
             'Content-Type': 'application/json',
           },
         }).then(res => res.json()),
-      ]
-      )
       const { count: activeUsers } = await supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
