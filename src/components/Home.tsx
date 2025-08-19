@@ -146,7 +146,7 @@ export function Home({
           <HomeContent
             onReligionClick={handleReligionClick}
             onShowRequests={onShowRequests}
-            onSignOut={handleSignOut}
+            onSignOut={signOut}
             isTransitioning={false}
             clickCounts={clickCounts}
             loadingCounts={loadingCounts}
@@ -218,7 +218,7 @@ export function Home({
       onReligionClick={handleReligionClick}
       onShowRequests={onShowRequests}
       onShowAdmin={onShowAdmin}
-      onSignOut={handleSignOut}
+      onSignOut={signOut}
       isTransitioning={isTransitioning}
       clickCounts={clickCounts}
       loadingCounts={loadingCounts}
@@ -384,6 +384,13 @@ function HomeContent({
     return found?.click_count || 0;
   };
 
+  const handleSignOutClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (confirm('Are you sure you want to sign out?')) {
+      onSignOut();
+    }
+  };
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
       {/* Desktop background */}
@@ -412,8 +419,9 @@ function HomeContent({
       {/* Sign out button at top left */}
       <div className="absolute top-8 left-8 z-20">
         <button
-          onClick={onSignOut}
+          onClick={handleSignOutClick}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
+          type="button"
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>

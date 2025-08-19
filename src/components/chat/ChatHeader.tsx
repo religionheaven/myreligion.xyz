@@ -7,7 +7,9 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
-  const handleSignOut = () => {
+  const handleSignOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (confirm('Are you sure you want to sign out?')) {
       onSignOut();
     }
@@ -31,6 +33,7 @@ export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
         <button
           onClick={handleSignOut}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
+          type="button"
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>
