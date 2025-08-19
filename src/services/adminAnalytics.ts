@@ -311,21 +311,13 @@ export class AdminAnalytics {
     locationData?: any,
   ): Promise<void> {
     try {
-      const { error } = await supabase.from('user_sessions').upsert({
+      await supabase.from('user_sessions').upsert({
         user_id: userId,
         session_token: sessionToken,
-        ip_address: locationData?.ip,
-        user_agent: navigator.userAgent,
         location_data: locationData || {},
         is_active: true,
         last_activity: new Date().toISOString(),
-      }, {
-        onConflict: 'session_token'
       });
-      
-      if (error) {
-        console.error('Error in trackUserSession:', error);
-      }
     } catch (error) {
       console.error('Error tracking user session:', error);
     }
