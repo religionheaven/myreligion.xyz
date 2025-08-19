@@ -408,7 +408,7 @@ function HomeContent({
       />
 
       {/* Sign out button at top left */}
-      <div className="absolute top-8 left-8 z-20">
+      <div className="absolute top-8 left-8 z-30">
         <button
           onClick={onSignOut}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
