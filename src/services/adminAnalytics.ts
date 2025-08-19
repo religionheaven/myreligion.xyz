@@ -89,8 +89,19 @@ export class AdminAnalytics {
         return [];
       }
 
-      // Get unique user IDs
-      const userIds = [...new Set(sessions.map(s => s.user_id).filter(Boolean))];
+      // Deduplicate sessions by user_id, keeping the most recent session for each user
+      const userSessionMap = new Map();
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
       
       if (userIds.length === 0) {
         return [];
@@ -112,8 +123,8 @@ export class AdminAnalytics {
         usernameMap.set(profile.user_id, profile.username);
       });
 
-      // Map sessions to live users
-      return sessions.map((session) => ({
+      // Map unique sessions to live users
+      return uniqueSessions.map((session) => ({
         id: session.user_id || session.id,
         username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
@@ -133,92 +144,158 @@ export class AdminAnalytics {
 
   // Get all site visits with analytics
   static async getSiteVisits(limit: number = 100): Promise<SiteVisit[]> {
-    const { data, error } = await supabase
-      .from('site_visits')
-      .select(
-        `
-        *,
-        user:auth.users(raw_user_meta_data)
-      `,
-      )
-      .order('created_at', { ascending: false })
-      .limit(limit);
+    try {
+      const { data: visits, error } = await supabase
+        .from('site_visits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-    if (error) {
-      console.error('Error fetching site visits:', error);
+      if (error) {
+        console.error('Error fetching site visits:', error);
+        return [];
+      }
+
+      if (!visits || visits.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(visits.map(v => v.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return visits.map((visit) => ({
+        id: visit.id,
+        visitor_id: visit.visitor_id,
+        user_id: visit.user_id,
+        username: visit.user_id ? (usernameMap.get(visit.user_id) || 'Unknown User') : 'Anonymous',
+        page_path: visit.page_path,
+        referrer: visit.referrer,
+        location_data: visit.location_data || {},
+        session_duration: visit.session_duration,
+        created_at: visit.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getSiteVisits:', error);
       return [];
     }
-
-    return (data || []).map((visit) => ({
-      id: visit.id,
-      visitor_id: visit.visitor_id,
-      user_id: visit.user_id,
-      username: visit.user?.raw_user_meta_data?.username || 'Anonymous',
-      page_path: visit.page_path,
-      referrer: visit.referrer,
-      location_data: visit.location_data || {},
-      session_duration: visit.session_duration,
-      created_at: visit.created_at,
-    }));
   }
 
   // Get message analytics
   static async getMessageAnalytics(limit: number = 100): Promise<MessageAnalytics[]> {
-    const { data, error } = await supabase
-      .from('message_analytics')
-      .select(
-        `
-        *,
-        user:auth.users(raw_user_meta_data)
-      `,
-      )
-      .order('created_at', { ascending: false })
-      .limit(limit);
+    try {
+      const { data: messages, error } = await supabase
+        .from('message_analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-    if (error) {
-      console.error('Error fetching message analytics:', error);
+      if (error) {
+        console.error('Error fetching message analytics:', error);
+        return [];
+      }
+
+      if (!messages || messages.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return messages.map((msg) => ({
+        id: msg.id,
+        user_id: msg.user_id,
+        username: usernameMap.get(msg.user_id) || 'Unknown User',
+        religion: msg.religion,
+        message_length: msg.message_length,
+        response_time_ms: msg.response_time_ms,
+        sentiment_score: msg.sentiment_score,
+        contains_sensitive: msg.contains_sensitive,
+        location_data: msg.location_data || {},
+        created_at: msg.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getMessageAnalytics:', error);
       return [];
     }
-
-    return (data || []).map((msg) => ({
-      id: msg.id,
-      user_id: msg.user_id,
-      username: msg.user?.raw_user_meta_data?.username || 'Unknown',
-      religion: msg.religion,
-      message_length: msg.message_length,
-      response_time_ms: msg.response_time_ms,
-      sentiment_score: msg.sentiment_score,
-      contains_sensitive: msg.contains_sensitive,
-      location_data: msg.location_data || {},
-      created_at: msg.created_at,
-    }));
   }
 
   // Get all user requests
   static async getUserRequests(): Promise<UserRequest[]> {
-    const { data, error } = await supabase
-      .from('user_requests')
-      .select(
-        `
-        *,
-        user:auth.users(raw_user_meta_data)
-      `,
-      )
-      .order('created_at', { ascending: false });
+    try {
+      const { data: requests, error } = await supabase
+        .from('user_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching user requests:', error);
+      if (error) {
+        console.error('Error fetching user requests:', error);
+        return [];
+      }
+
+      if (!requests || requests.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(requests.map(r => r.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return requests.map((request) => ({
+        id: request.id,
+        user_id: request.user_id,
+        username: usernameMap.get(request.user_id) || 'Unknown User',
+        request_type: request.request_type,
+        request_text: request.request_text,
+        created_at: request.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getUserRequests:', error);
       return [];
     }
-
-    return (data || []).map((request) => ({
-      id: request.id,
-      user_id: request.user_id,
-      username: request.user?.raw_user_meta_data?.username || 'Unknown',
-      request_type: request.request_type,
-      request_text: request.request_text,
-      created_at: request.created_at,
-    }));
   }
 
   // Get comprehensive admin statistics
