@@ -111,10 +111,32 @@ export class AdminAnalytics {
         }
       });
 
-      const uniqueSessions2 = Array.from(userSessionMap.values());
-      const userIds2 = uniqueSessions2.map(s => s.user_id);
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
       
-      if (userIds2.length === 0) {
+      if (userIds.length === 0) {
         return [];
       }
 
@@ -122,7 +144,7 @@ export class AdminAnalytics {
       const { data: profiles, error: profilesError } = await supabase
         .from('user_profiles')
         .select('user_id, username')
-        .in('user_id', userIds2);
+        .in('user_id', userIds);
 
       if (profilesError) {
         console.error('Error fetching user profiles:', profilesError);
@@ -135,18 +157,27 @@ export class AdminAnalytics {
       });
 
       // Map unique sessions to live users
-      return uniqueSessions2.map((session) => ({
-        id: session.user_id || session.id,
-        username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
         is_active: session.is_active,
         last_activity: session.last_activity,
         location_data: session.location_data || {},
-        session_duration: Math.floor(
-          (new Date().getTime() - new Date(session.created_at).getTime()) / 1000 / 60,
-        ),
-        current_page: session.location_data?.current_page,
-      }));
+      return uniqueSessions.map((session) => ({
+        id: session.user_id || session.id,
+        username: usernameMap.get(session.user_id) || 'Anonymous',
+        email: '', // We don't have email access in this context
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
+      const headers = {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      };
+
+      const response = await fetch(apiUrl, { headers });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const liveUsers = await response.json();
+      return liveUsers;
     } catch (error) {
       console.error('Error in getLiveUsers:', error);
       return [];
@@ -313,13 +344,12 @@ export class AdminAnalytics {
   static async getAdminStats(): Promise<AdminStats> {
     try {
       const [usersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
-        supabase.from('auth.users').select('*', { count: 'exact', head: true }),
-        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
-        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
-        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
-      ]);
-
-      // Get active users (last 24 hours)
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getTotalUserCount`, {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }).then(res => res.json()),
       const { count: activeUsers } = await supabase
         .from('user_sessions')
         .select('*', { count: 'exact', head: true })
@@ -370,7 +400,7 @@ export class AdminAnalytics {
       const totalUsers = usersResult.count || 0;
 
       return {
-        totalUsers,
+        totalUsers: usersResult?.count || 0,
         activeUsers: activeUsers || 0,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,
