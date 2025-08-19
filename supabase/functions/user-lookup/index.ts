@@ -1,108 +1,478 @@
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { supabase } from '../lib/supabase';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+export interface LiveUser {
+  id: string;
+  username: string;
+  email: string;
+  is_active: boolean;
+  last_activity: string;
+  location_data: {
+    country?: string;
+    city?: string;
+    region?: string;
+    ip?: string;
+  };
+  session_duration: number;
+  current_page?: string;
+}
 
-Deno.serve(async (req: Request) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+export interface SiteVisit {
+  id: string;
+  visitor_id: string;
+  user_id?: string;
+  username?: string;
+  page_path: string;
+  referrer?: string;
+  location_data: {
+    country?: string;
+    city?: string;
+    region?: string;
+  };
+  session_duration: number;
+  created_at: string;
+}
+
+export interface MessageAnalytics {
+  id: string;
+  user_id: string;
+  username: string;
+  religion: string;
+  message_length: number;
+  response_time_ms?: number;
+  sentiment_score: number;
+  contains_sensitive: boolean;
+  location_data: {
+    country?: string;
+    city?: string;
+  };
+  created_at: string;
+}
+
+export interface UserRequest {
+  id: string;
+  user_id: string;
+  username: string;
+  request_type: string;
+  request_text: string;
+  created_at: string;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  activeUsers: number;
+  totalVisits: number;
+  totalMessages: number;
+  totalRequests: number;
+  topCountries: Array<{ country: string; count: number }>;
+  topReligions: Array<{ religion: string; count: number }>;
+  recentActivity: number;
+}
+
+export class AdminAnalytics {
+  // Get live users currently on the site
+  static async getLiveUsers(): Promise<LiveUser[]> {
+    try {
+      // First, get active user sessions
+      const { data: sessions, error: sessionsError } = await supabase
+        .from('user_sessions')
+        .select('*')
+        .eq('is_active', true)
+        .gte('last_activity', new Date(Date.now() - 30 * 60 * 1000).toISOString()) // Last 30 minutes
+        .order('last_activity', { ascending: false });
+
+      if (sessionsError) {
+        console.error('Error fetching user sessions:', sessionsError);
+        return [];
+      }
+
+      if (!sessions || sessions.length === 0) {
+        return [];
+      }
+
+      // Deduplicate sessions by user_id, keeping the most recent session for each user
+      const userSessionMap = new Map();
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
+      
+      if (userIds.length === 0) {
+        return [];
+      }
+
+      // Get user profiles for usernames
+      const { data: profiles, error: profilesError } = await supabase
+        .from('user_profiles')
+        .select('user_id, username')
+        .in('user_id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching user profiles:', profilesError);
+      }
+
+      // Create username map
+      const usernameMap = new Map();
+      (profiles || []).forEach(profile => {
+        usernameMap.set(profile.user_id, profile.username);
+      });
+
+      // Map unique sessions to live users
+        id: session.user_id || session.id,
+        username: usernameMap.get(session.user_id) || 'Anonymous',
+        email: '', // We don't have email access in this context
+        is_active: session.is_active,
+        last_activity: session.last_activity,
+        location_data: session.location_data || {},
+        session_duration: Math.floor(
+          (new Date().getTime() - new Date(session.created_at).getTime()) / 1000 / 60,
+        ),
+        current_page: session.location_data?.current_page,
+      }));
+    } catch (error) {
+      console.error('Error in getLiveUsers:', error);
+      return [];
+    }
   }
 
-  try {
-    if (req.method !== 'POST') {
-      return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
-        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+  // Get all site visits with analytics
+  static async getSiteVisits(limit: number = 100): Promise<SiteVisit[]> {
+    try {
+      const { data: visits, error } = await supabase
+        .from('site_visits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-    const { action, userIds, username } = await req.json();
+      if (error) {
+        console.error('Error fetching site visits:', error);
+        return [];
+      }
 
-    // Create Supabase client with service role key
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-      { auth: { persistSession: false } }
-    );
+      if (!visits || visits.length === 0) {
+        return [];
+      }
 
-    let result = null;
+      // Get unique user IDs
+      const userIds = [...new Set(visits.map(v => v.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
 
-    switch (action) {
-      case 'getUserIdFromUsername':
-        if (!username) {
-          return new Response(
-            JSON.stringify({ error: 'Username required' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
-        if (userError) {
-          console.error('Error fetching users:', userError);
-          return new Response(
-            JSON.stringify({ error: 'Failed to fetch users' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const user = userData?.users?.find(
-          (u) => u.user_metadata?.username?.toLowerCase() === username.toLowerCase()
-        );
-        result = user?.id || null;
-        break;
-
-      case 'getUserMap':
-        if (!userIds || !Array.isArray(userIds)) {
-          return new Response(
-            JSON.stringify({ error: 'User IDs array required' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const { data: allUserData, error: allUserError } = await supabase.auth.admin.listUsers();
-        if (allUserError) {
-          console.error('Error fetching users:', allUserError);
-          return new Response(
-            JSON.stringify({ error: 'Failed to fetch users' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const userMap: Record<string, { username: string; email: string }> = {};
-        if (allUserData?.users) {
-          allUserData.users.forEach((user) => {
-            if (userIds.includes(user.id)) {
-              userMap[user.id] = {
-                username: user.user_metadata?.username || 'Unknown',
-                email: user.email || '',
-              };
-            }
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
           });
         }
-        result = userMap;
-        break;
+      }
 
-      default:
-        return new Response(
-          JSON.stringify({ error: 'Invalid action' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      return visits.map((visit) => ({
+        id: visit.id,
+        visitor_id: visit.visitor_id,
+        user_id: visit.user_id,
+        username: visit.user_id ? (usernameMap.get(visit.user_id) || 'Unknown User') : 'Anonymous',
+        page_path: visit.page_path,
+        referrer: visit.referrer,
+        location_data: visit.location_data || {},
+        session_duration: visit.session_duration,
+        created_at: visit.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getSiteVisits:', error);
+      return [];
     }
-
-    return new Response(
-      JSON.stringify({ result }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
-  } catch (error) {
-    console.error('Edge function error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
   }
-});
+
+  // Get message analytics
+  static async getMessageAnalytics(limit: number = 100): Promise<MessageAnalytics[]> {
+    try {
+      const { data: messages, error } = await supabase
+        .from('message_analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error fetching message analytics:', error);
+        return [];
+      }
+
+      if (!messages || messages.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return messages.map((msg) => ({
+        id: msg.id,
+        user_id: msg.user_id,
+        username: usernameMap.get(msg.user_id) || 'Unknown User',
+        religion: msg.religion,
+        message_length: msg.message_length,
+        response_time_ms: msg.response_time_ms,
+        sentiment_score: msg.sentiment_score,
+        contains_sensitive: msg.contains_sensitive,
+        location_data: msg.location_data || {},
+        created_at: msg.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getMessageAnalytics:', error);
+      return [];
+    }
+  }
+
+  // Get all user requests
+  static async getUserRequests(): Promise<UserRequest[]> {
+    try {
+      const { data: requests, error } = await supabase
+        .from('user_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching user requests:', error);
+        return [];
+      }
+
+      if (!requests || requests.length === 0) {
+        return [];
+      }
+
+      // Get unique user IDs
+      const userIds = [...new Set(requests.map(r => r.user_id).filter(Boolean))];
+      
+      let usernameMap = new Map();
+      if (userIds.length > 0) {
+        // Get user profiles for usernames
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (!profilesError && profiles) {
+          profiles.forEach(profile => {
+            usernameMap.set(profile.user_id, profile.username);
+          });
+        }
+      }
+
+      return requests.map((request) => ({
+        id: request.id,
+        user_id: request.user_id,
+        username: usernameMap.get(request.user_id) || 'Unknown User',
+        request_type: request.request_type,
+        request_text: request.request_text,
+        created_at: request.created_at,
+      }));
+    } catch (error) {
+      console.error('Error in getUserRequests:', error);
+      return [];
+    }
+  }
+
+  // Get comprehensive admin statistics
+  static async getAdminStats(): Promise<AdminStats> {
+    try {
+      const [usersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
+        supabase.from('auth.users').select('*', { count: 'exact', head: true }),
+        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
+        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
+        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
+      ]);
+
+      // Get active users (last 24 hours)
+      const { count: activeUsers } = await supabase
+        .from('user_sessions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true)
+        .gte('last_activity', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
+      // Get top countries
+      const { data: countryData } = await supabase
+        .from('site_visits')
+        .select('location_data')
+        .not('location_data->country', 'is', null);
+
+      const countryCount: Record<string, number> = {};
+      countryData?.forEach((visit) => {
+        const country = visit.location_data?.country;
+        if (country) {
+          countryCount[country] = (countryCount[country] || 0) + 1;
+        }
+      });
+
+      const topCountries = Object.entries(countryCount)
+        .map(([country, count]) => ({ country, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      // Get top religions
+      const { data: religionData } = await supabase.from('message_analytics').select('religion');
+
+      const religionCount: Record<string, number> = {};
+      religionData?.forEach((msg) => {
+        const religion = msg.religion;
+        if (religion) {
+          religionCount[religion] = (religionCount[religion] || 0) + 1;
+        }
+      });
+
+      const topReligions = Object.entries(religionCount)
+        .map(([religion, count]) => ({ religion, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 4);
+
+      // Get recent activity (last hour)
+      const { count: recentActivity } = await supabase
+        .from('site_visits')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
+
+      return {
+        totalUsers: usersResult.count || 0,
+        activeUsers: activeUsers || 0,
+        totalVisits: visitsResult.count || 0,
+        totalMessages: messagesResult.count || 0,
+        totalRequests: requestsResult.count || 0,
+        topCountries,
+        topReligions,
+        recentActivity: recentActivity || 0,
+      };
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      return {
+        totalUsers: 0,
+        activeUsers: 0,
+        totalVisits: 0,
+        totalMessages: 0,
+        totalRequests: 0,
+        topCountries: [],
+        topReligions: [],
+        recentActivity: 0,
+      };
+    }
+  }
+
+  // Track user session
+  static async trackUserSession(
+    userId: string,
+    sessionToken: string,
+    locationData?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('user_sessions').upsert({
+        user_id: userId,
+        session_token: sessionToken,
+        location_data: locationData || {},
+        is_active: true,
+        last_activity: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error tracking user session:', error);
+    }
+  }
+
+  // Track site visit
+  static async trackSiteVisit(
+    visitorId: string,
+    userId?: string,
+    pagePath: string = '/',
+    locationData?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('site_visits').insert({
+        visitor_id: visitorId,
+        user_id: userId,
+        page_path: pagePath,
+        referrer: document.referrer || null,
+        location_data: locationData || {},
+      });
+    } catch (error) {
+      console.error('Error tracking site visit:', error);
+    }
+  }
+
+  // Track message analytics
+  static async trackMessage(
+    messageId: string,
+    userId: string,
+    sessionId: string,
+    religion: string,
+    messageLength: number,
+    responseTimeMs?: number,
+  ): Promise<void> {
+    try {
+      await supabase.from('message_analytics').insert({
+        message_id: messageId,
+        user_id: userId,
+        session_id: sessionId,
+        religion: religion.toLowerCase(),
+        message_length: messageLength,
+        response_time_ms: responseTimeMs,
+        sentiment_score: 0, // Could be enhanced with sentiment analysis
+        contains_sensitive: false, // Could be enhanced with content analysis
+      });
+    } catch (error) {
+      console.error('Error tracking message analytics:', error);
+    }
+  }
+
+  // Log admin action
+  static async logAdminAction(
+    adminUserId: string,
+    action: string,
+    targetType?: string,
+    targetId?: string,
+    details?: any,
+  ): Promise<void> {
+    try {
+      await supabase.from('admin_logs').insert({
+        admin_user_id: adminUserId,
+        action,
+        target_type: targetType,
+        target_id: targetId,
+        details: details || {},
+      });
+    } catch (error) {
+      console.error('Error logging admin action:', error);
+    }
+  }
+}
