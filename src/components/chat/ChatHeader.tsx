@@ -7,14 +7,6 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
-  const handleSignOut = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (confirm('Are you sure you want to sign out?')) {
-      onSignOut();
-    }
-  };
-
   return (
     <div className="fixed top-0 left-0 right-0 z-30 pt-8 pb-4">
       {/* Back button at top left */}
@@ -31,17 +23,8 @@ export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
       {/* Sign out button at top right */}
       <div className="absolute top-8 right-8">
         <button
-          onClick={(e) => {
-            console.log('Chat sign out clicked!');
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm('Are you sure you want to sign out?')) {
-              onSignOut();
-            }
-          }}
+          onClick={onSignOut}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
-          type="button"
-          style={{ pointerEvents: 'auto', cursor: 'pointer' }}
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>

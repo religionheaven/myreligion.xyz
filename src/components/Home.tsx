@@ -92,9 +92,7 @@ export function Home({
   };
 
   const handleSignOut = () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      signOut();
-    }
+    signOut();
   };
 
   const handleReligionClick = (religion: string) => {
@@ -146,7 +144,7 @@ export function Home({
           <HomeContent
             onReligionClick={handleReligionClick}
             onShowRequests={onShowRequests}
-            onSignOut={signOut}
+            onSignOut={handleSignOut}
             isTransitioning={false}
             clickCounts={clickCounts}
             loadingCounts={loadingCounts}
@@ -218,7 +216,7 @@ export function Home({
       onReligionClick={handleReligionClick}
       onShowRequests={onShowRequests}
       onShowAdmin={onShowAdmin}
-      onSignOut={signOut}
+      onSignOut={handleSignOut}
       isTransitioning={isTransitioning}
       clickCounts={clickCounts}
       loadingCounts={loadingCounts}
@@ -410,19 +408,10 @@ function HomeContent({
       />
 
       {/* Sign out button at top left */}
-      <div className="absolute top-8 left-8 z-30">
+      <div className="absolute top-8 left-8 z-20">
         <button
-          onClick={(e) => {
-            console.log('Sign out clicked!');
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm('Are you sure you want to sign out?')) {
-              onSignOut();
-            }
-          }}
+          onClick={onSignOut}
           className="flex items-center gap-2 text-white/80 hover:text-white transition-colors duration-300"
-          type="button"
-          style={{ pointerEvents: 'auto', cursor: 'pointer' }}
         >
           <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>
