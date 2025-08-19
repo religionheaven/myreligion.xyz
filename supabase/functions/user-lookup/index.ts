@@ -102,28 +102,6 @@ export class AdminAnalytics {
 
       const uniqueSessions = Array.from(userSessionMap.values());
       const userIds = uniqueSessions.map(s => s.user_id);
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
-      sessions.forEach(session => {
-        if (session.user_id) {
-          const existing = userSessionMap.get(session.user_id);
-          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
-            userSessionMap.set(session.user_id, session);
-          }
-        }
-      });
-
-      const uniqueSessions = Array.from(userSessionMap.values());
-      const userIds = uniqueSessions.map(s => s.user_id);
       
       if (userIds.length === 0) {
         return [];
@@ -146,6 +124,8 @@ export class AdminAnalytics {
       });
 
       // Map unique sessions to live users
+      return uniqueSessions.map((session) => ({
+        id: session.user_id,
         username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
         is_active: session.is_active,
@@ -377,7 +357,7 @@ export class AdminAnalytics {
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
       return {
-        totalUsers,
+        totalUsers: usersResult.count || 0,
         activeUsers: activeUsers || 0,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,

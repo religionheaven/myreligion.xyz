@@ -102,6 +102,17 @@ export class AdminAnalytics {
 
       const uniqueSessions = Array.from(userSessionMap.values());
       const userIds = uniqueSessions.map(s => s.user_id);
+      sessions.forEach(session => {
+        if (session.user_id) {
+          const existing = userSessionMap.get(session.user_id);
+          if (!existing || new Date(session.last_activity) > new Date(existing.last_activity)) {
+            userSessionMap.set(session.user_id, session);
+          }
+        }
+      });
+
+      const uniqueSessions = Array.from(userSessionMap.values());
+      const userIds = uniqueSessions.map(s => s.user_id);
       
       if (userIds.length === 0) {
         return [];
@@ -124,7 +135,6 @@ export class AdminAnalytics {
       });
 
       // Map unique sessions to live users
-      return uniqueSessions.map((session) => ({
         id: session.user_id || session.id,
         username: usernameMap.get(session.user_id) || 'Anonymous',
         email: '', // We don't have email access in this context
