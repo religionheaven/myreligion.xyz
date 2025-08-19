@@ -439,43 +439,32 @@ export class BanManagement {
    */
   private static async getUserIdFromUsername(username: string): Promise<string | null> {
     try {
-      const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'getUserIdFromUsername',
+          username: username,
+        }),
+      });
 
-      if (userError) {
-        console.error('Error fetching users for username lookup:', userError);
+      if (!response.ok) {
+        console.error('Error fetching user ID from username:', response.statusText);
         return null;
       }
 
-      const user = userData?.users?.find(
-        (u) => u.user_metadata?.username?.toLowerCase() === username.toLowerCase(),
-      );
+      const { result } = await response.json();
+      return result;
 
-      return user?.id || null;
     } catch (error) {
       console.error('Error in getUserIdFromUsername:', error);
       return null;
     }
   }
 
-  /**
-   * Get username from user ID
-   */
-  private static async getUsernameFromUserId(userId: string): Promise<string | null> {
-    try {
-      const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
-
-      if (userError) {
-        console.error('Error fetching users for user ID lookup:', userError);
-        return null;
-      }
-
-      const user = userData?.users?.find((u) => u.id === userId);
-      return user?.user_metadata?.username || null;
-    } catch (error) {
-      console.error('Error in getUsernameFromUserId:', error);
-      return null;
-    }
-  }
 
   /**
    * Create a user map from auth system for username resolution
@@ -500,23 +489,30 @@ export class BanManagement {
         return userMap;
       }
 
-      // Fetch user data from auth system
-      const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
+      // Fetch user data from Edge Function
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'getUserMap',
+          userIds: Array.from(userIds),
+        }),
+      });
 
-      if (userError) {
-        console.error('Error fetching user data:', userError);
+      if (!response.ok) {
+        console.error('Error fetching user map:', response.statusText);
         return userMap;
       }
 
-      // Build user map
-      if (userData?.users) {
-        userData.users.forEach((user) => {
-          if (userIds.has(user.id)) {
-            userMap.set(user.id, {
-              username: user.user_metadata?.username || 'Unknown',
-              email: user.email || '',
-            });
-          }
+      const { result } = await response.json();
+      
+      // Build user map from result
+      if (result) {
+        Object.entries(result).forEach(([userId, userData]: [string, any]) => {
+          userMap.set(userId, userData);
         });
       }
     } catch (error) {
