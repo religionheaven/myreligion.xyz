@@ -118,6 +118,8 @@ export class ConfessionService {
     voteType: 'upvote' | 'downvote',
   ): Promise<boolean> {
     try {
+      console.log(`Starting vote operation: ${voteType} on ${confessionId} by ${userId}`);
+      
       // Check if user already voted on this confession
       const { data: existingVote, error: fetchError } = await supabase
         .from('confession_votes')
@@ -131,9 +133,12 @@ export class ConfessionService {
         return false;
       }
 
+      console.log('Existing vote:', existingVote);
+
       if (existingVote) {
         if (existingVote.vote_type === voteType) {
           // Same vote type - remove the vote (toggle off)
+          console.log('Removing existing vote');
           const { error: deleteError } = await supabase
             .from('confession_votes')
             .delete()
@@ -145,6 +150,7 @@ export class ConfessionService {
           }
         } else {
           // Different vote type - update the vote
+          console.log('Updating existing vote');
           const { error: updateError } = await supabase
             .from('confession_votes')
             .update({ vote_type: voteType })
@@ -157,6 +163,7 @@ export class ConfessionService {
         }
       } else {
         // No existing vote - create new vote
+        console.log('Creating new vote');
         const { error: insertError } = await supabase.from('confession_votes').insert({
           confession_id: confessionId,
           user_id: userId,
@@ -169,8 +176,30 @@ export class ConfessionService {
         }
       }
 
-      // After successful vote operation, manually update the confession counts
-      await this.updateConfessionCounts(confessionId);
+      console.log('Vote operation completed, waiting for trigger...');
+      
+      // Wait a moment for database triggers to process
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Verify the counts were updated by the trigger
+      const { data: updatedConfession, error: verifyError } = await supabase
+        .from('confessions')
+        .select('upvotes, downvotes, score')
+        .eq('id', confessionId)
+        .single();
+        
+      if (verifyError) {
+        console.error('Error verifying confession update:', verifyError);
+        // Fallback to manual update if trigger failed
+        await this.updateConfessionCounts(confessionId);
+      } else {
+        console.log('Confession after trigger:', updatedConfession);
+        // If trigger didn't work, do manual update
+        if (updatedConfession.upvotes === 0 && updatedConfession.downvotes === 0 && updatedConfession.score === 0) {
+          console.log('Trigger did not update counts, doing manual update');
+          await this.updateConfessionCounts(confessionId);
+        }
+      }
 
       return true;
     } catch (error) {
