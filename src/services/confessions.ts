@@ -144,6 +144,10 @@ export class ConfessionService {
       /www\.[^\s]+/gi,
       /[a-zA-Z0-9-]+\.(com|org|net|edu|gov|mil|int|co|io|me|tv|cc|ly|be|to|it|us|uk|ca|de|fr|jp|au|in|br|ru|cn|za|mx|es|nl|se|no|dk|fi|pl|cz|hu|ro|bg|hr|si|sk|lt|lv|ee|is|ie|pt|gr|tr|il|ae|sa|eg|ma|ng|ke|gh|tz|ug|zw|zm|mw|bw|sz|ls|na|ao|mz|mg|mu|sc|re|yt|km|dj|so|et|er|sd|ss|td|cf|cm|gq|ga|cg|cd|st|gw|gn|sl|lr|ci|bf|ml|ne|sn|gm|cv|mr)/gi,
       /bit\.ly|tinyurl|t\.co|goo\.gl|short\.link|ow\.ly|is\.gd|buff\.ly/gi,
+      /discord\.gg|discord\.com\/invite/gi,
+      /youtube\.com|youtu\.be|vimeo\.com|twitch\.tv/gi,
+      /facebook\.com|instagram\.com|twitter\.com|x\.com|tiktok\.com|snapchat\.com/gi,
+      /[^\s]*\.[a-zA-Z]{2,}[^\s]*/gi,
     ];
 
     const containsLink = linkPatterns.some(pattern => pattern.test(content));
@@ -151,24 +155,52 @@ export class ConfessionService {
       return { isValid: false, error: 'Links are not allowed in confessions' };
     }
 
-    // Check for contact information
+    // Check for contact information - STRICTLY PROHIBITED
     const contactPatterns = [
+      // Email addresses
       /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/gi, // Email
+      // Phone numbers (various formats)
       /\b(?:\+?1[-.\s]?)?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g, // Phone
+      /\b(?:\+?[0-9]{1,4}[-.\s]?)?[0-9]{3,4}[-.\s]?[0-9]{3,4}[-.\s]?[0-9]{3,4}\b/g, // International phone
+      // Social media and messaging platforms
       /\btelegram\.me\/[a-zA-Z0-9_]+/gi,
       /\bt\.me\/[a-zA-Z0-9_]+/gi,
       /\b@[a-zA-Z0-9_]{1,15}\b/g, // Social handles
+      /\binsta\s*:\s*[a-zA-Z0-9_]+/gi,
+      /\bsnap\s*:\s*[a-zA-Z0-9_]+/gi,
+      /\btiktok\s*:\s*[a-zA-Z0-9_]+/gi,
+      // Contact requests
       /\bdm\s+me\b/gi,
       /\bcontact\s+me\b/gi,
       /\bmessage\s+me\b/gi,
+      /\btext\s+me\b/gi,
+      /\bcall\s+me\b/gi,
+      /\bhit\s+me\s+up\b/gi,
+      /\bhmu\b/gi,
+      // Messaging apps
       /\bwhatsapp\b/gi,
       /\bskype\b/gi,
       /\bdiscord\b/gi,
+      /\bsignal\b/gi,
+      /\bviber\b/gi,
+      /\bkik\b/gi,
+      /\bline\s+app\b/gi,
+      /\bwechat\b/gi,
+      // Crypto addresses (common patterns)
+      /\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b/g, // Bitcoin
+      /\b0x[a-fA-F0-9]{40}\b/g, // Ethereum
+      /\b[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}\b/g, // Litecoin
+      /\bbc1[a-z0-9]{39,59}\b/gi, // Bitcoin Bech32
+      // Generic contact patterns
+      /\bfind\s+me\s+on\b/gi,
+      /\badd\s+me\s+on\b/gi,
+      /\bfollow\s+me\s+on\b/gi,
+      /\bmy\s+[a-zA-Z]+\s+is\s+[a-zA-Z0-9_@.]+/gi,
     ];
 
     const containsContact = contactPatterns.some(pattern => pattern.test(content));
     if (containsContact) {
-      return { isValid: false, error: 'Contact information is not allowed in confessions' };
+      return { isValid: false, error: 'Contact information is STRICTLY PROHIBITED in confessions' };
     }
 
     return { isValid: true };

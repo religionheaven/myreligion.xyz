@@ -1062,7 +1062,7 @@ function HomeContent({
               </div>
               <div className="mt-2 flex justify-between text-white/40 text-xs">
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Anonymous posting • Max 2 confessions per user • No links/contact info
+                  Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED
                 </p>
                 <p>{confessionText.length}/500</p>
               </div>
