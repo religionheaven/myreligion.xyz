@@ -37,6 +37,9 @@ export function Home({
   const [isSubmittingConfession, setIsSubmittingConfession] = React.useState(false);
   const [confessionSortBy, setConfessionSortBy] = React.useState<SortOption>('recent');
   const [loadingConfessions, setLoadingConfessions] = React.useState(false);
+  const [showConfessionWarning, setShowConfessionWarning] = React.useState(false);
+  const [confessionWarningMessage, setConfessionWarningMessage] = React.useState('');
+  const [isConfessionWarningFadingOut, setIsConfessionWarningFadingOut] = React.useState(false);
 
   // Live chat visibility state
   const [showLiveChat, setShowLiveChat] = React.useState(false);
@@ -129,10 +132,22 @@ export function Home({
       // Reload confessions to show the new one
       await loadConfessions();
     } else {
-      alert(result.error || 'Failed to submit confession. Please try again.');
+      showConfessionWarning(result.error || 'Failed to submit confession. Please try again.');
     }
     
     setIsSubmittingConfession(false);
+  };
+
+  const showConfessionWarning = (message: string) => {
+    setConfessionWarningMessage(message);
+    setShowConfessionWarning(true);
+    setIsConfessionWarningFadingOut(false);
+
+    setTimeout(() => setIsConfessionWarningFadingOut(true), 1700);
+    setTimeout(() => {
+      setShowConfessionWarning(false);
+      setIsConfessionWarningFadingOut(false);
+    }, 2000);
   };
 
   const handleVoteOnConfession = async (confessionId: string, voteType: 'upvote' | 'downvote') => {
@@ -290,6 +305,9 @@ export function Home({
             setShowRequestedReligions={setShowRequestedReligions}
             showConfessions={showConfessions}
             setShowConfessions={setShowConfessions}
+            showConfessionWarning={showConfessionWarning}
+            confessionWarningMessage={confessionWarningMessage}
+            isConfessionWarningFadingOut={isConfessionWarningFadingOut}
             confessions={confessions}
             confessionText={confessionText}
             setConfessionText={setConfessionText}
