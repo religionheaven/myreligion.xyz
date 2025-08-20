@@ -287,7 +287,8 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
           alert('Failed to send message. Please try again.');
         }
       } else {
-        setCooldownTime(SPAM_DETECTION_CONFIG.COOLDOWN_DURATION / 1000);
+        // Don't set additional cooldown since there's already a base 3s cooldown
+        // setCooldownTime(SPAM_DETECTION_CONFIG.COOLDOWN_DURATION / 1000);
         updateSpamTracking(messageContent);
         scrollToBottomForced();
         setTimeout(loadMessages, 100);

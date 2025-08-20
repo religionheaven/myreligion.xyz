@@ -70,7 +70,7 @@ export const checkRateLimit = (userId: string): {
     const remainingTime = Math.ceil((userData.currentPenalty - (now - userData.lastViolation)) / 1000);
     return {
       isRateLimited: true,
-      message: `🚫 Rate limited. Please wait ${remainingTime} seconds before sending another message.`,
+      message: `🚫 Sending too fast! Please wait ${remainingTime} seconds.`,
       cooldownTime: remainingTime
     };
   }
@@ -96,13 +96,13 @@ export const checkRateLimit = (userId: string): {
   
   if (shortWindowMessages >= SHORT.maxMessages) {
     violation = true;
-    violationType = 'short';
+    violationType = `${SHORT.maxMessages} messages in ${SHORT.duration/1000} seconds`;
   } else if (mediumWindowMessages >= MEDIUM.maxMessages) {
     violation = true;
-    violationType = 'medium';
+    violationType = `${MEDIUM.maxMessages} messages in ${MEDIUM.duration/1000} seconds`;
   } else if (longWindowMessages >= LONG.maxMessages) {
     violation = true;
-    violationType = 'long';
+    violationType = `${LONG.maxMessages} messages in ${LONG.duration/1000} seconds`;
   }
   
   if (violation) {
@@ -124,7 +124,7 @@ export const checkRateLimit = (userId: string): {
     userData.currentPenalty = penalty;
     
     const penaltySeconds = Math.ceil(penalty / 1000);
-    let message = `🚫 Sending messages too quickly! Please wait ${penaltySeconds} seconds.`;
+    let message = `🚫 Rate limit exceeded (${violationType}). Wait ${penaltySeconds}s.`;
     
     if (userData.violations > 1) {
       message += ` (Violation #${userData.violations})`;
