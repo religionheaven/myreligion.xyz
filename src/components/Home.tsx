@@ -684,9 +684,9 @@ function HomeContent({
       <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             {showRequestedReligions ? 'back' : 'requested religions'}
           </span>
         </button>
@@ -696,9 +696,9 @@ function HomeContent({
       <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
         <button
           onClick={() => setShowConfessions(!showConfessions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             {showConfessions ? 'close confessions' : 'confessions'}
           </span>
         </button>
