@@ -18,6 +18,13 @@ export function ChatInput({
   isLoading,
   religion,
 }: ChatInputProps) {
+  const getPlaceholder = () => {
+    if (religion.toLowerCase() === 'nga') {
+      return "Don't get offended...";
+    }
+    return `Ask about ${religion}...`;
+  };
+
   return (
     <div className="p-4 md:p-6 border-t border-white/20 flex-shrink-0">
       <form onSubmit={onSubmit} className="flex gap-2 md:gap-3">
@@ -25,7 +32,7 @@ export function ChatInput({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`Ask about ${religion}...`}
+          placeholder={getPlaceholder()}
           className="flex-1 px-3 py-3 md:px-5 md:py-4 bg-black/20 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-black/30 text-sm md:text-base"
         />
         {isLoading ? (
