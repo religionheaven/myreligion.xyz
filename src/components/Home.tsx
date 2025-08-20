@@ -399,6 +399,8 @@ export function Home({
       showConfessions={showConfessions}
       setShowConfessions={setShowConfessions}
       showConfessionWarningPopup={showConfessionWarningPopup}
+      confessionWarningMessage={confessionWarningMessage}
+      isConfessionWarningFadingOut={isConfessionWarningFadingOut}
       confessionText={confessionText}
       setConfessionText={setConfessionText}
       isSubmittingConfession={isSubmittingConfession}
