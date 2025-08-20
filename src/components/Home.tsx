@@ -511,7 +511,18 @@ function HomeContent({
       </div>
 
       {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-20">
+      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center gap-4">
+        {/* Requested Religion Button */}
+        <button
+          onClick={() => alert('Requested Religion feature coming soon!')}
+          className="bg-purple-500/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            Requested Religion
+          </span>
+        </button>
+        
+        {/* Live Chat Button */}
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -554,6 +565,30 @@ function HomeContent({
         getClickCount={getClickCount}
         isTransitioning={isTransitioning}
       />
+
+      {/* Mobile Requested Religion Button - positioned below cards */}
+      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 md:hidden flex flex-col items-center gap-4">
+        {/* Requested Religion Button */}
+        <button
+          onClick={() => alert('Requested Religion feature coming soon!')}
+          className="bg-purple-500/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            Requested Religion
+          </span>
+        </button>
+        
+        {/* Live Chat Button */}
+        <button
+          onClick={() => setShowLiveChat(true)}
+          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <MessageCircle className="w-4 h-4" />
+          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            heaven, live
+          </span>
+        </button>
+      </div>
 
       {/* Requests button at bottom */}
       <div className="absolute bottom-8 left-8 z-20">
