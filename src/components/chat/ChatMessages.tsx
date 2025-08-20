@@ -53,7 +53,7 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
         <div className="text-center text-white/60 mt-20">
           <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
             {religion.toLowerCase() === 'nga' 
-               ? 'Welcome to the Nga spiritual realm. What wisdom do you seek?'
+               ? 'Welcome to the Nigga religion. Start fucking talkin.'
                : `Welcome to your ${religion} chat. Ask me anything!`
              }
           </p>
