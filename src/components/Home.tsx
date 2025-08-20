@@ -163,6 +163,13 @@ export function Home({
             showProfileModal={showProfileModal}
             setShowProfileModal={setShowProfileModal}
             userProfile={userProfile}
+            onProfileUpdate={handleProfileUpdate}
+            showLiveChat={showLiveChat}
+            setShowLiveChat={setShowLiveChat}
+            showRequestedReligions={showRequestedReligions}
+            setShowRequestedReligions={setShowRequestedReligions}
+            showConfessions={showConfessions}
+            setShowConfessions={setShowConfessions}
           />
         </div>
 
@@ -228,6 +235,7 @@ export function Home({
       onReligionClick={handleReligionClick}
       onShowRequests={onShowRequests}
       onShowAdmin={onShowAdmin}
+      onHideRequests={onHideRequests}
       onSignOut={handleSignOut}
       isTransitioning={isTransitioning}
       clickCounts={clickCounts}
@@ -240,6 +248,8 @@ export function Home({
       setShowLiveChat={setShowLiveChat}
       showRequestedReligions={showRequestedReligions}
       setShowRequestedReligions={setShowRequestedReligions}
+      showConfessions={showConfessions}
+      setShowConfessions={setShowConfessions}
     />
   );
 }
@@ -248,6 +258,7 @@ interface HomeContentProps {
   onReligionClick: (religion: string) => void;
   onShowRequests?: () => void;
   onShowAdmin?: () => void;
+  onHideRequests?: () => void;
   onSignOut: () => void;
   isTransitioning: boolean;
   clickCounts: ReligionClickData[];
@@ -379,10 +390,12 @@ function MobileReligionCards({
     </div>
   );
 }
+
 function HomeContent({
   onReligionClick,
   onShowRequests,
   onShowAdmin,
+  onHideRequests,
   onSignOut,
   isTransitioning,
   clickCounts,
@@ -611,6 +624,7 @@ function HomeContent({
           </span>
         </button>
       </div>
+
       {/* Live Chat Button - positioned below cards */}
       <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
@@ -687,19 +701,6 @@ function HomeContent({
         </div>
       )}
 
-      {/* Mobile Live Chat Button */}
-      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 md:hidden transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-        <button
-          onClick={() => setShowLiveChat(true)}
-          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            heaven, live
-          </span>
-        </button>
-      </div>
-
       {/* Requests button at bottom */}
       <div className={`absolute bottom-8 left-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex gap-3">
@@ -761,105 +762,6 @@ function HomeContent({
 
       {/* Image at bottom right */}
       <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-        <a
-          href="https://x.com/religionheaven"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block transition-all duration-300 hover:scale-105"
-        >
-          <img
-            src="https://i.imgur.com/HIhlm3m.png"
-            alt="Religion Heaven Twitter"
-            className="w-auto h-12"
-          />
-        </a>
-      </div>
-    </div>
-  );
-}
-          onReligionClick={onReligionClick}
-          getClickCount={getClickCount}
-          isTransitioning={isTransitioning}
-          showConfessions={showConfessions}
-          setShowConfessions={setShowConfessions}
-        />
-      )}
-
-      {/* Requested Religions Cards - Mobile */}
-      {showRequestedReligions && (
-        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
-          <div className="w-full h-full flex items-center justify-center px-8">
-            <div className="relative w-full max-w-xs h-80 overflow-hidden">
-              {/* Cards container */}
-              <div className="flex transition-transform duration-300 ease-out h-full">
-                <div className="w-full flex-shrink-0 h-full flex items-center justify-center">
-                  <div className="relative w-3/4 h-3/4">
-                    <img
-                      src="https://i.imgur.com/5eZqdQy.png"
-                      alt="Nga"
-                      className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
-                      onClick={() => onReligionClick('Nga')}
-                    />
-                    <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
-                      {getClickCount('Nga')}
-                    </div>
-                  </div>
-                </div>
-                {/* Add more cards here as they become available */}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile Requested Religion Button - positioned below cards */}
-
-      {/* Mobile Live Chat Button */}
-      <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
-        <button
-          onClick={() => setShowLiveChat(true)}
-          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            heaven, live
-          </span>
-        </button>
-      </div>
-
-      {/* Requests button at bottom */}
-      <div className="absolute bottom-8 left-8 z-20">
-        <div className="flex gap-3">
-          <button
-            onClick={onShowRequests || (() => {})}
-            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
-          >
-            <span
-              className="text-base font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              requests
-            </span>
-          </button>
-
-          {onShowAdmin && (
-            <button
-              onClick={onShowAdmin}
-              className="bg-red-500/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-red-400/20 hover:bg-red-500/40 transition-all duration-300 hover:scale-105"
-            >
-              <span
-                className="text-base font-medium"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
-              >
-                admin
-              </span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Image at bottom right */}
-      <div className="absolute bottom-8 right-8 z-20">
         <a
           href="https://x.com/religionheaven"
           target="_blank"
