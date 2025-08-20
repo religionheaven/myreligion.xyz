@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Confession, SortOption } from '../../services/confessions';
+import { WarningPopup } from './WarningPopup';
 
 interface ConfessionsModalProps {
   showConfessions: boolean;
@@ -14,6 +15,9 @@ interface ConfessionsModalProps {
   loadingConfessions: boolean;
   handleVoteOnConfession: (confessionId: string, voteType: 'upvote' | 'downvote') => void;
   formatTimeAgo: (timestamp: string) => string;
+  showWarning: boolean;
+  warningMessage: string;
+  isWarningFadingOut: boolean;
 }
 
 export function ConfessionsModal({
@@ -28,6 +32,9 @@ export function ConfessionsModal({
   loadingConfessions,
   handleVoteOnConfession,
   formatTimeAgo,
+  showWarning,
+  warningMessage,
+  isWarningFadingOut,
 }: ConfessionsModalProps) {
   if (!showConfessions) return null;
 
@@ -188,6 +195,13 @@ export function ConfessionsModal({
           </div>
         </div>
       </div>
+
+      {/* Warning Popup */}
+      <WarningPopup
+        showWarning={showWarning}
+        warningMessage={warningMessage}
+        isWarningFadingOut={isWarningFadingOut}
+      />
     </div>
   );
 }

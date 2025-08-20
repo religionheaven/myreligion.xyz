@@ -9,6 +9,9 @@ export function useConfessions() {
   const [isSubmittingConfession, setIsSubmittingConfession] = useState(false);
   const [confessionSortBy, setConfessionSortBy] = useState<SortOption>('recent');
   const [loadingConfessions, setLoadingConfessions] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [isWarningFadingOut, setIsWarningFadingOut] = useState(false);
 
   // Load confessions when sort changes
   useEffect(() => {
@@ -26,6 +29,18 @@ export function useConfessions() {
     setLoadingConfessions(false);
   };
 
+  const showWarningPopup = (message: string) => {
+    setWarningMessage(message);
+    setShowWarning(true);
+    setIsWarningFadingOut(false);
+
+    setTimeout(() => setIsWarningFadingOut(true), 2700);
+    setTimeout(() => {
+      setShowWarning(false);
+      setIsWarningFadingOut(false);
+    }, 3000);
+  };
+
   const handleSubmitConfession = async () => {
     if (!confessionText.trim() || isSubmittingConfession || !user) return;
 
@@ -37,7 +52,7 @@ export function useConfessions() {
       // Reload confessions to show the new one
       await loadConfessions();
     } else {
-      alert(result.error || 'Failed to submit confession. Please try again.');
+      showWarningPopup(result.error || 'Failed to submit confession. Please try again.');
     }
     
     setIsSubmittingConfession(false);
@@ -134,5 +149,8 @@ export function useConfessions() {
     handleVoteOnConfession,
     formatTimeAgo,
     loadConfessions,
+    showWarning,
+    warningMessage,
+    isWarningFadingOut,
   };
 }
