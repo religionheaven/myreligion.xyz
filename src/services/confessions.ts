@@ -76,6 +76,7 @@ export class ConfessionService {
       // Map confessions with user votes
       return confessions.map((confession) => {
         const userVote = userVotes.find((vote) => vote.confession_id === confession.id);
+        console.log(`Loading confession ${confession.id}: upvotes=${confession.upvotes}, downvotes=${confession.downvotes}, score=${confession.score}`);
         return {
           ...confession,
           user_vote: userVote?.vote_type || null,
