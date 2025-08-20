@@ -455,7 +455,46 @@ function MobileReligionCards({
       </div>
     </div>
   );
-  }
+}
+
+function HomeContent({
+  onReligionClick,
+  onShowRequests,
+  onShowAdmin,
+  onHideRequests,
+  onSignOut,
+  isTransitioning,
+  clickCounts,
+  loadingCounts,
+  showProfileModal,
+  setShowProfileModal,
+  userProfile,
+  onProfileUpdate,
+  showLiveChat,
+  setShowLiveChat,
+  showRequestedReligions,
+  setShowRequestedReligions,
+  confessions,
+  confessionText,
+  setConfessionText,
+  isSubmittingConfession,
+  handleSubmitConfession,
+  confessionSortBy,
+  setConfessionSortBy,
+  loadingConfessions,
+  handleVoteOnConfession,
+  formatTimeAgo,
+  showConfessions,
+  setShowConfessions,
+  showWarning,
+  warningMessage,
+  isWarningFadingOut,
+}: HomeContentProps) {
+  const getClickCount = (religion: string) => {
+    if (loadingCounts) return '...';
+    const found = clickCounts.find((item) => item.religion === religion);
+    return found?.click_count || 0;
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
@@ -532,7 +571,7 @@ function MobileReligionCards({
         </p>
       </div>
 
-      {/* Mobile Requested Religion Button - positioned below "powered by heaven" */}
+      {/* Mobile Requested Religion and Confessions Buttons - positioned below "powered by heaven" */}
       <div className="relative z-20 flex justify-center mt-4 md:hidden">
         <div className="flex flex-col items-center gap-2">
           <button
@@ -545,47 +584,6 @@ function MobileReligionCards({
           </button>
         </div>
       </div>
-
-      {/* Mobile Confessions Button - positioned much lower */}
-      <div className="relative z-20 flex justify-center mt-8 md:hidden">
-function HomeContent({
-  onReligionClick,
-  onShowRequests,
-  onShowAdmin,
-  onHideRequests,
-  onSignOut,
-  isTransitioning,
-  clickCounts,
-  loadingCounts,
-  showProfileModal,
-  setShowProfileModal,
-  userProfile,
-  onProfileUpdate,
-  showLiveChat,
-  setShowLiveChat,
-  showRequestedReligions,
-  setShowRequestedReligions,
-  confessions,
-  confessionText,
-  setConfessionText,
-  isSubmittingConfession,
-  handleSubmitConfession,
-  confessionSortBy,
-  setConfessionSortBy,
-  loadingConfessions,
-  handleVoteOnConfession,
-  formatTimeAgo,
-  showConfessions,
-  setShowConfessions,
-  showWarning,
-  warningMessage,
-  isWarningFadingOut,
-}: HomeContentProps) {
-  const getClickCount = (religion: string) => {
-    if (loadingCounts) return '...';
-    const found = clickCounts.find((item) => item.religion === religion);
-    return found?.click_count || 0;
-  };
 
       {/* Mobile Confessions Button - positioned below "powered by heaven" */}
       <div className="relative z-20 flex justify-center mt-2 md:hidden">
