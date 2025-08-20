@@ -243,16 +243,6 @@ export function Home({
             loadingConfessions={loadingConfessions}
             handleVoteOnConfession={handleVoteOnConfession}
             formatTimeAgo={formatTimeAgo}
-            confessions={confessions}
-            confessionText={confessionText}
-            setConfessionText={setConfessionText}
-            isSubmittingConfession={isSubmittingConfession}
-            handleSubmitConfession={handleSubmitConfession}
-            confessionSortBy={confessionSortBy}
-            setConfessionSortBy={setConfessionSortBy}
-            loadingConfessions={loadingConfessions}
-            handleVoteOnConfession={handleVoteOnConfession}
-            formatTimeAgo={formatTimeAgo}
           />
         </div>
 
@@ -333,6 +323,16 @@ export function Home({
       setShowRequestedReligions={setShowRequestedReligions}
       showConfessions={showConfessions}
       setShowConfessions={setShowConfessions}
+      confessions={confessions}
+      confessionText={confessionText}
+      setConfessionText={setConfessionText}
+      isSubmittingConfession={isSubmittingConfession}
+      handleSubmitConfession={handleSubmitConfession}
+      confessionSortBy={confessionSortBy}
+      setConfessionSortBy={setConfessionSortBy}
+      loadingConfessions={loadingConfessions}
+      handleVoteOnConfession={handleVoteOnConfession}
+      formatTimeAgo={formatTimeAgo}
     />
   );
 }
