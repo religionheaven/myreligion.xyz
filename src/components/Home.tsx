@@ -455,8 +455,8 @@ function MobileReligionCards({
       </div>
     </div>
   );
-}
-
+    {/* Mobile Confessions Button - positioned much lower */}
+    <div className="relative z-20 flex justify-center mt-8 md:hidden">
 function HomeContent({
   onReligionClick,
   onShowRequests,
