@@ -511,7 +511,7 @@ function HomeContent({
       </div>
 
       {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center gap-4">
+      <div className="absolute bottom-60 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center gap-4">
         {/* Requested Religion Button */}
         <button
           onClick={() => alert('Requested Religion feature coming soon!')}
