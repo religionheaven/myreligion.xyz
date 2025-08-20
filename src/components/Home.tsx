@@ -482,7 +482,7 @@ function HomeContent({
             className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
           >
             <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              {showRequestedReligions ? 'Back' : 'Requested Religion'}
+              {showRequestedReligions ? 'back' : 'requested religions'}
             </span>
           </button>
           <button
@@ -490,7 +490,7 @@ function HomeContent({
             className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
           >
             <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              CONFESSIONS
+              confessions
             </span>
           </button>
         </div>
@@ -590,7 +590,7 @@ function HomeContent({
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            {showRequestedReligions ? 'Back' : 'Requested Religions'}
+            {showRequestedReligions ? 'back' : 'requested religions'}
           </span>
         </button>
       </div>
@@ -602,7 +602,7 @@ function HomeContent({
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            CONFESSIONS
+            confessions
           </span>
         </button>
       </div>
