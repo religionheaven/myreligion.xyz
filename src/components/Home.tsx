@@ -7,7 +7,8 @@ import { ReligionClickService, ReligionClickData } from '../services/religionCli
 import { ProfileModal } from './ProfileModal';
 import { UserProfileService, UserProfile } from '../services/userProfile';
 import LiveChat from './LiveChat';
-import { ConfessionService, Confession, SortOption } from '../services/confessions';
+import { ConfessionsModal } from './confessions/ConfessionsModal';
+import { useConfessions } from '../hooks/useConfessions';
 
 interface HomeProps {
   showRequests?: boolean;
@@ -32,14 +33,24 @@ export function Home({
   const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
   const [showRequestedReligions, setShowRequestedReligions] = React.useState(false);
   const [showConfessions, setShowConfessions] = React.useState(false);
-  const [confessions, setConfessions] = React.useState<Confession[]>([]);
-  const [confessionText, setConfessionText] = React.useState('');
-  const [isSubmittingConfession, setIsSubmittingConfession] = React.useState(false);
-  const [confessionSortBy, setConfessionSortBy] = React.useState<SortOption>('recent');
-  const [loadingConfessions, setLoadingConfessions] = React.useState(false);
 
   // Live chat visibility state
   const [showLiveChat, setShowLiveChat] = React.useState(false);
+
+  // Use confessions hook
+  const {
+    confessions,
+    confessionText,
+    setConfessionText,
+    isSubmittingConfession,
+    handleSubmitConfession,
+    confessionSortBy,
+    setConfessionSortBy,
+    loadingConfessions,
+    handleVoteOnConfession,
+    formatTimeAgo,
+    loadConfessions,
+  } = useConfessions();
 
   // Load click counts on component mount
   React.useEffect(() => {
@@ -57,13 +68,6 @@ export function Home({
 
     loadClickCounts();
   }, []);
-
-  // Load confessions when modal opens
-  React.useEffect(() => {
-    if (showConfessions) {
-      loadConfessions();
-    }
-  }, [showConfessions, confessionSortBy]);
 
   // Load user profile
   React.useEffect(() => {
@@ -107,112 +111,12 @@ export function Home({
     setUserProfile(updatedProfile);
   };
 
-  const loadConfessions = async () => {
-    setLoadingConfessions(true);
-    const fetchedConfessions = await ConfessionService.getConfessions(
-      confessionSortBy,
-      50,
-      user?.id
-    );
-    setConfessions(fetchedConfessions);
-    setLoadingConfessions(false);
-  };
-
-  const handleSubmitConfession = async () => {
-    if (!confessionText.trim() || isSubmittingConfession || !user) return;
-
-    setIsSubmittingConfession(true);
-    const result = await ConfessionService.submitConfession(confessionText, user.id);
-    
-    if (result.success) {
-      setConfessionText('');
-      // Reload confessions to show the new one
-      await loadConfessions();
-    } else {
-      alert(result.error || 'Failed to submit confession. Please try again.');
+  // Load confessions when modal opens
+  React.useEffect(() => {
+    if (showConfessions) {
+      loadConfessions();
     }
-    
-    setIsSubmittingConfession(false);
-  };
-
-  const handleVoteOnConfession = async (confessionId: string, voteType: 'upvote' | 'downvote') => {
-    if (!user) return;
-
-    console.log(`Voting ${voteType} on confession ${confessionId}`);
-
-    // Optimistically update the UI first
-    setConfessions(prevConfessions => 
-      prevConfessions.map(confession => {
-        if (confession.id === confessionId) {
-          const currentVote = confession.user_vote;
-          let newUpvotes = confession.upvotes;
-          let newDownvotes = confession.downvotes;
-          let newUserVote: 'upvote' | 'downvote' | null = voteType;
-
-          // Handle vote logic
-          if (currentVote === voteType) {
-            // Same vote - remove it
-            if (voteType === 'upvote') {
-              newUpvotes = Math.max(0, newUpvotes - 1);
-            } else {
-              newDownvotes = Math.max(0, newDownvotes - 1);
-            }
-            newUserVote = null;
-          } else if (currentVote && currentVote !== voteType) {
-            // Different vote - change it
-            if (currentVote === 'upvote') {
-              newUpvotes = Math.max(0, newUpvotes - 1);
-              newDownvotes = newDownvotes + 1;
-            } else {
-              newDownvotes = Math.max(0, newDownvotes - 1);
-              newUpvotes = newUpvotes + 1;
-            }
-          } else {
-            // No previous vote - add new vote
-            if (voteType === 'upvote') {
-              newUpvotes = newUpvotes + 1;
-            } else {
-              newDownvotes = newDownvotes + 1;
-            }
-          }
-
-          console.log(`UI Update: ${confession.id} -> upvotes=${newUpvotes}, downvotes=${newDownvotes}, score=${newUpvotes - newDownvotes}`);
-
-          return {
-            ...confession,
-            upvotes: newUpvotes,
-            downvotes: newDownvotes,
-            score: newUpvotes - newDownvotes,
-            user_vote: newUserVote
-          };
-        }
-        return confession;
-      })
-    );
-
-    // Then update the backend
-    const success = await ConfessionService.voteOnConfession(confessionId, user.id, voteType);
-    
-    if (!success) {
-      // If backend failed, reload to get correct state
-      console.log('Backend vote failed, reloading confessions');
-      await loadConfessions();
-    } else {
-      console.log('Backend vote successful');
-    }
-  };
-
-  const formatTimeAgo = (timestamp: string) => {
-    const diff = Date.now() - new Date(timestamp).getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
-  };
+  }, [showConfessions]);
 
   const handleSignOut = () => {
     signOut();
@@ -892,8 +796,6 @@ function HomeContent({
         </div>
       </div>
 
-      {/* Confessions Modal */}
-
       {/* Image at bottom right */}
       <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <a
@@ -910,166 +812,20 @@ function HomeContent({
         </a>
       </div>
 
-      {/* Confessions Modal - Positioned above confessions button */}
-      {showConfessions && (
-        <div className="absolute bottom-72 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-4xl mx-4">
-          <div className="h-[60vh] bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
-            {/* Confessions Header */}
-            <div className="bg-black/30 backdrop-blur-sm px-6 py-4 border-b border-white/20">
-              <div className="flex items-center justify-between">
-                <h3
-                  className="text-white font-medium text-xl"
-                  style={{ fontFamily: 'Poiret One, sans-serif' }}
-                >
-                  Confessions
-                </h3>
-                
-                {/* Sort Options */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setConfessionSortBy('recent')}
-                    className={`px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-                      confessionSortBy === 'recent'
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    Recent
-                  </button>
-                  <button
-                    onClick={() => setConfessionSortBy('top')}
-                    className={`px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-                      confessionSortBy === 'top'
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    Top
-                  </button>
-                  <button
-                    onClick={() => setConfessionSortBy('lowest')}
-                    className={`px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-                      confessionSortBy === 'lowest'
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    Lowest
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Confessions List */}
-            <div className="flex-1 p-6 overflow-y-auto">
-              {loadingConfessions ? (
-                <div className="text-center text-white/60 mt-20">
-                  <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                    Loading confessions...
-                  </p>
-                </div>
-              ) : confessions.length === 0 ? (
-                <div className="text-center text-white/60 mt-20">
-                  <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                    No confessions yet. Be the first to share...
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {confessions.map((confession) => (
-                    <div
-                      key={confession.id}
-                      className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20"
-                    >
-                      {/* Own confession indicator */}
-                      {confession.is_own && (
-                        <div className="mb-2">
-                          <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full border border-blue-500/30">
-                            Yours
-                          </span>
-                        </div>
-                      )}
-                      
-                      <p className="text-white/90 text-sm leading-relaxed mb-3">
-                        {confession.content}
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {/* Upvote Button */}
-                          <button
-                            onClick={() => handleVoteOnConfession(confession.id, 'upvote')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 ${
-                              confession.user_vote === 'upvote'
-                                ? 'bg-green-500/20 text-green-400'
-                                : 'text-white/60 hover:text-green-400 hover:bg-green-500/10'
-                            }`}
-                          >
-                            <ChevronUp className="w-4 h-4" />
-                            <span className="text-xs">{confession.upvotes}</span>
-                          </button>
-                          
-                          {/* Downvote Button */}
-                          <button
-                            onClick={() => handleVoteOnConfession(confession.id, 'downvote')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 ${
-                              confession.user_vote === 'downvote'
-                                ? 'bg-red-500/20 text-red-400'
-                                : 'text-white/60 hover:text-red-400 hover:bg-red-500/10'
-                            }`}
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                            <span className="text-xs">{confession.downvotes}</span>
-                          </button>
-                          
-                          {/* Score */}
-                          <div className="text-white/60 text-xs">
-                            Score: {confession.score}
-                          </div>
-                        </div>
-                        
-                        {/* Timestamp */}
-                        <div className="text-white/40 text-xs">
-                          {formatTimeAgo(confession.created_at)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Confession Input - Fixed at bottom */}
-            <div className="border-t border-white/20 p-6 bg-black/20 backdrop-blur-sm">
-              <div className="flex gap-3">
-                <textarea
-                  value={confessionText}
-                  onChange={(e) => setConfessionText(e.target.value)}
-                  placeholder="Write your confession anonymously... (No links or contact info)"
-                  maxLength={500}
-                  className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[120px]"
-                  style={{ fontFamily: 'Poiret One, sans-serif' }}
-                  disabled={isSubmittingConfession}
-                />
-                <button
-                  onClick={handleSubmitConfession}
-                  disabled={!confessionText.trim() || isSubmittingConfession}
-                  className="px-6 py-4 bg-white/80 backdrop-blur-sm text-black rounded-2xl hover:bg-white/90 transition-all duration-300 hover:scale-105 border border-white/20 self-end"
-                  style={{ fontFamily: 'Poiret One, sans-serif' }}
-                >
-                  {isSubmittingConfession ? 'Submitting...' : 'Submit'}
-                </button>
-              </div>
-              <div className="mt-2 flex justify-between text-white/40 text-xs">
-                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED
-                </p>
-                <p>{confessionText.length}/500</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confessions Modal */}
+      <ConfessionsModal
+        showConfessions={showConfessions}
+        confessions={confessions}
+        confessionText={confessionText}
+        setConfessionText={setConfessionText}
+        isSubmittingConfession={isSubmittingConfession}
+        handleSubmitConfession={handleSubmitConfession}
+        confessionSortBy={confessionSortBy}
+        setConfessionSortBy={setConfessionSortBy}
+        loadingConfessions={loadingConfessions}
+        handleVoteOnConfession={handleVoteOnConfession}
+        formatTimeAgo={formatTimeAgo}
+      />
     </div>
   );
 }
