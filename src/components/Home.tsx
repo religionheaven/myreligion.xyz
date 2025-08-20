@@ -518,7 +518,7 @@ function HomeContent({
           className="bg-purple-500/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Requested Religion
+            Requested Religions
           </span>
         </button>
         
