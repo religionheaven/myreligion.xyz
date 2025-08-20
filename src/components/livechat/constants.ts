@@ -4,13 +4,31 @@
 
 export const SPAM_DETECTION_CONFIG = {
   DUPLICATE_CHECK_LIMIT: 5,
-  MIN_MESSAGE_INTERVAL: 2000, // 2 seconds
+  MIN_MESSAGE_INTERVAL: 1500, // 1.5 seconds base interval
   MAX_CAPS_RATIO: 0.7,
   MAX_REPEATED_CHARS: 4,
   MAX_EMOJIS: 5,
   MAX_PUNCTUATION_RATIO: 0.3,
-  COOLDOWN_DURATION: 3000, // 3 seconds
-  RATE_LIMIT_COOLDOWN: 5000, // 5 seconds
+  COOLDOWN_DURATION: 2000, // 2 seconds base cooldown
+  RATE_LIMIT_COOLDOWN: 5000, // 5 seconds for rate limit violations
+  
+  // Progressive rate limiting
+  RATE_LIMIT_WINDOWS: {
+    SHORT: { duration: 10000, maxMessages: 4 }, // 4 messages in 10 seconds
+    MEDIUM: { duration: 30000, maxMessages: 8 }, // 8 messages in 30 seconds  
+    LONG: { duration: 60000, maxMessages: 12 }, // 12 messages in 1 minute
+  },
+  
+  // Progressive penalties
+  PENALTIES: {
+    FIRST_VIOLATION: 3000,   // 3 seconds
+    SECOND_VIOLATION: 8000,  // 8 seconds
+    THIRD_VIOLATION: 15000,  // 15 seconds
+    PERSISTENT_VIOLATION: 30000, // 30 seconds
+  },
+  
+  // Reset violation count after this period of good behavior
+  VIOLATION_RESET_TIME: 300000, // 5 minutes
 };
 
 export const LINK_PATTERNS = [

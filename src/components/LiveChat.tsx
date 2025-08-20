@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LiveChatProps, ChatMessage } from './livechat/types';
 import { SPAM_DETECTION_CONFIG } from './livechat/constants';
 import { getCachedMessages, cacheMessages } from './livechat/utils';
-import { detectSpam, detectProhibitedContent } from './livechat/SpamDetection';
+import { detectSpam, detectProhibitedContent, checkRateLimit } from './livechat/SpamDetection';
 import { ChatMessage as ChatMessageComponent } from './livechat/ChatMessage';
 import { ChatInput } from './livechat/ChatInput';
 import { WarningPopup } from './livechat/WarningPopup';
@@ -241,6 +241,14 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
 
     if (inputValue.length > 200) {
       alert('Message too long! Maximum 200 characters.');
+      return;
+    }
+
+    // Enhanced rate limiting check
+    const rateLimitCheck = checkRateLimit(user.id);
+    if (rateLimitCheck.isRateLimited) {
+      showWarning(rateLimitCheck.message);
+      setCooldownTime(rateLimitCheck.cooldownTime);
       return;
     }
 
