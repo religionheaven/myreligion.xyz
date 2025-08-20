@@ -37,9 +37,6 @@ export function Home({
   const [isSubmittingConfession, setIsSubmittingConfession] = React.useState(false);
   const [confessionSortBy, setConfessionSortBy] = React.useState<SortOption>('recent');
   const [loadingConfessions, setLoadingConfessions] = React.useState(false);
-  const [showConfessionWarningPopup, setShowConfessionWarningPopup] = React.useState(false);
-  const [confessionWarningMessage, setConfessionWarningMessage] = React.useState('');
-  const [isConfessionWarningFadingOut, setIsConfessionWarningFadingOut] = React.useState(false);
 
   // Live chat visibility state
   const [showLiveChat, setShowLiveChat] = React.useState(false);
@@ -132,22 +129,10 @@ export function Home({
       // Reload confessions to show the new one
       await loadConfessions();
     } else {
-      triggerConfessionWarning(result.error || 'Failed to submit confession. Please try again.');
+      alert(result.error || 'Failed to submit confession. Please try again.');
     }
     
     setIsSubmittingConfession(false);
-  };
-
-  const triggerConfessionWarning = (message: string) => {
-    setConfessionWarningMessage(message);
-    setShowConfessionWarningPopup(true);
-    setIsConfessionWarningFadingOut(false);
-
-    setTimeout(() => setIsConfessionWarningFadingOut(true), 1700);
-    setTimeout(() => {
-      setShowConfessionWarningPopup(false);
-      setIsConfessionWarningFadingOut(false);
-    }, 2000);
   };
 
   const handleVoteOnConfession = async (confessionId: string, voteType: 'upvote' | 'downvote') => {
@@ -305,9 +290,6 @@ export function Home({
             setShowRequestedReligions={setShowRequestedReligions}
             showConfessions={showConfessions}
             setShowConfessions={setShowConfessions}
-            showConfessionWarningPopup={showConfessionWarningPopup}
-            confessionWarningMessage={confessionWarningMessage}
-            isConfessionWarningFadingOut={isConfessionWarningFadingOut}
             confessions={confessions}
             confessionText={confessionText}
             setConfessionText={setConfessionText}
@@ -398,9 +380,7 @@ export function Home({
       setShowRequestedReligions={setShowRequestedReligions}
       showConfessions={showConfessions}
       setShowConfessions={setShowConfessions}
-      showConfessionWarningPopup={showConfessionWarningPopup}
-      confessionWarningMessage={confessionWarningMessage}
-      isConfessionWarningFadingOut={isConfessionWarningFadingOut}
+      confessions={confessions}
       confessionText={confessionText}
       setConfessionText={setConfessionText}
       isSubmittingConfession={isSubmittingConfession}
@@ -443,7 +423,6 @@ interface HomeContentProps {
   formatTimeAgo: (timestamp: string) => string;
   showConfessions: boolean;
   setShowConfessions: (show: boolean) => void;
-  showConfessionWarningPopup: boolean;
 }
 
 interface MobileReligionCardsProps {
@@ -591,7 +570,6 @@ function HomeContent({
   formatTimeAgo,
   showConfessions,
   setShowConfessions,
-  showConfessionWarningPopup,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -1086,22 +1064,9 @@ function HomeContent({
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
                   Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED
                 </p>
-                <p>{confessionText?.length ?? 0}/500</p>
+                <p>{confessionText.length}/500</p>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Confession Warning Popup */}
-      {showConfessionWarningPopup && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-          <div
-            className={`bg-red-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl border border-red-400/30 shadow-lg ${
-              isConfessionWarningFadingOut ? 'animate-popup-out' : 'animate-popup-in'
-            }`}
-          >
-            <p className="text-sm font-medium">{confessionWarningMessage}</p>
           </div>
         </div>
       )}
