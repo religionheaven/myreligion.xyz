@@ -735,7 +735,7 @@ function HomeContent({
       {/* Confessions Modal */}
       {showConfessions && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="w-full max-w-4xl mx-4 h-[80vh] bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
+          <div className="w-full max-w-4xl mx-4 h-[80vh] bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
             {/* Confessions Header */}
             <div className="bg-black/30 backdrop-blur-sm px-6 py-4 border-b border-white/20">
               <div className="flex items-center justify-center">
@@ -749,36 +749,34 @@ function HomeContent({
             </div>
 
             {/* Confessions Content */}
-            <div className="p-6 h-full overflow-y-auto">
-              <div className="flex flex-col h-full">
-                {/* Confessions List Area */}
-                <div className="flex-1 text-center text-white/60 mt-20">
-                  <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                    Share your thoughts anonymously...
-                  </p>
-                </div>
+            {/* Confessions List Area */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              <div className="text-center text-white/60 mt-20">
+                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Share your thoughts anonymously...
+                </p>
+              </div>
+            </div>
 
-                {/* Confession Input */}
-                <div className="mt-6 border-t border-white/20 pt-6">
-                  <div className="flex gap-3">
-                    <textarea
-                      placeholder="Write your confession anonymously..."
-                      className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[200px]"
-                      style={{ fontFamily: 'Poiret One, sans-serif' }}
-                    />
-                    <button
-                      className="px-6 py-4 bg-white/80 backdrop-blur-sm text-black rounded-2xl hover:bg-white/90 transition-all duration-300 hover:scale-105 border border-white/20 self-end"
-                      style={{ fontFamily: 'Poiret One, sans-serif' }}
-                    >
-                      Submit
-                    </button>
-                  </div>
-                  <div className="mt-2 text-white/40 text-xs text-center">
-                    <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                      Your confession will be posted anonymously
-                    </p>
-                  </div>
-                </div>
+            {/* Confession Input - Fixed at bottom */}
+            <div className="border-t border-white/20 p-6 bg-black/20 backdrop-blur-sm">
+              <div className="flex gap-3">
+                <textarea
+                  placeholder="Write your confession anonymously..."
+                  className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[120px]"
+                  style={{ fontFamily: 'Poiret One, sans-serif' }}
+                />
+                <button
+                  className="px-6 py-4 bg-white/80 backdrop-blur-sm text-black rounded-2xl hover:bg-white/90 transition-all duration-300 hover:scale-105 border border-white/20 self-end"
+                  style={{ fontFamily: 'Poiret One, sans-serif' }}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="mt-2 text-white/40 text-xs text-center">
+                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Your confession will be posted anonymously
+                </p>
               </div>
             </div>
           </div>
