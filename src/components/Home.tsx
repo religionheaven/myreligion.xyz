@@ -522,32 +522,32 @@ function HomeContent({
       <div
         className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
       >
-        <div className="text-center">
-          <h2 className="text-white text-3xl mb-8" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Requested Religions
-          </h2>
-          <div className="grid grid-cols-2 gap-8">
-            {/* Placeholder cards - we'll add actual requested religions here */}
-            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                Coming Soon
-              </span>
+        <div className="flex items-center gap-8">
+          <div className="relative">
+            <img
+              src="https://i.imgur.com/5eZqdQy.png"
+              alt="Buddhism"
+              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
+              onClick={() => onReligionClick('Buddhism')}
+            />
+            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
+              {getClickCount('Buddhism')}
             </div>
-            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                Coming Soon
-              </span>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                Coming Soon
-              </span>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                Coming Soon
-              </span>
-            </div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Coming Soon
+            </span>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Coming Soon
+            </span>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Coming Soon
+            </span>
           </div>
         </div>
       </div>
@@ -614,21 +614,24 @@ function HomeContent({
       {/* Requested Religions Cards - Mobile */}
       {showRequestedReligions && (
         <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
-          <div className="text-center px-8">
-            <h2 className="text-white text-2xl mb-8" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Requested Religions
-            </h2>
-            <div className="grid grid-cols-1 gap-6">
-              {/* Placeholder cards - we'll add actual requested religions here */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-6 w-full h-32 flex items-center justify-center">
-                <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Coming Soon
-                </span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-6 w-full h-32 flex items-center justify-center">
-                <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Coming Soon
-                </span>
+          <div className="w-full h-full flex items-center justify-center px-8">
+            <div className="relative w-full max-w-xs h-80 overflow-hidden">
+              {/* Cards container */}
+              <div className="flex transition-transform duration-300 ease-out h-full">
+                <div className="w-full flex-shrink-0 h-full flex items-center justify-center">
+                  <div className="relative w-3/4 h-3/4">
+                    <img
+                      src="https://i.imgur.com/5eZqdQy.png"
+                      alt="Buddhism"
+                      className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
+                      onClick={() => onReligionClick('Buddhism')}
+                    />
+                    <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
+                      {getClickCount('Buddhism')}
+                    </div>
+                  </div>
+                </div>
+                {/* Add more cards here as they become available */}
               </div>
             </div>
           </div>
