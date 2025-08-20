@@ -510,19 +510,20 @@ function HomeContent({
         </div>
       </div>
 
-      {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center gap-4">
-        {/* Requested Religion Button */}
+      {/* Requested Religion Button - positioned below religion cards */}
+      <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
           onClick={() => alert('Requested Religion feature coming soon!')}
           className="bg-purple-500/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Requested Religions
+            Requested Religion
           </span>
         </button>
-        
-        {/* Live Chat Button */}
+      </div>
+
+      {/* Live Chat Button - positioned below cards */}
+      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20">
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -567,8 +568,7 @@ function HomeContent({
       />
 
       {/* Mobile Requested Religion Button - positioned below cards */}
-      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 md:hidden flex flex-col items-center gap-4">
-        {/* Requested Religion Button */}
+      <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
           onClick={() => alert('Requested Religion feature coming soon!')}
           className="bg-purple-500/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -577,8 +577,10 @@ function HomeContent({
             Requested Religion
           </span>
         </button>
-        
-        {/* Live Chat Button */}
+      </div>
+
+      {/* Mobile Live Chat Button */}
+      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
