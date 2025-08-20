@@ -586,7 +586,7 @@ function HomeContent({
       </div>
 
       {/* Mobile Confessions Button - positioned below "powered by heaven" */}
-      <div className="relative z-20 flex justify-center mt-10 md:hidden">
+      <div className="relative z-20 flex justify-center mt-20 md:hidden">
         <button
           onClick={() => setShowConfessions(!showConfessions)}
           className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
