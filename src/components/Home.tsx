@@ -50,6 +50,9 @@ export function Home({
     handleVoteOnConfession,
     formatTimeAgo,
     loadConfessions,
+    showWarning,
+    warningMessage,
+    isWarningFadingOut,
   } = useConfessions();
 
   // Load click counts on component mount
@@ -204,6 +207,9 @@ export function Home({
             loadingConfessions={loadingConfessions}
             handleVoteOnConfession={handleVoteOnConfession}
             formatTimeAgo={formatTimeAgo}
+            showWarning={showWarning}
+            warningMessage={warningMessage}
+            isWarningFadingOut={isWarningFadingOut}
           />
         </div>
 
@@ -294,6 +300,9 @@ export function Home({
       loadingConfessions={loadingConfessions}
       handleVoteOnConfession={handleVoteOnConfession}
       formatTimeAgo={formatTimeAgo}
+      showWarning={showWarning}
+      warningMessage={warningMessage}
+      isWarningFadingOut={isWarningFadingOut}
     />
   );
 }
@@ -327,6 +336,9 @@ interface HomeContentProps {
   formatTimeAgo: (timestamp: string) => string;
   showConfessions: boolean;
   setShowConfessions: (show: boolean) => void;
+  showWarning: boolean;
+  warningMessage: string;
+  isWarningFadingOut: boolean;
 }
 
 interface MobileReligionCardsProps {
@@ -474,6 +486,9 @@ function HomeContent({
   formatTimeAgo,
   showConfessions,
   setShowConfessions,
+  showWarning,
+  warningMessage,
+  isWarningFadingOut,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -825,6 +840,9 @@ function HomeContent({
         loadingConfessions={loadingConfessions}
         handleVoteOnConfession={handleVoteOnConfession}
         formatTimeAgo={formatTimeAgo}
+        showWarning={showWarning}
+        warningMessage={warningMessage}
+        isWarningFadingOut={isWarningFadingOut}
       />
     </div>
   );
