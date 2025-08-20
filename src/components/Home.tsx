@@ -526,12 +526,12 @@ function HomeContent({
           <div className="relative">
             <img
               src="https://i.imgur.com/5eZqdQy.png"
-              alt="Buddhism"
+              alt="Nga"
               className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
-              onClick={() => onReligionClick('Buddhism')}
+              onClick={() => onReligionClick('Nga')}
             />
             <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
-              {getClickCount('Buddhism')}
+              {getClickCount('Nga')}
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
@@ -622,12 +622,12 @@ function HomeContent({
                   <div className="relative w-3/4 h-3/4">
                     <img
                       src="https://i.imgur.com/5eZqdQy.png"
-                      alt="Buddhism"
+                      alt="Nga"
                       className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
-                      onClick={() => onReligionClick('Buddhism')}
+                      onClick={() => onReligionClick('Nga')}
                     />
                     <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
-                      {getClickCount('Buddhism')}
+                      {getClickCount('Nga')}
                     </div>
                   </div>
                 </div>
