@@ -437,7 +437,7 @@ export class BanManagement {
   /**
    * Get user ID from username
    */
-  private static async getUserIdFromUsername(username: string): Promise<string | null> {
+  static async getUserIdFromUsername(username: string): Promise<string | null> {
     try {
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup`, {
         method: 'POST',

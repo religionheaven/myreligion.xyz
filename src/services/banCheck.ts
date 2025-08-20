@@ -19,9 +19,7 @@ export class BanCheck {
     let userId: string | undefined;
     if (userIdentifier) {
       if (isUsername) {
-        // For username lookup, we'd need to implement a cache or lookup
-        // For now, we'll use the BanManagement method
-        const foundUserId = await BanManagement.getUserIdFromUsername?.(userIdentifier);
+        const foundUserId = await BanManagement.getUserIdFromUsername(userIdentifier);
         userId = foundUserId || undefined;
       } else {
         userId = userIdentifier;

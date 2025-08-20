@@ -11,6 +11,7 @@ import { detectSpam, detectProhibitedContent, checkRateLimit } from './livechat/
 import { ChatMessage as ChatMessageComponent } from './livechat/ChatMessage';
 import { ChatInput } from './livechat/ChatInput';
 import { WarningPopup } from './livechat/WarningPopup';
+import { BanCheck } from '../services/banCheck';
 
 // ============================================================================
 // MAIN COMPONENT
@@ -79,10 +80,26 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   // Load + realtime subscription
   useEffect(() => {
     if (!isVisible) return;
+    
+    // Check if user is banned before loading chat
+    const checkBanStatus = async () => {
+      if (!user) return;
+      
+      try {
+        const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
+        if (isBanned) {
+          // User is banned, don't load chat
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking ban status:', error);
+      }
+    };
 
     let cleanup: (() => void) | undefined;
     let pollInterval: NodeJS.Timeout | undefined;
 
+    checkBanStatus();
     loadMessages();
     cleanup = setupRealtimeSubscription();
     pollInterval = setInterval(loadMessages, 1000);
@@ -238,6 +255,16 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || !user || isLoading || cooldownTime > 0) return;
+    
+    // Check if user is banned before allowing message
+    try {
+      const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
+      if (isBanned) {
+        return; // User is banned, don't allow message
+      }
+    } catch (error) {
+      console.error('Error checking ban status:', error);
+    }
 
     if (inputValue.length > 200) {
       alert('Message too long! Maximum 200 characters.');
