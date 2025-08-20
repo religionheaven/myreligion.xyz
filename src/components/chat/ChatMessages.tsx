@@ -76,7 +76,10 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
               <div
                 className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
                 style={{ animationDelay: '0.4s', animationDuration: '1.4s' }}
-              ></div>
+             {religion.toLowerCase() === 'nga' 
+               ? 'Welcome to the Nga spiritual realm. What wisdom do you seek?'
+               : `Welcome to your ${religion} chat. Ask me anything!`
+             }
             </div>
           </div>
         </div>
