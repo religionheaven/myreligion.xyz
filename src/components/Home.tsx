@@ -29,6 +29,7 @@ export function Home({
   const [clickCounts, setClickCounts] = React.useState<ReligionClickData[]>([]);
   const [loadingCounts, setLoadingCounts] = React.useState(true);
   const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+  const [showRequestedReligions, setShowRequestedReligions] = React.useState(false);
 
   // Live chat visibility state
   const [showLiveChat, setShowLiveChat] = React.useState(false);
@@ -80,6 +81,7 @@ export function Home({
       setIsExiting(false);
       setShowProfileModal(false);
       setUserProfile(null);
+      setShowRequestedReligions(false);
     }
   }, [user]);
 
@@ -226,6 +228,8 @@ export function Home({
       onProfileUpdate={handleProfileUpdate}
       showLiveChat={showLiveChat}
       setShowLiveChat={setShowLiveChat}
+      showRequestedReligions={showRequestedReligions}
+      setShowRequestedReligions={setShowRequestedReligions}
     />
   );
 }
@@ -244,6 +248,8 @@ interface HomeContentProps {
   onProfileUpdate: () => Promise<void>;
   showLiveChat: boolean;
   setShowLiveChat: (show: boolean) => void;
+  showRequestedReligions: boolean;
+  setShowRequestedReligions: (show: boolean) => void;
 }
 
 interface MobileReligionCardsProps {
@@ -375,6 +381,8 @@ function HomeContent({
   onProfileUpdate,
   showLiveChat,
   setShowLiveChat,
+  showRequestedReligions,
+  setShowRequestedReligions,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -460,7 +468,7 @@ function HomeContent({
       {/* Center image in true middle of page */}
       {/* Desktop: Center images in grid */}
       <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning || showRequestedReligions ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
       >
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -510,14 +518,48 @@ function HomeContent({
         </div>
       </div>
 
+      {/* Requested Religions Cards - Desktop */}
+      <div
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+      >
+        <div className="text-center">
+          <h2 className="text-white text-3xl mb-8" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            Requested Religions
+          </h2>
+          <div className="grid grid-cols-2 gap-8">
+            {/* Placeholder cards - we'll add actual requested religions here */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                Coming Soon
+              </span>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                Coming Soon
+              </span>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                Coming Soon
+              </span>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
+              <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                Coming Soon
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Requested Religion Button - positioned below religion cards */}
       <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
-          onClick={() => alert('Requested Religion feature coming soon!')}
+          onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Requested Religions
+            {showRequestedReligions ? 'Back' : 'Requested Religions'}
           </span>
         </button>
       </div>
@@ -561,20 +603,46 @@ function HomeContent({
       )}
 
       {/* Mobile: Swipeable full-screen cards */}
-      <MobileReligionCards
-        onReligionClick={onReligionClick}
-        getClickCount={getClickCount}
-        isTransitioning={isTransitioning}
-      />
+      {!showRequestedReligions && (
+        <MobileReligionCards
+          onReligionClick={onReligionClick}
+          getClickCount={getClickCount}
+          isTransitioning={isTransitioning}
+        />
+      )}
+
+      {/* Requested Religions Cards - Mobile */}
+      {showRequestedReligions && (
+        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
+          <div className="text-center px-8">
+            <h2 className="text-white text-2xl mb-8" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Requested Religions
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              {/* Placeholder cards - we'll add actual requested religions here */}
+              <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-6 w-full h-32 flex items-center justify-center">
+                <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Coming Soon
+                </span>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-6 w-full h-32 flex items-center justify-center">
+                <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Coming Soon
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Requested Religion Button - positioned below cards */}
       <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
-          onClick={() => alert('Requested Religion feature coming soon!')}
+          onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Requested Religion
+            {showRequestedReligions ? 'Back' : 'Requested Religion'}
           </span>
         </button>
       </div>
