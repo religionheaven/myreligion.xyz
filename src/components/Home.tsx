@@ -37,7 +37,7 @@ export function Home({
   const [isSubmittingConfession, setIsSubmittingConfession] = React.useState(false);
   const [confessionSortBy, setConfessionSortBy] = React.useState<SortOption>('recent');
   const [loadingConfessions, setLoadingConfessions] = React.useState(false);
-  const [showConfessionWarning, setShowConfessionWarning] = React.useState(false);
+  const [showConfessionWarningPopup, setShowConfessionWarningPopup] = React.useState(false);
   const [confessionWarningMessage, setConfessionWarningMessage] = React.useState('');
   const [isConfessionWarningFadingOut, setIsConfessionWarningFadingOut] = React.useState(false);
 
@@ -132,20 +132,20 @@ export function Home({
       // Reload confessions to show the new one
       await loadConfessions();
     } else {
-      showConfessionWarning(result.error || 'Failed to submit confession. Please try again.');
+      triggerConfessionWarning(result.error || 'Failed to submit confession. Please try again.');
     }
     
     setIsSubmittingConfession(false);
   };
 
-  const showConfessionWarning = (message: string) => {
+  const triggerConfessionWarning = (message: string) => {
     setConfessionWarningMessage(message);
-    setShowConfessionWarning(true);
+    setShowConfessionWarningPopup(true);
     setIsConfessionWarningFadingOut(false);
 
     setTimeout(() => setIsConfessionWarningFadingOut(true), 1700);
     setTimeout(() => {
-      setShowConfessionWarning(false);
+      setShowConfessionWarningPopup(false);
       setIsConfessionWarningFadingOut(false);
     }, 2000);
   };
@@ -305,7 +305,7 @@ export function Home({
             setShowRequestedReligions={setShowRequestedReligions}
             showConfessions={showConfessions}
             setShowConfessions={setShowConfessions}
-            showConfessionWarning={showConfessionWarning}
+            showConfessionWarningPopup={showConfessionWarningPopup}
             confessionWarningMessage={confessionWarningMessage}
             isConfessionWarningFadingOut={isConfessionWarningFadingOut}
             confessions={confessions}
@@ -398,7 +398,7 @@ export function Home({
       setShowRequestedReligions={setShowRequestedReligions}
       showConfessions={showConfessions}
       setShowConfessions={setShowConfessions}
-      confessions={confessions}
+      showConfessionWarningPopup={showConfessionWarningPopup}
       confessionText={confessionText}
       setConfessionText={setConfessionText}
       isSubmittingConfession={isSubmittingConfession}
@@ -441,6 +441,7 @@ interface HomeContentProps {
   formatTimeAgo: (timestamp: string) => string;
   showConfessions: boolean;
   setShowConfessions: (show: boolean) => void;
+  showConfessionWarningPopup: boolean;
 }
 
 interface MobileReligionCardsProps {
@@ -588,6 +589,7 @@ function HomeContent({
   formatTimeAgo,
   showConfessions,
   setShowConfessions,
+  showConfessionWarningPopup,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -1090,7 +1092,7 @@ function HomeContent({
       )}
 
       {/* Confession Warning Popup */}
-      {showConfessionWarning && (
+      {showConfessionWarningPopup && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <div
             className={`bg-red-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl border border-red-400/30 shadow-lg ${
