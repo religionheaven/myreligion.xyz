@@ -562,7 +562,7 @@ function HomeContent({
       </div>
 
       {/* Requested Religion Button - positioned below religion cards */}
-      <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
+      <div className="absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -574,7 +574,7 @@ function HomeContent({
       </div>
 
       {/* Confessions Button - positioned below requested religions button */}
-      <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
+      <div className="absolute bottom-56 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
           onClick={() => {/* TODO: Add confessions functionality */}}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -585,7 +585,7 @@ function HomeContent({
         </button>
       </div>
       {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20">
+      <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20">
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -660,29 +660,28 @@ function HomeContent({
 
       {/* Mobile Requested Religion Button - positioned below cards */}
       <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
-        <button
-          onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            {showRequestedReligions ? 'Back' : 'Requested Religion'}
-          </span>
-        </button>
+        <div className="flex flex-col items-center gap-2">
+          <button
+            onClick={() => setShowRequestedReligions(!showRequestedReligions)}
+            className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+          >
+            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              {showRequestedReligions ? 'Back' : 'Requested Religion'}
+            </span>
+          </button>
+          <button
+            onClick={() => {/* TODO: Add confessions functionality */}}
+            className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+          >
+            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              CONFESSIONS
+            </span>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Confessions Button */}
-      <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
-        <button
-          onClick={() => {/* TODO: Add confessions functionality */}}
-          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            CONFESSIONS
-          </span>
-        </button>
-      </div>
       {/* Mobile Live Chat Button */}
-      <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
+      <div className="absolute bottom-60 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
