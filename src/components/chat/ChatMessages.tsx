@@ -52,7 +52,10 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
       {messages.length === 0 && (
         <div className="text-center text-white/60 mt-20">
           <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Welcome to your {religion} chat. Ask me anything!
+            {religion.toLowerCase() === 'nga' 
+               ? 'Welcome to the Nga spiritual realm. What wisdom do you seek?'
+               : `Welcome to your ${religion} chat. Ask me anything!`
+             }
           </p>
         </div>
       )}
@@ -76,10 +79,7 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
               <div
                 className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
                 style={{ animationDelay: '0.4s', animationDuration: '1.4s' }}
-             {religion.toLowerCase() === 'nga' 
-               ? 'Welcome to the Nga spiritual realm. What wisdom do you seek?'
-               : `Welcome to your ${religion} chat. Ask me anything!`
-             }
+              ></div>
             </div>
           </div>
         </div>
