@@ -211,6 +211,8 @@ export class ConfessionService {
   // Manually update confession vote counts and score
   private static async updateConfessionCounts(confessionId: string): Promise<void> {
     try {
+      console.log(`Manual count update for confession ${confessionId}`);
+      
       // Get current vote counts
       const { data: votes, error: votesError } = await supabase
         .from('confession_votes')
@@ -222,10 +224,14 @@ export class ConfessionService {
         return;
       }
 
+      console.log(`Found ${votes?.length || 0} votes for confession ${confessionId}:`, votes);
+      
       const upvotes = votes?.filter(v => v.vote_type === 'upvote').length || 0;
       const downvotes = votes?.filter(v => v.vote_type === 'downvote').length || 0;
       const score = upvotes - downvotes;
 
+      console.log(`Calculated counts: upvotes=${upvotes}, downvotes=${downvotes}, score=${score}`);
+      
       // Update the confession with new counts
       const { error: updateError } = await supabase
         .from('confessions')
@@ -238,9 +244,23 @@ export class ConfessionService {
 
       if (updateError) {
         console.error('Error updating confession counts:', updateError);
+        return;
       }
 
       console.log(`Updated confession ${confessionId}: upvotes=${upvotes}, downvotes=${downvotes}, score=${score}`);
+      
+      // Verify the update worked
+      const { data: updatedConfession, error: verifyError } = await supabase
+        .from('confessions')
+        .select('upvotes, downvotes, score')
+        .eq('id', confessionId)
+        .single();
+        
+      if (verifyError) {
+        console.error('Error verifying confession update:', verifyError);
+      } else {
+        console.log(`Verified confession ${confessionId} after manual update:`, updatedConfession);
+      }
     } catch (error) {
       console.error('Error in updateConfessionCounts:', error);
     }
