@@ -334,7 +334,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         // Apply Nga-specific text replacement
         let processedResponse = fullResponse;
         if (religion.toLowerCase() === 'nga') {
-          processedResponse = fullResponse.replace(/\*g/g, 'ig');
+          console.log('Original response:', fullResponse);
+          processedResponse = fullResponse.replace(/\*g/gi, 'ig');
+          console.log('Processed response:', processedResponse);
+          console.log('Replacement made:', fullResponse !== processedResponse);
         }
 
         // Update the final message with processed response
