@@ -211,6 +211,22 @@ export function ConfessionsModal({
         warningMessage={warningMessage}
         isWarningFadingOut={isWarningFadingOut}
       />
+
+      {/* Mobile Confessions Button - positioned below modal */}
+      <div className="md:hidden">
+        {showConfessions && (
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+            <button
+              onClick={() => setShowConfessions(false)}
+              className="bg-black/50 backdrop-blur-sm text-white px-6 py-3 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+            >
+              <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                close confessions
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
