@@ -573,6 +573,17 @@ function HomeContent({
         </button>
       </div>
 
+      {/* Confessions Button - positioned below requested religions button */}
+      <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
+        <button
+          onClick={() => {/* TODO: Add confessions functionality */}}
+          className="bg-purple-500/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-purple-400/20 hover:bg-purple-500/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            CONFESSIONS
+          </span>
+        </button>
+      </div>
       {/* Live Chat Button - positioned below cards */}
       <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20">
         <button
@@ -659,6 +670,17 @@ function HomeContent({
         </button>
       </div>
 
+      {/* Mobile Confessions Button */}
+      <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
+        <button
+          onClick={() => {/* TODO: Add confessions functionality */}}
+          className="bg-purple-500/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-purple-400/20 hover:bg-purple-500/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            CONFESSIONS
+          </span>
+        </button>
+      </div>
       {/* Mobile Live Chat Button */}
       <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
