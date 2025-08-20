@@ -571,30 +571,26 @@ function HomeContent({
         </p>
       </div>
 
-      {/* Mobile Requested Religion Button - positioned below "powered by heaven" */}
+      {/* Mobile Requested Religion and Confessions Buttons - positioned below "powered by heaven" */}
       <div className="relative z-20 flex justify-center mt-4 md:hidden">
         <div className="flex flex-col items-center gap-2">
           <button
             onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'hidden' : 'block'}`}
           >
             <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
               {showRequestedReligions ? 'back' : 'requested religions'}
             </span>
           </button>
+          <button
+            onClick={() => setShowConfessions(!showConfessions)}
+            className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 z-50"
+          >
+            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              {showConfessions ? 'close confessions' : 'confessions'}
+            </span>
+          </button>
         </div>
-      </div>
-
-      {/* Mobile Confessions Button - positioned much lower */}
-      <div className="relative z-20 flex justify-center mt-8 md:hidden">
-        <button
-          onClick={() => setShowConfessions(!showConfessions)}
-          className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-        >
-          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            confessions
-          </span>
-        </button>
       </div>
 
       {/* Center image in true middle of page */}
