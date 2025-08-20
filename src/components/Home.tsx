@@ -103,9 +103,18 @@ export function Home({
       if (success) {
         // Update local state
         setClickCounts((prev) =>
-          prev.map((item) =>
-            item.religion === religion ? { ...item, click_count: item.click_count + 1 } : item,
-          ),
+          {
+            const existingItem = prev.find(item => item.religion === religion);
+            if (existingItem) {
+              // Update existing item
+              return prev.map((item) =>
+                item.religion === religion ? { ...item, click_count: item.click_count + 1 } : item,
+              );
+            } else {
+              // Add new item if it doesn't exist
+              return [...prev, { religion, click_count: 1 }];
+            }
+          }
         );
       }
     });
