@@ -1086,7 +1086,7 @@ function HomeContent({
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
                   Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED
                 </p>
-                <p>{confessionText?.length || 0}/500</p>
+                <p>{(confessionText || '').length}/500</p>
               </div>
             </div>
           </div>
