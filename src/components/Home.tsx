@@ -30,6 +30,7 @@ export function Home({
   const [loadingCounts, setLoadingCounts] = React.useState(true);
   const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
   const [showRequestedReligions, setShowRequestedReligions] = React.useState(false);
+  const [showConfessions, setShowConfessions] = React.useState(false);
 
   // Live chat visibility state
   const [showLiveChat, setShowLiveChat] = React.useState(false);
@@ -259,6 +260,8 @@ interface HomeContentProps {
   setShowLiveChat: (show: boolean) => void;
   showRequestedReligions: boolean;
   setShowRequestedReligions: (show: boolean) => void;
+  showConfessions: boolean;
+  setShowConfessions: (show: boolean) => void;
 }
 
 interface MobileReligionCardsProps {
@@ -392,6 +395,8 @@ function HomeContent({
   setShowLiveChat,
   showRequestedReligions,
   setShowRequestedReligions,
+  showConfessions,
+  setShowConfessions,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -479,18 +484,18 @@ function HomeContent({
         <div className="flex flex-col items-center gap-2">
           <button
             onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-            className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           >
             <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
               {showRequestedReligions ? 'back' : 'requested religions'}
             </span>
           </button>
           <button
-            onClick={() => {/* TODO: Add confessions functionality */}}
+            onClick={() => setShowConfessions(!showConfessions)}
             className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
           >
             <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              confessions
+              {showConfessions ? 'close confessions' : 'confessions'}
             </span>
           </button>
         </div>
@@ -499,7 +504,7 @@ function HomeContent({
       {/* Center image in true middle of page */}
       {/* Desktop: Center images in grid */}
       <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning || showRequestedReligions ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning || showRequestedReligions || showConfessions ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
       >
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -551,7 +556,7 @@ function HomeContent({
 
       {/* Requested Religions Cards - Desktop */}
       <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions && !showConfessions ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
       >
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -584,7 +589,7 @@ function HomeContent({
       </div>
 
       {/* Requested Religion Button - positioned below religion cards */}
-      <div className="absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
+      <div className={`absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -598,16 +603,16 @@ function HomeContent({
       {/* Confessions Button - positioned below requested religions button */}
       <div className="absolute bottom-56 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
-          onClick={() => {/* TODO: Add confessions functionality */}}
+          onClick={() => setShowConfessions(!showConfessions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            confessions
+            {showConfessions ? 'close confessions' : 'confessions'}
           </span>
         </button>
       </div>
       {/* Live Chat Button - positioned below cards */}
-      <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20">
+      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -646,10 +651,137 @@ function HomeContent({
 
       {/* Mobile: Swipeable full-screen cards */}
       {!showRequestedReligions && (
-        <MobileReligionCards
+        <div className={`transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <MobileReligionCards
+            onReligionClick={onReligionClick}
+            getClickCount={getClickCount}
+            isTransitioning={isTransitioning}
+          />
+        </div>
+      )}
+
+      {/* Requested Religions Cards - Mobile */}
+      {showRequestedReligions && !showConfessions && (
+        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center px-8">
+            <div className="relative w-full max-w-xs h-80 overflow-hidden">
+              {/* Cards container */}
+              <div className="flex transition-transform duration-300 ease-out h-full">
+                <div className="w-full flex-shrink-0 h-full flex items-center justify-center">
+                  <div className="relative w-3/4 h-3/4">
+                    <img
+                      src="https://i.imgur.com/5eZqdQy.png"
+                      alt="Nga"
+                      className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
+                      onClick={() => onReligionClick('Nga')}
+                    />
+                    <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
+                      {getClickCount('Nga')}
+                    </div>
+                  </div>
+                </div>
+                {/* Add more cards here as they become available */}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Live Chat Button */}
+      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 md:hidden transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <button
+          onClick={() => setShowLiveChat(true)}
+          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <MessageCircle className="w-4 h-4" />
+          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            heaven, live
+          </span>
+        </button>
+      </div>
+
+      {/* Requests button at bottom */}
+      <div className={`absolute bottom-8 left-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className="flex gap-3">
+          <button
+            onClick={onShowRequests || (() => {})}
+            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
+          >
+            <span
+              className="text-base font-medium"
+              style={{ fontFamily: 'Poiret One, sans-serif' }}
+            >
+              requests
+            </span>
+          </button>
+
+          {onShowAdmin && (
+            <button
+              onClick={onShowAdmin}
+              className="bg-red-500/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-red-400/20 hover:bg-red-500/40 transition-all duration-300 hover:scale-105"
+            >
+              <span
+                className="text-base font-medium"
+                style={{ fontFamily: 'Poiret One, sans-serif' }}
+              >
+                admin
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Confessions Modal */}
+      {showConfessions && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="w-full max-w-4xl mx-4 h-[80vh] bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
+            {/* Confessions Header */}
+            <div className="bg-black/30 backdrop-blur-sm px-6 py-4 border-b border-white/20">
+              <div className="flex items-center justify-center">
+                <h3
+                  className="text-white font-medium text-xl"
+                  style={{ fontFamily: 'Poiret One, sans-serif' }}
+                >
+                  Confessions
+                </h3>
+              </div>
+            </div>
+
+            {/* Confessions Content */}
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="text-center text-white/60 mt-20">
+                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Confessions feature coming soon...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image at bottom right */}
+      <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <a
+          href="https://x.com/religionheaven"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block transition-all duration-300 hover:scale-105"
+        >
+          <img
+            src="https://i.imgur.com/HIhlm3m.png"
+            alt="Religion Heaven Twitter"
+            className="w-auto h-12"
+          />
+        </a>
+      </div>
+    </div>
+  );
+}
           onReligionClick={onReligionClick}
           getClickCount={getClickCount}
           isTransitioning={isTransitioning}
+          showConfessions={showConfessions}
+          setShowConfessions={setShowConfessions}
         />
       )}
 
