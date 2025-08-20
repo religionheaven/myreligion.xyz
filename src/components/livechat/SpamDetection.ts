@@ -8,6 +8,146 @@ import {
 } from './constants';
 
 // ============================================================================
+// RATE LIMITING TRACKER
+// ============================================================================
+
+interface UserRateLimit {
+  messages: number[];
+  violations: number;
+  lastViolation: number;
+  currentPenalty: number;
+}
+
+const userRateLimits = new Map<string, UserRateLimit>();
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  const fiveMinutesAgo = now - 300000;
+  
+  for (const [userId, data] of userRateLimits.entries()) {
+    // Remove old message timestamps
+    data.messages = data.messages.filter(timestamp => timestamp > fiveMinutesAgo);
+    
+    // Reset violations if user has been good for 5 minutes
+    if (data.lastViolation < fiveMinutesAgo) {
+      data.violations = 0;
+      data.currentPenalty = 0;
+    }
+    
+    // Remove user if no recent activity
+    if (data.messages.length === 0 && data.lastViolation < fiveMinutesAgo) {
+      userRateLimits.delete(userId);
+    }
+  }
+}, 60000); // Clean up every minute
+
+// ============================================================================
+// ENHANCED RATE LIMITING
+// ============================================================================
+
+export const checkRateLimit = (userId: string): { 
+  isRateLimited: boolean; 
+  message: string; 
+  cooldownTime: number;
+} => {
+  const now = Date.now();
+  
+  // Get or create user rate limit data
+  let userData = userRateLimits.get(userId);
+  if (!userData) {
+    userData = {
+      messages: [],
+      violations: 0,
+      lastViolation: 0,
+      currentPenalty: 0
+    };
+    userRateLimits.set(userId, userData);
+  }
+  
+  // Check if user is currently in penalty period
+  if (userData.currentPenalty > 0 && (now - userData.lastViolation) < userData.currentPenalty) {
+    const remainingTime = Math.ceil((userData.currentPenalty - (now - userData.lastViolation)) / 1000);
+    return {
+      isRateLimited: true,
+      message: `🚫 Sending too fast! Please wait ${remainingTime} seconds.`,
+      cooldownTime: remainingTime
+    };
+  }
+  
+  // Reset penalty if enough time has passed
+  if (userData.currentPenalty > 0 && (now - userData.lastViolation) >= userData.currentPenalty) {
+    userData.currentPenalty = 0;
+  }
+  
+  // Clean old messages
+  const oneMinuteAgo = now - SPAM_DETECTION_CONFIG.RATE_LIMIT_WINDOWS.LONG.duration;
+  userData.messages = userData.messages.filter(timestamp => timestamp > oneMinuteAgo);
+  
+  // Check rate limits (most restrictive first)
+  const { SHORT, MEDIUM, LONG } = SPAM_DETECTION_CONFIG.RATE_LIMIT_WINDOWS;
+  
+  const shortWindowMessages = userData.messages.filter(t => t > now - SHORT.duration).length;
+  const mediumWindowMessages = userData.messages.filter(t => t > now - MEDIUM.duration).length;
+  const longWindowMessages = userData.messages.filter(t => t > now - LONG.duration).length;
+  
+  let violation = false;
+  let violationType = '';
+  
+  if (shortWindowMessages >= SHORT.maxMessages) {
+    violation = true;
+    violationType = `${SHORT.maxMessages} messages in ${SHORT.duration/1000} seconds`;
+  } else if (mediumWindowMessages >= MEDIUM.maxMessages) {
+    violation = true;
+    violationType = `${MEDIUM.maxMessages} messages in ${MEDIUM.duration/1000} seconds`;
+  } else if (longWindowMessages >= LONG.maxMessages) {
+    violation = true;
+    violationType = `${LONG.maxMessages} messages in ${LONG.duration/1000} seconds`;
+  }
+  
+  if (violation) {
+    userData.violations++;
+    userData.lastViolation = now;
+    
+    // Calculate penalty based on violation count
+    const { PENALTIES } = SPAM_DETECTION_CONFIG;
+    let penalty = PENALTIES.FIRST_VIOLATION;
+    
+    if (userData.violations >= 4) {
+      penalty = PENALTIES.PERSISTENT_VIOLATION;
+    } else if (userData.violations === 3) {
+      penalty = PENALTIES.THIRD_VIOLATION;
+    } else if (userData.violations === 2) {
+      penalty = PENALTIES.SECOND_VIOLATION;
+    }
+    
+    userData.currentPenalty = penalty;
+    
+    const penaltySeconds = Math.ceil(penalty / 1000);
+    let message = `🚫 Rate limit exceeded (${violationType}). Wait ${penaltySeconds}s.`;
+    
+    if (userData.violations > 1) {
+      message += ` (Violation #${userData.violations})`;
+    }
+    
+    return {
+      isRateLimited: true,
+      message,
+      cooldownTime: penaltySeconds
+    };
+  }
+  
+  // Add current message timestamp
+  userData.messages.push(now);
+  
+  return {
+    isRateLimited: false,
+    message: '',
+    cooldownTime: 0
+  };
+};
+
+// ============================================================================
 // SPAM DETECTION FUNCTIONS
 // ============================================================================
 

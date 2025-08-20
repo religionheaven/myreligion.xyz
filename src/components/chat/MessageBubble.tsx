@@ -181,10 +181,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         >
           {message.role === 'assistant' ? (
             <div className="leading-relaxed space-y-1">
-              <div className="space-y-2">{formatMessageContent(message.content)}</div>
+              <div className="space-y-2">{formatMessageContent(message.content ?? '')}</div>
             </div>
           ) : (
-            <p className="leading-relaxed">{message.content}</p>
+            <p className="leading-relaxed">{message.content ?? ''}</p>
           )}
         </div>
 

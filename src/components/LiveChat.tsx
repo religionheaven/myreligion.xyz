@@ -7,10 +7,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { LiveChatProps, ChatMessage } from './livechat/types';
 import { SPAM_DETECTION_CONFIG } from './livechat/constants';
 import { getCachedMessages, cacheMessages } from './livechat/utils';
-import { detectSpam, detectProhibitedContent } from './livechat/SpamDetection';
+import { detectSpam, detectProhibitedContent, checkRateLimit } from './livechat/SpamDetection';
 import { ChatMessage as ChatMessageComponent } from './livechat/ChatMessage';
 import { ChatInput } from './livechat/ChatInput';
 import { WarningPopup } from './livechat/WarningPopup';
+import { BanCheck } from '../services/banCheck';
 
 // ============================================================================
 // MAIN COMPONENT
@@ -79,10 +80,26 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   // Load + realtime subscription
   useEffect(() => {
     if (!isVisible) return;
+    
+    // Check if user is banned before loading chat
+    const checkBanStatus = async () => {
+      if (!user) return;
+      
+      try {
+        const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
+        if (isBanned) {
+          // User is banned, don't load chat
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking ban status:', error);
+      }
+    };
 
     let cleanup: (() => void) | undefined;
     let pollInterval: NodeJS.Timeout | undefined;
 
+    checkBanStatus();
     loadMessages();
     cleanup = setupRealtimeSubscription();
     pollInterval = setInterval(loadMessages, 1000);
@@ -238,9 +255,27 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || !user || isLoading || cooldownTime > 0) return;
+    
+    // Check if user is banned before allowing message
+    try {
+      const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
+      if (isBanned) {
+        return; // User is banned, don't allow message
+      }
+    } catch (error) {
+      console.error('Error checking ban status:', error);
+    }
 
     if (inputValue.length > 200) {
       alert('Message too long! Maximum 200 characters.');
+      return;
+    }
+
+    // Enhanced rate limiting check
+    const rateLimitCheck = checkRateLimit(user.id);
+    if (rateLimitCheck.isRateLimited) {
+      showWarning(rateLimitCheck.message);
+      setCooldownTime(rateLimitCheck.cooldownTime);
       return;
     }
 
@@ -279,7 +314,8 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
           alert('Failed to send message. Please try again.');
         }
       } else {
-        setCooldownTime(SPAM_DETECTION_CONFIG.COOLDOWN_DURATION / 1000);
+        // Don't set additional cooldown since there's already a base 3s cooldown
+        // setCooldownTime(SPAM_DETECTION_CONFIG.COOLDOWN_DURATION / 1000);
         updateSpamTracking(messageContent);
         scrollToBottomForced();
         setTimeout(loadMessages, 100);

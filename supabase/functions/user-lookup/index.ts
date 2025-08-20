@@ -26,6 +26,94 @@ Deno.serve(async (req) => {
     const action = url.searchParams.get('action');
 
     switch (action) {
+      case 'getUserIdFromUsername': {
+        const body = await req.json();
+        const { username } = body;
+        
+        if (!username) {
+          return new Response(
+            JSON.stringify({ error: 'Username is required' }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        // Get user ID from user_profiles table
+        const { data: profile, error: profileError } = await supabaseClient
+          .from('user_profiles')
+          .select('user_id')
+          .eq('username', username)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('Error fetching user profile:', profileError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch user profile' }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ result: profile?.user_id || null }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      case 'getUserMap': {
+        const body = await req.json();
+        const { userIds } = body;
+        
+        if (!userIds || !Array.isArray(userIds)) {
+          return new Response(
+            JSON.stringify({ error: 'User IDs array is required' }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        // Get user profiles
+        const { data: profiles, error: profilesError } = await supabaseClient
+          .from('user_profiles')
+          .select('user_id, username')
+          .in('user_id', userIds);
+
+        if (profilesError) {
+          console.error('Error fetching user profiles:', profilesError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch user profiles' }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+
+        // Build user map
+        const userMap: Record<string, { username: string; email: string }> = {};
+        (profiles || []).forEach(profile => {
+          userMap[profile.user_id] = {
+            username: profile.username || 'Unknown',
+            email: `${profile.username}@religion.app` // Construct email from username
+          };
+        });
+
+        return new Response(
+          JSON.stringify({ result: userMap }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
       case 'getTotalUserCount': {
         const { count, error } = await supabaseClient.auth.admin.listUsers({
           page: 1,
