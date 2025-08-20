@@ -535,18 +535,18 @@ function HomeContent({
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Coming Soon
+            <span className="text-white/60 text-center" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Vote for the next religion on X
             </span>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Coming Soon
+            <span className="text-white/60 text-center" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Vote for the next religion on X
             </span>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-            <span className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Coming Soon
+            <span className="text-white/60 text-center" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Vote for the next religion on X
             </span>
           </div>
         </div>
