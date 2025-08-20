@@ -566,7 +566,7 @@ function HomeContent({
 
       {/* Powered by heaven text */}
       <div className="relative z-10 flex justify-center mt-2">
-        <p className="text-white/60 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <p className="text-white/60 text-xs md:text-sm" style={{ fontFamily: 'Poiret One, sans-serif' }}>
           powered by heaven
         </p>
       </div>
@@ -708,10 +708,10 @@ function HomeContent({
       <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowLiveChat(true)}
-          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-xs font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+          <span className="text-xs md:text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             heaven, live
           </span>
         </button>
