@@ -514,9 +514,9 @@ function HomeContent({
       <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
           onClick={() => alert('Requested Religion feature coming soon!')}
-          className="bg-black/50 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
-          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             Requested Religions
           </span>
         </button>
@@ -571,9 +571,9 @@ function HomeContent({
       <div className="absolute bottom-80 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
           onClick={() => alert('Requested Religion feature coming soon!')}
-          className="bg-black/50 backdrop-blur-sm text-white px-6 py-3 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
-          <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             Requested Religion
           </span>
         </button>
