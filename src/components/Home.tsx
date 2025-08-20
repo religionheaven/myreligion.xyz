@@ -138,6 +138,8 @@ export function Home({
   const handleVoteOnConfession = async (confessionId: string, voteType: 'upvote' | 'downvote') => {
     if (!user) return;
 
+    console.log(`Voting ${voteType} on confession ${confessionId}`);
+
     // Optimistically update the UI first
     setConfessions(prevConfessions => 
       prevConfessions.map(confession => {
@@ -174,6 +176,8 @@ export function Home({
             }
           }
 
+          console.log(`UI Update: ${confession.id} -> upvotes=${newUpvotes}, downvotes=${newDownvotes}, score=${newUpvotes - newDownvotes}`);
+
           return {
             ...confession,
             upvotes: newUpvotes,
@@ -191,7 +195,10 @@ export function Home({
     
     if (!success) {
       // If backend failed, reload to get correct state
+      console.log('Backend vote failed, reloading confessions');
       await loadConfessions();
+    } else {
+      console.log('Backend vote successful');
     }
   };
 

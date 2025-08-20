@@ -209,6 +209,8 @@ export class ConfessionService {
       if (updateError) {
         console.error('Error updating confession counts:', updateError);
       }
+
+      console.log(`Updated confession ${confessionId}: upvotes=${upvotes}, downvotes=${downvotes}, score=${score}`);
     } catch (error) {
       console.error('Error in updateConfessionCounts:', error);
     }
