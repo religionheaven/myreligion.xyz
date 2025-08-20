@@ -172,9 +172,17 @@ export function ConfessionsModal({
             <textarea
               value={confessionText}
               onChange={(e) => setConfessionText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (confessionText.trim() && !isSubmittingConfession) {
+                    handleSubmitConfession();
+                  }
+                }
+              }}
               placeholder="Write your confession anonymously... (No links or contact info)"
               maxLength={500}
-              className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[120px]"
+              className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[120px] confession-textarea"
               style={{ fontFamily: 'Poiret One, sans-serif' }}
               disabled={isSubmittingConfession}
             />
@@ -189,7 +197,7 @@ export function ConfessionsModal({
           </div>
           <div className="mt-2 flex justify-between text-white/40 text-xs">
             <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED
+              Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED • Press Enter to submit
             </p>
             <p>{confessionText.length}/500</p>
           </div>

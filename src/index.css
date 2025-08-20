@@ -70,3 +70,28 @@
 .animate-popup-out {
   animation: popup-fade-out 0.3s ease-in forwards;
 }
+
+/* Sleek glass scrollbar for confession textarea */
+.confession-textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.confession-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.confession-textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  backdrop-filter: blur(10px);
+}
+
+.confession-textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox scrollbar for confession textarea */
+.confession-textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
