@@ -46,7 +46,7 @@ export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
       </div>
 
       {/* Powered by heaven text */}
-      <div className="flex justify-center mt-2">
+      <div className="hidden md:flex justify-center mt-2">
         <p className="text-white/60 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
           powered by heaven
         </p>
