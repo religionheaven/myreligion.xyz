@@ -21,10 +21,10 @@ export const SPAM_DETECTION_CONFIG = {
   
   // Progressive penalties
   PENALTIES: {
-    FIRST_VIOLATION: 5000,   // 5 seconds total (3s base + 2s penalty)
-    SECOND_VIOLATION: 10000, // 10 seconds total
-    THIRD_VIOLATION: 20000,  // 20 seconds total
-    PERSISTENT_VIOLATION: 45000, // 45 seconds total
+    FIRST_VIOLATION: 90000,   // 1 minute 30 seconds total
+    SECOND_VIOLATION: 180000, // 3 minutes total
+    THIRD_VIOLATION: 300000,  // 5 minutes total
+    PERSISTENT_VIOLATION: 600000, // 10 minutes total
   },
   
   // Reset violation count after this period of good behavior
