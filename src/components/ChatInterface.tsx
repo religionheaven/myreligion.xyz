@@ -331,7 +331,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       // Save the complete AI response to database
       if (fullResponse) {
-        await ChatStore.addMessage(sessionId, 'assistant', fullResponse);
+        // Apply Nga-specific text replacement
+        let processedResponse = fullResponse;
+        if (religion.toLowerCase() === 'nga') {
+          processedResponse = fullResponse.replace(/\*g/g, 'ig');
+        }
+
+        // Update the final message with processed response
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMessageId ? { ...msg, content: processedResponse } : msg,
+          ),
+        );
+
+        await ChatStore.addMessage(sessionId, 'assistant', processedResponse);
 
         // Add to cache
         MessageCache.addMessageToCache(
@@ -339,7 +352,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {
             id: aiMessageId,
             role: 'assistant',
-            content: fullResponse,
+            content: processedResponse,
             timestamp: new Date(),
             sessionId,
           },
