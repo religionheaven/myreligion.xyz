@@ -138,9 +138,59 @@ export function Home({
   const handleVoteOnConfession = async (confessionId: string, voteType: 'upvote' | 'downvote') => {
     if (!user) return;
 
+    // Optimistically update the UI first
+    setConfessions(prevConfessions => 
+      prevConfessions.map(confession => {
+        if (confession.id === confessionId) {
+          const currentVote = confession.user_vote;
+          let newUpvotes = confession.upvotes;
+          let newDownvotes = confession.downvotes;
+          let newUserVote: 'upvote' | 'downvote' | null = voteType;
+
+          // Handle vote logic
+          if (currentVote === voteType) {
+            // Same vote - remove it
+            if (voteType === 'upvote') {
+              newUpvotes = Math.max(0, newUpvotes - 1);
+            } else {
+              newDownvotes = Math.max(0, newDownvotes - 1);
+            }
+            newUserVote = null;
+          } else if (currentVote && currentVote !== voteType) {
+            // Different vote - change it
+            if (currentVote === 'upvote') {
+              newUpvotes = Math.max(0, newUpvotes - 1);
+              newDownvotes = newDownvotes + 1;
+            } else {
+              newDownvotes = Math.max(0, newDownvotes - 1);
+              newUpvotes = newUpvotes + 1;
+            }
+          } else {
+            // No previous vote - add new vote
+            if (voteType === 'upvote') {
+              newUpvotes = newUpvotes + 1;
+            } else {
+              newDownvotes = newDownvotes + 1;
+            }
+          }
+
+          return {
+            ...confession,
+            upvotes: newUpvotes,
+            downvotes: newDownvotes,
+            score: newUpvotes - newDownvotes,
+            user_vote: newUserVote
+          };
+        }
+        return confession;
+      })
+    );
+
+    // Then update the backend
     const success = await ConfessionService.voteOnConfession(confessionId, user.id, voteType);
-    if (success) {
-      // Reload confessions to update vote counts
+    
+    if (!success) {
+      // If backend failed, reload to get correct state
       await loadConfessions();
     }
   };
