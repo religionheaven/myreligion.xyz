@@ -44,7 +44,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           }`}
         >
           <div className="text-sm leading-relaxed break-words space-y-1">
-            <div className="space-y-2">{formatMessageContent(message.content)}</div>
+            <div className="space-y-2">{formatMessageContent(message.content ?? '')}</div>
           </div>
         </div>
       </div>
