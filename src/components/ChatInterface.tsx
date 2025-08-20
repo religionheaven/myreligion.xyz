@@ -309,11 +309,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 const content = parsed.choices?.[0]?.delta?.content;
                 if (content) {
                   fullResponse += content;
+                  
+                  // Apply Nga-specific text replacement in real-time
+                  let displayResponse = fullResponse;
+                  if (religion.toLowerCase() === 'nga') {
+                    displayResponse = fullResponse.replace(/\*g/gi, 'ig');
+                  }
+                  
                   // Add a small delay for smoother typing effect
                   setTimeout(() => {
                     setMessages((prev) =>
                       prev.map((msg) =>
-                        msg.id === aiMessageId ? { ...msg, content: fullResponse } : msg,
+                        msg.id === aiMessageId ? { ...msg, content: displayResponse } : msg,
                       ),
                     );
                   }, 50); // 50ms delay for smoother appearance
