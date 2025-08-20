@@ -196,6 +196,8 @@ export class ConfessionService {
       /\badd\s+me\s+on\b/gi,
       /\bfollow\s+me\s+on\b/gi,
       /\bmy\s+[a-zA-Z]+\s+is\s+[a-zA-Z0-9_@.]+/gi,
+      // Catch any long alphanumeric strings that could be addresses/IDs
+      /\b[A-Za-z0-9]{25,}\b/g, // Any 25+ character alphanumeric string
     ];
 
     const containsContact = contactPatterns.some(pattern => pattern.test(content));
