@@ -577,7 +577,7 @@ function HomeContent({
       <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <button
           onClick={() => {/* TODO: Add confessions functionality */}}
-          className="bg-purple-500/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-purple-400/20 hover:bg-purple-500/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             CONFESSIONS
@@ -674,7 +674,7 @@ function HomeContent({
       <div className="absolute bottom-64 left-1/2 transform -translate-x-1/2 z-20 md:hidden">
         <button
           onClick={() => {/* TODO: Add confessions functionality */}}
-          className="bg-purple-500/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-purple-400/20 hover:bg-purple-500/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span className="text-base font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
             CONFESSIONS
