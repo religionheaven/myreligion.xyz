@@ -168,10 +168,49 @@ export class ConfessionService {
         }
       }
 
+      // After successful vote operation, manually update the confession counts
+      await this.updateConfessionCounts(confessionId);
+
       return true;
     } catch (error) {
       console.error('Error in voteOnConfession:', error);
       return false;
+    }
+  }
+
+  // Manually update confession vote counts and score
+  private static async updateConfessionCounts(confessionId: string): Promise<void> {
+    try {
+      // Get current vote counts
+      const { data: votes, error: votesError } = await supabase
+        .from('confession_votes')
+        .select('vote_type')
+        .eq('confession_id', confessionId);
+
+      if (votesError) {
+        console.error('Error fetching votes for count update:', votesError);
+        return;
+      }
+
+      const upvotes = votes?.filter(v => v.vote_type === 'upvote').length || 0;
+      const downvotes = votes?.filter(v => v.vote_type === 'downvote').length || 0;
+      const score = upvotes - downvotes;
+
+      // Update the confession with new counts
+      const { error: updateError } = await supabase
+        .from('confessions')
+        .update({
+          upvotes,
+          downvotes,
+          score
+        })
+        .eq('id', confessionId);
+
+      if (updateError) {
+        console.error('Error updating confession counts:', updateError);
+      }
+    } catch (error) {
+      console.error('Error in updateConfessionCounts:', error);
     }
   }
 
