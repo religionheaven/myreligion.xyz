@@ -122,14 +122,14 @@ export function Home({
     if (!confessionText.trim() || isSubmittingConfession || !user) return;
 
     setIsSubmittingConfession(true);
-    const success = await ConfessionService.submitConfession(confessionText);
+    const result = await ConfessionService.submitConfession(confessionText, user.id);
     
-    if (success) {
+    if (result.success) {
       setConfessionText('');
       // Reload confessions to show the new one
       await loadConfessions();
     } else {
-      alert('Failed to submit confession. Please try again.');
+      alert(result.error || 'Failed to submit confession. Please try again.');
     }
     
     setIsSubmittingConfession(false);
@@ -981,6 +981,15 @@ function HomeContent({
                       key={confession.id}
                       className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20"
                     >
+                      {/* Own confession indicator */}
+                      {confession.is_own && (
+                        <div className="mb-2">
+                          <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full border border-blue-500/30">
+                            Yours
+                          </span>
+                        </div>
+                      )}
+                      
                       <p className="text-white/90 text-sm leading-relaxed mb-3">
                         {confession.content}
                       </p>
@@ -1036,7 +1045,7 @@ function HomeContent({
                 <textarea
                   value={confessionText}
                   onChange={(e) => setConfessionText(e.target.value)}
-                  placeholder="Write your confession anonymously..."
+                  placeholder="Write your confession anonymously... (No links or contact info)"
                   maxLength={500}
                   className="flex-1 p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[100px] max-h-[120px]"
                   style={{ fontFamily: 'Poiret One, sans-serif' }}
@@ -1053,7 +1062,7 @@ function HomeContent({
               </div>
               <div className="mt-2 flex justify-between text-white/40 text-xs">
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Your confession will be posted anonymously
+                  Anonymous posting • Max 2 confessions per user • No links/contact info
                 </p>
                 <p>{confessionText.length}/500</p>
               </div>

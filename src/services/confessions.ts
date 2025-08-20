@@ -2,6 +2,7 @@ import { supabase } from '../lib/supabase';
 
 export interface Confession {
   id: string;
+  user_id?: string;
   content: string;
   upvotes: number;
   downvotes: number;
@@ -9,6 +10,7 @@ export interface Confession {
   created_at: string;
   updated_at: string;
   user_vote?: 'upvote' | 'downvote' | null;
+  is_own?: boolean;
 }
 
 export interface ConfessionVote {
@@ -29,7 +31,7 @@ export class ConfessionService {
     userId?: string,
   ): Promise<Confession[]> {
     try {
-      let query = supabase.from('confessions').select('*');
+      let query = supabase.from('confessions').select('id, user_id, content, upvotes, downvotes, score, created_at, updated_at');
 
       // Apply sorting
       switch (sortBy) {
@@ -80,6 +82,7 @@ export class ConfessionService {
         return {
           ...confession,
           user_vote: userVote?.vote_type || null,
+          is_own: userId ? confession.user_id === userId : false,
         };
       });
     } catch (error) {
@@ -89,26 +92,86 @@ export class ConfessionService {
   }
 
   // Submit a new confession
-  static async submitConfession(content: string): Promise<boolean> {
+  static async submitConfession(content: string, userId: string): Promise<{ success: boolean; error?: string }> {
     try {
       if (!content.trim()) {
-        return false;
+        return { success: false, error: 'Content cannot be empty' };
+      }
+
+      // Check content for prohibited patterns
+      const contentCheck = this.validateConfessionContent(content);
+      if (!contentCheck.isValid) {
+        return { success: false, error: contentCheck.error };
+      }
+
+      // Check user confession limit
+      const { data: existingConfessions, error: countError } = await supabase
+        .from('confessions')
+        .select('id')
+        .eq('user_id', userId);
+
+      if (countError) {
+        console.error('Error checking confession count:', countError);
+        return { success: false, error: 'Failed to check confession limit' };
+      }
+
+      if (existingConfessions && existingConfessions.length >= 2) {
+        return { success: false, error: 'You can only submit 2 confessions maximum' };
       }
 
       const { error } = await supabase.from('confessions').insert({
+        user_id: userId,
         content: content.trim(),
       });
 
       if (error) {
         console.error('Error submitting confession:', error);
-        return false;
+        return { success: false, error: 'Failed to submit confession' };
       }
 
-      return true;
+      return { success: true };
     } catch (error) {
       console.error('Error in submitConfession:', error);
-      return false;
+      return { success: false, error: 'An unexpected error occurred' };
     }
+  }
+
+  // Validate confession content
+  private static validateConfessionContent(content: string): { isValid: boolean; error?: string } {
+    // Check for links
+    const linkPatterns = [
+      /https?:\/\/[^\s]+/gi,
+      /www\.[^\s]+/gi,
+      /[a-zA-Z0-9-]+\.(com|org|net|edu|gov|mil|int|co|io|me|tv|cc|ly|be|to|it|us|uk|ca|de|fr|jp|au|in|br|ru|cn|za|mx|es|nl|se|no|dk|fi|pl|cz|hu|ro|bg|hr|si|sk|lt|lv|ee|is|ie|pt|gr|tr|il|ae|sa|eg|ma|ng|ke|gh|tz|ug|zw|zm|mw|bw|sz|ls|na|ao|mz|mg|mu|sc|re|yt|km|dj|so|et|er|sd|ss|td|cf|cm|gq|ga|cg|cd|st|gw|gn|sl|lr|ci|bf|ml|ne|sn|gm|cv|mr)/gi,
+      /bit\.ly|tinyurl|t\.co|goo\.gl|short\.link|ow\.ly|is\.gd|buff\.ly/gi,
+    ];
+
+    const containsLink = linkPatterns.some(pattern => pattern.test(content));
+    if (containsLink) {
+      return { isValid: false, error: 'Links are not allowed in confessions' };
+    }
+
+    // Check for contact information
+    const contactPatterns = [
+      /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/gi, // Email
+      /\b(?:\+?1[-.\s]?)?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g, // Phone
+      /\btelegram\.me\/[a-zA-Z0-9_]+/gi,
+      /\bt\.me\/[a-zA-Z0-9_]+/gi,
+      /\b@[a-zA-Z0-9_]{1,15}\b/g, // Social handles
+      /\bdm\s+me\b/gi,
+      /\bcontact\s+me\b/gi,
+      /\bmessage\s+me\b/gi,
+      /\bwhatsapp\b/gi,
+      /\bskype\b/gi,
+      /\bdiscord\b/gi,
+    ];
+
+    const containsContact = contactPatterns.some(pattern => pattern.test(content));
+    if (containsContact) {
+      return { isValid: false, error: 'Contact information is not allowed in confessions' };
+    }
+
+    return { isValid: true };
   }
 
   // Vote on a confession
