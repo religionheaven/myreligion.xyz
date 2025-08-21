@@ -221,6 +221,18 @@ function AuthForm() {
               </div>
             </div>
           </div>
+            {/* Testing Notice */}
+            <div className="mt-6 bg-black/50 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+              <div className="text-center">
+                <p className="text-white/90 text-sm font-medium mb-2" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Here for testing? Use "religion" for your username and password!
+                </p>
+                <p className="text-white/70 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  NOTE: In the testing account other users will be able to view your AI messages.
+                </p>
+              </div>
+            </div>
+
         </div>
       </div>
     </div>
