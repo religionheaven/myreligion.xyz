@@ -18,7 +18,7 @@ export function ToolsSection({
   return (
     <>
       {/* Tools Button - Desktop Only */}
-      <div className="relative z-20 flex justify-center mt-12 lg:mt-16 xl:mt-20 hidden md:flex">
+      <div className="relative z-20 flex justify-center mt-8 hidden md:flex">
         <button
           onClick={handleToolsClick}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
