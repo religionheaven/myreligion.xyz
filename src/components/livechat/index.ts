@@ -1,11 +1,1 @@
-export { default as LiveChat } from "./LiveChat";
-export { ChatMessage } from "./ChatMessage";
-export { ChatInput } from "./ChatInput";
-export { WarningPopup } from "./WarningPopup";
-export { checkRateLimit, detectSpam, detectProhibitedContent } from "./SpamDetection";
-export { formatMessageContent } from "./MessageFormatter";
-export * from "./types";
-export * from "./constants";
-export * from "./utils";
-
-export default from
+export { default } from "./LiveChat";
