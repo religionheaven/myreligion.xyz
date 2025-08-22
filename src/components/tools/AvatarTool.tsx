@@ -13,7 +13,7 @@ export function AvatarTool() {
     { id: 'jewish', name: 'Jewish', url: 'https://i.imgur.com/WaBoB1X.png' },
     { id: 'islamic', name: 'Islamic', url: 'https://i.imgur.com/JkLEbS3.png' },
     { id: 'hindu', name: 'Hindu', url: 'https://i.imgur.com/fhaXuTH.png' },
-    { id: 'nga', name: 'Nga', url: 'https://i.imgur.com/5eZqdQy.png' },
+    { id: 'nga', name: 'Nigga', url: 'https://i.imgur.com/5eZqdQy.png' },
   ];
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
