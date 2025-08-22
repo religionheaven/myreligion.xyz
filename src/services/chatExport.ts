@@ -1,5 +1,5 @@
 interface ExportMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -13,21 +13,21 @@ export class ChatExport {
     content += `Exported on: ${new Date().toLocaleString()}\n`;
     content += `Religion: ${religion}\n`;
     content += `Total Messages: ${messages.length}\n`;
-    content += '\n' + '='.repeat(50) + '\n\n';
+    content += "\n" + "=".repeat(50) + "\n\n";
 
     messages.forEach((message, index) => {
       const timestamp = message.timestamp.toLocaleString();
-      const role = message.role === 'user' ? 'You' : `${religion} AI`;
+      const role = message.role === "user" ? "You" : `${religion} AI`;
 
       content += `[${timestamp}] ${role}:\n`;
       content += `${message.content}\n\n`;
 
       if (index < messages.length - 1) {
-        content += '-'.repeat(30) + '\n\n';
+        content += "-".repeat(30) + "\n\n";
       }
     });
 
-    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, '_')}.txt`, 'text/plain');
+    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, "_")}.txt`, "text/plain");
   }
 
   // Export chat as JSON
@@ -47,14 +47,14 @@ export class ChatExport {
     };
 
     const content = JSON.stringify(exportData, null, 2);
-    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, '_')}.json`, 'application/json');
+    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, "_")}.json`, "application/json");
   }
 
   // Export chat as Markdown
   static exportAsMarkdown(
     messages: ExportMessage[],
     religion: string,
-    sessionTitle?: string,
+    sessionTitle?: string
   ): void {
     const title = sessionTitle || `${religion} Chat - ${new Date().toLocaleDateString()}`;
 
@@ -62,21 +62,21 @@ export class ChatExport {
     content += `**Exported:** ${new Date().toLocaleString()}  \n`;
     content += `**Religion:** ${religion}  \n`;
     content += `**Total Messages:** ${messages.length}\n\n`;
-    content += '---\n\n';
+    content += "---\n\n";
 
     messages.forEach((message, index) => {
       const timestamp = message.timestamp.toLocaleString();
-      const role = message.role === 'user' ? '**You**' : `**${religion} AI**`;
+      const role = message.role === "user" ? "**You**" : `**${religion} AI**`;
 
       content += `### ${role} - *${timestamp}*\n\n`;
       content += `${message.content}\n\n`;
 
       if (index < messages.length - 1) {
-        content += '---\n\n';
+        content += "---\n\n";
       }
     });
 
-    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, '_')}.md`, 'text/markdown');
+    this.downloadFile(content, `${title.replace(/[^a-z0-9]/gi, "_")}.md`, "text/markdown");
   }
 
   private static downloadFile(content: string, filename: string, mimeType: string): void {
@@ -84,10 +84,10 @@ export class ChatExport {
       const blob = new Blob([content], { type: mimeType });
       const url = URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = filename;
-      link.style.display = 'none';
+      link.style.display = "none";
 
       document.body.appendChild(link);
       link.click();
@@ -96,15 +96,15 @@ export class ChatExport {
       // Clean up the URL object
       setTimeout(() => URL.revokeObjectURL(url), 100);
     } catch (error) {
-      console.error('Error downloading file:', error);
+      console.error("Error downloading file:", error);
       // Fallback: copy to clipboard
       navigator.clipboard
         ?.writeText(content)
         .then(() => {
-          alert('Export failed, but content has been copied to clipboard!');
+          alert("Export failed, but content has been copied to clipboard!");
         })
         .catch(() => {
-          alert('Export failed. Please try again.');
+          alert("Export failed. Please try again.");
         });
     }
   }

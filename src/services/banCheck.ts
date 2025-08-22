@@ -1,4 +1,4 @@
-import { BanManagement } from './banManagement';
+import { BanManagement } from "./banManagement";
 
 export class BanCheck {
   private static bannedUsers = new Set<string>();
@@ -10,7 +10,7 @@ export class BanCheck {
   static async isBanned(
     userIdentifier?: string,
     ipAddress?: string,
-    isUsername: boolean = false,
+    isUsername: boolean = false
   ): Promise<boolean> {
     // Refresh cache if needed
     await this.refreshCacheIfNeeded();
@@ -64,7 +64,7 @@ export class BanCheck {
 
       this.lastCheck = Date.now();
     } catch (error) {
-      console.error('Error refreshing ban cache:', error);
+      console.error("Error refreshing ban cache:", error);
     }
   }
 
@@ -78,11 +78,11 @@ export class BanCheck {
   // Get user's current IP address
   static async getCurrentIP(): Promise<string | null> {
     try {
-      const response = await fetch('https://api.ipify.org?format=json');
+      const response = await fetch("https://api.ipify.org?format=json");
       const data = await response.json();
       return data.ip;
     } catch (error) {
-      console.error('Error getting current IP:', error);
+      console.error("Error getting current IP:", error);
       return null;
     }
   }
@@ -90,7 +90,7 @@ export class BanCheck {
   // Check ban status and redirect if banned
   static async checkAndEnforceBan(
     userIdentifier?: string,
-    isUsername: boolean = false,
+    isUsername: boolean = false
   ): Promise<boolean> {
     try {
       const currentIP = await this.getCurrentIP();
@@ -104,7 +104,7 @@ export class BanCheck {
 
       return false;
     } catch (error) {
-      console.error('Error checking ban status:', error);
+      console.error("Error checking ban status:", error);
       return false;
     }
   }
@@ -112,7 +112,7 @@ export class BanCheck {
   // Show ban message to user
   private static showBanMessage(): void {
     // Create ban overlay
-    const overlay = document.createElement('div');
+    const overlay = document.createElement("div");
     overlay.style.cssText = `
       position: fixed;
       top: 0;

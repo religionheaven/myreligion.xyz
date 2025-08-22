@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }

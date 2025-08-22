@@ -5,7 +5,7 @@ import {
   CONTACT_PATTERNS,
   CRYPTO_KEYWORDS,
   SUSPICIOUS_PATTERNS,
-} from './constants';
+} from "./constants";
 
 // ============================================================================
 // RATE LIMITING TRACKER
@@ -24,17 +24,17 @@ const userRateLimits = new Map<string, UserRateLimit>();
 setInterval(() => {
   const now = Date.now();
   const fiveMinutesAgo = now - 300000;
-  
+
   for (const [userId, data] of userRateLimits.entries()) {
     // Remove old message timestamps
-    data.messages = data.messages.filter(timestamp => timestamp > fiveMinutesAgo);
-    
+    data.messages = data.messages.filter((timestamp) => timestamp > fiveMinutesAgo);
+
     // Reset violations if user has been good for 5 minutes
     if (data.lastViolation < fiveMinutesAgo) {
       data.violations = 0;
       data.currentPenalty = 0;
     }
-    
+
     // Remove user if no recent activity
     if (data.messages.length === 0 && data.lastViolation < fiveMinutesAgo) {
       userRateLimits.delete(userId);
@@ -46,13 +46,15 @@ setInterval(() => {
 // ENHANCED RATE LIMITING
 // ============================================================================
 
-export const checkRateLimit = (userId: string): { 
-  isRateLimited: boolean; 
-  message: string; 
+export const checkRateLimit = (
+  userId: string
+): {
+  isRateLimited: boolean;
+  message: string;
   cooldownTime: number;
 } => {
   const now = Date.now();
-  
+
   // Get or create user rate limit data
   let userData = userRateLimits.get(userId);
   if (!userData) {
@@ -60,59 +62,61 @@ export const checkRateLimit = (userId: string): {
       messages: [],
       violations: 0,
       lastViolation: 0,
-      currentPenalty: 0
+      currentPenalty: 0,
     };
     userRateLimits.set(userId, userData);
   }
-  
+
   // Check if user is currently in penalty period
-  if (userData.currentPenalty > 0 && (now - userData.lastViolation) < userData.currentPenalty) {
-    const remainingTime = Math.ceil((userData.currentPenalty - (now - userData.lastViolation)) / 1000);
+  if (userData.currentPenalty > 0 && now - userData.lastViolation < userData.currentPenalty) {
+    const remainingTime = Math.ceil(
+      (userData.currentPenalty - (now - userData.lastViolation)) / 1000
+    );
     return {
       isRateLimited: true,
       message: `🚫 Sending too fast! Please wait ${remainingTime} seconds.`,
-      cooldownTime: remainingTime
+      cooldownTime: remainingTime,
     };
   }
-  
+
   // Reset penalty if enough time has passed
-  if (userData.currentPenalty > 0 && (now - userData.lastViolation) >= userData.currentPenalty) {
+  if (userData.currentPenalty > 0 && now - userData.lastViolation >= userData.currentPenalty) {
     userData.currentPenalty = 0;
   }
-  
+
   // Clean old messages
   const oneMinuteAgo = now - SPAM_DETECTION_CONFIG.RATE_LIMIT_WINDOWS.LONG.duration;
-  userData.messages = userData.messages.filter(timestamp => timestamp > oneMinuteAgo);
-  
+  userData.messages = userData.messages.filter((timestamp) => timestamp > oneMinuteAgo);
+
   // Check rate limits (most restrictive first)
   const { SHORT, MEDIUM, LONG } = SPAM_DETECTION_CONFIG.RATE_LIMIT_WINDOWS;
-  
-  const shortWindowMessages = userData.messages.filter(t => t > now - SHORT.duration).length;
-  const mediumWindowMessages = userData.messages.filter(t => t > now - MEDIUM.duration).length;
-  const longWindowMessages = userData.messages.filter(t => t > now - LONG.duration).length;
-  
+
+  const shortWindowMessages = userData.messages.filter((t) => t > now - SHORT.duration).length;
+  const mediumWindowMessages = userData.messages.filter((t) => t > now - MEDIUM.duration).length;
+  const longWindowMessages = userData.messages.filter((t) => t > now - LONG.duration).length;
+
   let violation = false;
-  let violationType = '';
-  
+  let violationType = "";
+
   if (shortWindowMessages >= SHORT.maxMessages) {
     violation = true;
-    violationType = `${SHORT.maxMessages} messages in ${SHORT.duration/1000} seconds`;
+    violationType = `${SHORT.maxMessages} messages in ${SHORT.duration / 1000} seconds`;
   } else if (mediumWindowMessages >= MEDIUM.maxMessages) {
     violation = true;
-    violationType = `${MEDIUM.maxMessages} messages in ${MEDIUM.duration/1000} seconds`;
+    violationType = `${MEDIUM.maxMessages} messages in ${MEDIUM.duration / 1000} seconds`;
   } else if (longWindowMessages >= LONG.maxMessages) {
     violation = true;
-    violationType = `${LONG.maxMessages} messages in ${LONG.duration/1000} seconds`;
+    violationType = `${LONG.maxMessages} messages in ${LONG.duration / 1000} seconds`;
   }
-  
+
   if (violation) {
     userData.violations++;
     userData.lastViolation = now;
-    
+
     // Calculate penalty based on violation count
     const { PENALTIES } = SPAM_DETECTION_CONFIG;
     let penalty = PENALTIES.FIRST_VIOLATION;
-    
+
     if (userData.violations >= 4) {
       penalty = PENALTIES.PERSISTENT_VIOLATION;
     } else if (userData.violations === 3) {
@@ -120,30 +124,30 @@ export const checkRateLimit = (userId: string): {
     } else if (userData.violations === 2) {
       penalty = PENALTIES.SECOND_VIOLATION;
     }
-    
+
     userData.currentPenalty = penalty;
-    
+
     const penaltySeconds = Math.ceil(penalty / 1000);
     let message = `🚫 Rate limit exceeded (${violationType}). Wait ${penaltySeconds}s.`;
-    
+
     if (userData.violations > 1) {
       message += ` (Violation #${userData.violations})`;
     }
-    
+
     return {
       isRateLimited: true,
       message,
-      cooldownTime: penaltySeconds
+      cooldownTime: penaltySeconds,
     };
   }
-  
+
   // Add current message timestamp
   userData.messages.push(now);
-  
+
   return {
     isRateLimited: false,
-    message: '',
-    cooldownTime: 0
+    message: "",
+    cooldownTime: 0,
   };
 };
 
@@ -154,7 +158,7 @@ export const checkRateLimit = (userId: string): {
 export const detectSpam = (
   message: string,
   recentMessages: string[],
-  lastMessageTime: number,
+  lastMessageTime: number
 ): { isSpam: boolean; message: string } => {
   const lowerMessage = message.toLowerCase();
 
@@ -166,7 +170,7 @@ export const detectSpam = (
   // 2. Too frequent messaging
   const now = Date.now();
   if (now - lastMessageTime < SPAM_DETECTION_CONFIG.MIN_MESSAGE_INTERVAL) {
-    return { isSpam: true, message: '🚫 Please slow down your messaging' };
+    return { isSpam: true, message: "🚫 Please slow down your messaging" };
   }
 
   // 3. Excessive caps
@@ -185,63 +189,63 @@ export const detectSpam = (
   // 5. Excessive emojis
   const emojiCount = (
     message.match(
-      /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu,
+      /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
     ) || []
   ).length;
   if (emojiCount > SPAM_DETECTION_CONFIG.MAX_EMOJIS) {
-    return { isSpam: true, message: '🚫 Please limit emojis to 5 per message' };
+    return { isSpam: true, message: "🚫 Please limit emojis to 5 per message" };
   }
 
   // 6. Suspicious patterns
   if (SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(message))) {
-    return { isSpam: true, message: '🚫 Promotional content is not allowed' };
+    return { isSpam: true, message: "🚫 Promotional content is not allowed" };
   }
 
   // 7. Excessive punctuation
   const punctuationCount = (message.match(/[!?.,;:]/g) || []).length;
   if (punctuationCount > message.length * SPAM_DETECTION_CONFIG.MAX_PUNCTUATION_RATIO) {
-    return { isSpam: true, message: '🚫 Please reduce excessive punctuation' };
+    return { isSpam: true, message: "🚫 Please reduce excessive punctuation" };
   }
 
   // 8. Only numbers or special characters
   if (/^[0-9\s\W]+$/.test(message) && message.trim().length > 3) {
-    return { isSpam: true, message: '🚫 Please write meaningful messages' };
+    return { isSpam: true, message: "🚫 Please write meaningful messages" };
   }
 
   // 9. Gibberish detection
   if (/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{6,}/.test(message)) {
-    return { isSpam: true, message: '🚫 Please write coherent messages' };
+    return { isSpam: true, message: "🚫 Please write coherent messages" };
   }
 
-  return { isSpam: false, message: '' };
+  return { isSpam: false, message: "" };
 };
 
 export const detectProhibitedContent = (
-  message: string,
+  message: string
 ): { isProhibited: boolean; message: string } => {
   // Check for links
   const containsLink = LINK_PATTERNS.some((pattern) => pattern.test(message));
   if (containsLink) {
-    return { isProhibited: true, message: '🚫 Links are not allowed in chat' };
+    return { isProhibited: true, message: "🚫 Links are not allowed in chat" };
   }
 
   // Check for crypto addresses
   const containsCrypto = CRYPTO_PATTERNS.some((pattern) => pattern.test(message));
   if (containsCrypto) {
-    return { isProhibited: true, message: '🚫 Crypto addresses are not allowed in chat' };
+    return { isProhibited: true, message: "🚫 Crypto addresses are not allowed in chat" };
   }
 
   // Check for contact information
   const containsContact = CONTACT_PATTERNS.some((pattern) => pattern.test(message));
   if (containsContact) {
-    return { isProhibited: true, message: '🚫 Contact information is not allowed in chat' };
+    return { isProhibited: true, message: "🚫 Contact information is not allowed in chat" };
   }
 
   // Check for crypto keywords
   const containsCryptoKeywords = CRYPTO_KEYWORDS.some((pattern) => pattern.test(message));
   if (containsCryptoKeywords) {
-    return { isProhibited: true, message: '🚫 Crypto promotion is not allowed in chat' };
+    return { isProhibited: true, message: "🚫 Crypto promotion is not allowed in chat" };
   }
 
-  return { isProhibited: false, message: '' };
+  return { isProhibited: false, message: "" };
 };

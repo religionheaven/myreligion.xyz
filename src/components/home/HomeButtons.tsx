@@ -1,5 +1,5 @@
-import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import React from "react";
+import { MessageCircle } from "lucide-react";
 
 interface HomeButtonsProps {
   showRequestedReligions: boolean;
@@ -30,14 +30,11 @@ export function HomeButtons({
           <button
             onClick={() => setShowRequestedReligions(!showRequestedReligions)}
             className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${
-              showConfessions ? 'hidden' : 'block'
+              showConfessions ? "hidden" : "block"
             }`}
           >
-            <span
-              className="text-sm font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              {showRequestedReligions ? 'back' : 'requested religions'}
+            <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
+              {showRequestedReligions ? "back" : "requested religions"}
             </span>
           </button>
         </div>
@@ -46,7 +43,7 @@ export function HomeButtons({
       {/* Desktop Requested Religion Button */}
       <div
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px] z-20 hidden md:block transition-opacity duration-300 ${
-          showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
         <button
@@ -55,9 +52,9 @@ export function HomeButtons({
         >
           <span
             className="text-sm lg:text-base font-medium"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+            style={{ fontFamily: "Poiret One, sans-serif" }}
           >
-            {showRequestedReligions ? 'back' : 'requested religions'}
+            {showRequestedReligions ? "back" : "requested religions"}
           </span>
         </button>
       </div>
@@ -65,7 +62,7 @@ export function HomeButtons({
       {/* Live Chat and Confessions Buttons */}
       <div
         className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${
-          showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
         <div className="flex items-center gap-4">
@@ -76,21 +73,21 @@ export function HomeButtons({
             <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
             <span
               className="text-xs md:text-sm font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               heaven, live
             </span>
           </button>
-          
+
           <button
             onClick={() => setShowConfessions(!showConfessions)}
             className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
           >
             <span
               className="text-xs md:text-sm font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
-              {showConfessions ? 'close confessions' : 'confessions'}
+              {showConfessions ? "close confessions" : "confessions"}
             </span>
           </button>
         </div>
@@ -99,7 +96,7 @@ export function HomeButtons({
       {/* Bottom Left Buttons */}
       <div
         className={`absolute bottom-4 lg:bottom-6 xl:bottom-8 left-4 lg:left-6 xl:left-8 z-20 transition-opacity duration-300 ${
-          showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
         <div className="flex gap-2 lg:gap-3">
@@ -109,7 +106,7 @@ export function HomeButtons({
           >
             <span
               className="text-sm lg:text-base font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               requests
             </span>
@@ -122,7 +119,7 @@ export function HomeButtons({
             >
               <span
                 className="text-sm lg:text-base font-medium"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
+                style={{ fontFamily: "Poiret One, sans-serif" }}
               >
                 admin
               </span>
@@ -134,7 +131,7 @@ export function HomeButtons({
       {/* Bottom Right Image */}
       <div
         className={`absolute bottom-4 lg:bottom-6 xl:bottom-8 right-4 lg:right-6 xl:right-8 z-20 transition-opacity duration-300 ${
-          showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
         <a

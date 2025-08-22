@@ -1,5 +1,5 @@
-import React from 'react';
-import { Download } from 'lucide-react';
+import React from "react";
+import { Download } from "lucide-react";
 
 interface ChatControlsProps {
   onNewChat: () => void;
@@ -20,7 +20,7 @@ export function ChatControls({
         onClick={onNewChat}
         className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
       >
-        <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
           New Chat
         </span>
       </button>
@@ -28,7 +28,7 @@ export function ChatControls({
         onClick={onChatHistory}
         className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 cursor-pointer"
       >
-        <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
           Chat History
         </span>
       </button>
@@ -39,7 +39,7 @@ export function ChatControls({
         >
           <div className="flex items-center gap-2">
             <Download className="w-4 h-4" />
-            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
               Export
             </span>
           </div>

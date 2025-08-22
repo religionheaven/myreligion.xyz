@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase";
 
 export interface UserProfile {
   id: string;
@@ -15,19 +15,19 @@ export class UserProfileService {
   static async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('user_id', userId)
+        .from("user_profiles")
+        .select("*")
+        .eq("user_id", userId)
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching user profile:', error);
+        console.error("Error fetching user profile:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error in getUserProfile:', error);
+      console.error("Error in getUserProfile:", error);
       return null;
     }
   }
@@ -35,31 +35,31 @@ export class UserProfileService {
   // Create or update user profile
   static async upsertUserProfile(
     userId: string,
-    updates: Partial<Pick<UserProfile, 'username' | 'profile_photo_url' | 'bio'>>,
+    updates: Partial<Pick<UserProfile, "username" | "profile_photo_url" | "bio">>
   ): Promise<UserProfile | null> {
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from("user_profiles")
         .upsert(
           {
             user_id: userId,
             ...updates,
           },
           {
-            onConflict: 'user_id',
-          },
+            onConflict: "user_id",
+          }
         )
         .select()
         .single();
 
       if (error) {
-        console.error('Error upserting user profile:', error);
+        console.error("Error upserting user profile:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error in upsertUserProfile:', error);
+      console.error("Error in upsertUserProfile:", error);
       return null;
     }
   }
@@ -68,33 +68,33 @@ export class UserProfileService {
   static async uploadProfilePhoto(userId: string, file: File): Promise<string | null> {
     try {
       // Validate file
-      if (!file.type.startsWith('image/')) {
-        throw new Error('File must be an image');
+      if (!file.type.startsWith("image/")) {
+        throw new Error("File must be an image");
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Image must be smaller than 5MB');
+        throw new Error("Image must be smaller than 5MB");
       }
 
       // Create unique filename
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${userId}/profile-${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('profile-photos')
+        .from("profile-photos")
         .upload(fileName, file, {
-          cacheControl: '3600',
+          cacheControl: "3600",
           upsert: true,
         });
 
       if (uploadError) {
-        console.error('Error uploading file:', uploadError);
+        console.error("Error uploading file:", uploadError);
         return null;
       }
 
       // Get public URL
-      const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(fileName);
+      const { data: urlData } = supabase.storage.from("profile-photos").getPublicUrl(fileName);
 
       const photoUrl = urlData.publicUrl;
 
@@ -105,7 +105,7 @@ export class UserProfileService {
 
       return photoUrl;
     } catch (error) {
-      console.error('Error in uploadProfilePhoto:', error);
+      console.error("Error in uploadProfilePhoto:", error);
       return null;
     }
   }
@@ -121,17 +121,17 @@ export class UserProfileService {
 
       // Extract filename from URL
       const url = new URL(profile.profile_photo_url);
-      const pathParts = url.pathname.split('/');
+      const pathParts = url.pathname.split("/");
       const fileName = pathParts[pathParts.length - 1];
       const filePath = `${userId}/${fileName}`;
 
       // Delete from storage
       const { error: deleteError } = await supabase.storage
-        .from('profile-photos')
+        .from("profile-photos")
         .remove([filePath]);
 
       if (deleteError) {
-        console.error('Error deleting file:', deleteError);
+        console.error("Error deleting file:", deleteError);
         return false;
       }
 
@@ -142,7 +142,7 @@ export class UserProfileService {
 
       return true;
     } catch (error) {
-      console.error('Error in deleteProfilePhoto:', error);
+      console.error("Error in deleteProfilePhoto:", error);
       return false;
     }
   }
@@ -150,7 +150,7 @@ export class UserProfileService {
   // Initialize user profile (call this when user signs up or first logs in)
   static async initializeUserProfile(
     userId: string,
-    username?: string,
+    username?: string
   ): Promise<UserProfile | null> {
     try {
       // Check if profile already exists
@@ -161,10 +161,10 @@ export class UserProfileService {
 
       // Create new profile
       return await this.upsertUserProfile(userId, {
-        username: username || 'User',
+        username: username || "User",
       });
     } catch (error) {
-      console.error('Error in initializeUserProfile:', error);
+      console.error("Error in initializeUserProfile:", error);
       return null;
     }
   }

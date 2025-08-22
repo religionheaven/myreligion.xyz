@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // ============================================================================
 // MESSAGE FORMATTING FUNCTIONS
@@ -21,14 +21,14 @@ const formatInlineText = (text: string) => {
           elements.push(
             <span key={`bold-italic-${keyCounter++}`} className="font-bold italic text-white">
               {italicText}
-            </span>,
+            </span>
           );
         } else {
           if (italicPart) {
             elements.push(
               <span key={`bold-${keyCounter++}`} className="font-bold text-white">
                 {italicPart}
-              </span>,
+              </span>
             );
           }
         }
@@ -42,7 +42,7 @@ const formatInlineText = (text: string) => {
           elements.push(
             <span key={`italic-${keyCounter++}`} className="italic text-white/80">
               {italicText}
-            </span>,
+            </span>
           );
         } else {
           if (italicPart) {
@@ -70,12 +70,12 @@ export const formatMessageContent = (content: string) => {
 
     // Handle headers with ### **text** or ### 1. text
     if (trimmedLine.match(/^###\s*(\*\*.*?\*\*|[\d]+\..*)/)) {
-      let headerText = '';
+      let headerText = "";
 
       // Handle ### **text** format
       const headerMatch = trimmedLine.match(/^###\s*\*\*(.*?)\*\*(.*?)$/);
       if (headerMatch) {
-        headerText = headerMatch[1].trim() + (headerMatch[2] ? headerMatch[2].trim() : '');
+        headerText = headerMatch[1].trim() + (headerMatch[2] ? headerMatch[2].trim() : "");
       } else {
         // Handle ### 1. text format
         const numberMatch = trimmedLine.match(/^###\s*(.+)$/);
@@ -90,7 +90,7 @@ export const formatMessageContent = (content: string) => {
             <div className="text-white font-bold text-lg bg-white/10 rounded-lg px-4 py-2 border-l-4 border-white/40">
               {headerText}
             </div>
-          </div>,
+          </div>
         );
         return;
       }
@@ -106,7 +106,7 @@ export const formatMessageContent = (content: string) => {
             <div className="text-white font-bold text-base bg-white/15 rounded-lg px-3 py-2 border-l-4 border-blue-400/60">
               {numberText}
             </div>
-          </div>,
+          </div>
         );
         return;
       }
@@ -114,13 +114,13 @@ export const formatMessageContent = (content: string) => {
 
     // Handle bullet points starting with -
     if (trimmedLine.match(/^\s*-\s+/)) {
-      const bulletText = trimmedLine.replace(/^\s*-\s+/, '');
+      const bulletText = trimmedLine.replace(/^\s*-\s+/, "");
       const formattedBullet = formatInlineText(bulletText);
       elements.push(
         <div key={`bullet-${lineIndex}`} className="ml-4 mb-2 flex items-start">
           <span className="text-white/60 mr-3 mt-1 text-base">•</span>
           <div className="text-white/90 text-base leading-relaxed flex-1">{formattedBullet}</div>
-        </div>,
+        </div>
       );
       return;
     }
@@ -130,7 +130,7 @@ export const formatMessageContent = (content: string) => {
     elements.push(
       <div key={`text-${lineIndex}`} className="mb-2">
         <div className="text-white/90 leading-relaxed text-base">{formattedLine}</div>
-      </div>,
+      </div>
     );
   });
 

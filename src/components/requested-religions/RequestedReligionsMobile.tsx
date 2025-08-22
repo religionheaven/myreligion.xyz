@@ -1,5 +1,5 @@
-import React from 'react';
-import { REQUESTED_RELIGIONS } from '../../config/religions';
+import React from "react";
+import { REQUESTED_RELIGIONS } from "../../config/religions";
 
 interface RequestedReligionsMobileProps {
   onReligionClick: (religion: string) => void;
@@ -77,8 +77,8 @@ export function RequestedReligionsMobile({
               key={index}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? 'bg-white shadow-lg scale-110'
-                  : 'bg-white/50 hover:bg-white/70'
+                  ? "bg-white shadow-lg scale-110"
+                  : "bg-white/50 hover:bg-white/70"
               }`}
               onClick={() => setCurrentIndex(index)}
             />

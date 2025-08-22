@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Ban, UserX, Globe, Clock, AlertTriangle, Eye } from 'lucide-react';
-import { BanManagement, BannedUser, BannedIP, BanLog } from '../../services/banManagement';
-import { AdminAnalytics, LiveUser } from '../../services/adminAnalytics';
+import React, { useState, useEffect } from "react";
+import { Ban, UserX, Globe, Clock, AlertTriangle, Eye } from "lucide-react";
+import { BanManagement, BannedUser, BannedIP, BanLog } from "../../services/banManagement";
+import { AdminAnalytics, LiveUser } from "../../services/adminAnalytics";
 
 export function BanManagementPanel() {
-  const [activeTab, setActiveTab] = useState<'users' | 'ips' | 'logs'>('users');
+  const [activeTab, setActiveTab] = useState<"users" | "ips" | "logs">("users");
   const [bannedUsers, setBannedUsers] = useState<BannedUser[]>([]);
   const [bannedIPs, setBannedIPs] = useState<BannedIP[]>([]);
   const [banLogs, setBanLogs] = useState<BanLog[]>([]);
@@ -12,13 +12,13 @@ export function BanManagementPanel() {
   const [loading, setLoading] = useState(true);
   const [showBanModal, setShowBanModal] = useState(false);
   const [banTarget, setBanTarget] = useState<{
-    type: 'user' | 'ip';
+    type: "user" | "ip";
     id: string;
     name: string;
   } | null>(null);
-  const [banReason, setBanReason] = useState('');
+  const [banReason, setBanReason] = useState("");
   const [isPermanent, setIsPermanent] = useState(true);
-  const [expiresAt, setExpiresAt] = useState('');
+  const [expiresAt, setExpiresAt] = useState("");
 
   useEffect(() => {
     loadData();
@@ -39,19 +39,19 @@ export function BanManagementPanel() {
       setBanLogs(logs);
       setLiveUsers(live);
     } catch (error) {
-      console.error('Error loading ban data:', error);
+      console.error("Error loading ban data:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleBanUser = (userId: string, username: string) => {
-    setBanTarget({ type: 'user', id: username, name: username }); // Use username as ID for display
+    setBanTarget({ type: "user", id: username, name: username }); // Use username as ID for display
     setShowBanModal(true);
   };
 
   const handleBanIP = (ip: string) => {
-    setBanTarget({ type: 'ip', id: ip, name: ip });
+    setBanTarget({ type: "ip", id: ip, name: ip });
     setShowBanModal(true);
   };
 
@@ -61,23 +61,23 @@ export function BanManagementPanel() {
     try {
       let success = false;
 
-      if (banTarget.type === 'user') {
+      if (banTarget.type === "user") {
         success = await BanManagement.banUser(
           banTarget.id,
           banReason,
           isPermanent,
           isPermanent ? undefined : expiresAt,
-          true, // isUsername = true
+          true // isUsername = true
         );
 
         if (success) {
           await BanManagement.logBanAction(
-            'ban_user',
+            "ban_user",
             banTarget.id,
             undefined,
             banReason,
             {},
-            true,
+            true
           );
         }
       } else {
@@ -85,51 +85,51 @@ export function BanManagementPanel() {
           banTarget.id,
           banReason,
           isPermanent,
-          isPermanent ? undefined : expiresAt,
+          isPermanent ? undefined : expiresAt
         );
 
         if (success) {
-          await BanManagement.logBanAction('ban_ip', undefined, banTarget.id, banReason);
+          await BanManagement.logBanAction("ban_ip", undefined, banTarget.id, banReason);
         }
       }
 
       if (success) {
         setShowBanModal(false);
         setBanTarget(null);
-        setBanReason('');
+        setBanReason("");
         setIsPermanent(true);
-        setExpiresAt('');
+        setExpiresAt("");
         loadData();
       }
     } catch (error) {
-      console.error('Error executing ban:', error);
+      console.error("Error executing ban:", error);
     }
   };
 
-  const handleUnban = async (type: 'user' | 'ip', id: string, name: string) => {
+  const handleUnban = async (type: "user" | "ip", id: string, name: string) => {
     if (!confirm(`Are you sure you want to unban ${name}?`)) return;
 
     try {
       let success = false;
 
-      if (type === 'user') {
+      if (type === "user") {
         // For unbanning, we need to use the user ID, not username
         // So we'll keep using the user ID from the banned users list
         success = await BanManagement.unbanUser(id, false); // isUsername = false
         if (success) {
           await BanManagement.logBanAction(
-            'unban_user',
+            "unban_user",
             id,
             undefined,
-            'Unbanned by admin',
+            "Unbanned by admin",
             {},
-            false,
+            false
           );
         }
       } else {
         success = await BanManagement.unbanIP(id);
         if (success) {
-          await BanManagement.logBanAction('unban_ip', undefined, id, 'Unbanned by admin');
+          await BanManagement.logBanAction("unban_ip", undefined, id, "Unbanned by admin");
         }
       }
 
@@ -137,7 +137,7 @@ export function BanManagementPanel() {
         loadData();
       }
     } catch (error) {
-      console.error('Error unbanning:', error);
+      console.error("Error unbanning:", error);
     }
   };
 
@@ -147,18 +147,18 @@ export function BanManagementPanel() {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return `${days}d ago`;
   };
 
   const formatExpiry = (expiresAt?: string) => {
-    if (!expiresAt) return 'Permanent';
+    if (!expiresAt) return "Permanent";
     const date = new Date(expiresAt);
     const now = new Date();
 
-    if (date < now) return 'Expired';
+    if (date < now) return "Expired";
 
     const diff = date.getTime() - now.getTime();
     const days = Math.floor(diff / 86400000);
@@ -173,7 +173,7 @@ export function BanManagementPanel() {
       <div className="flex items-center justify-between">
         <h3
           className="text-lg text-white font-medium"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Ban Management
         </h3>
@@ -188,33 +188,33 @@ export function BanManagementPanel() {
       {/* Tab Navigation */}
       <div className="flex gap-2">
         <button
-          onClick={() => setActiveTab('users')}
+          onClick={() => setActiveTab("users")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            activeTab === 'users'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
+            activeTab === "users"
+              ? "bg-white/20 text-white border border-white/30"
+              : "text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
           <UserX className="w-4 h-4" />
           <span className="text-sm">Banned Users ({bannedUsers.length})</span>
         </button>
         <button
-          onClick={() => setActiveTab('ips')}
+          onClick={() => setActiveTab("ips")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            activeTab === 'ips'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
+            activeTab === "ips"
+              ? "bg-white/20 text-white border border-white/30"
+              : "text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
           <Globe className="w-4 h-4" />
           <span className="text-sm">Banned IPs ({bannedIPs.length})</span>
         </button>
         <button
-          onClick={() => setActiveTab('logs')}
+          onClick={() => setActiveTab("logs")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            activeTab === 'logs'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
+            activeTab === "logs"
+              ? "bg-white/20 text-white border border-white/30"
+              : "text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
           <Eye className="w-4 h-4" />
@@ -229,7 +229,7 @@ export function BanManagementPanel() {
       ) : (
         <>
           {/* Live Users - Quick Ban Section */}
-          {activeTab === 'users' && (
+          {activeTab === "users" && (
             <div className="bg-white/10 rounded-2xl p-4 border border-white/20 mb-6">
               <h4 className="text-white font-medium mb-3">Live Users - Quick Ban</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -257,7 +257,7 @@ export function BanManagementPanel() {
           )}
 
           {/* Banned Users Tab */}
-          {activeTab === 'users' && (
+          {activeTab === "users" && (
             <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
               <div className="max-h-96 overflow-y-auto custom-scrollbar">
                 <table className="w-full">
@@ -301,7 +301,7 @@ export function BanManagementPanel() {
                         </td>
                         <td className="p-3">
                           <button
-                            onClick={() => handleUnban('user', ban.user_id, ban.username)}
+                            onClick={() => handleUnban("user", ban.user_id, ban.username)}
                             className="bg-green-500/80 hover:bg-green-600/90 text-white px-3 py-1 rounded-lg text-xs transition-all duration-200"
                           >
                             Unban
@@ -316,7 +316,7 @@ export function BanManagementPanel() {
           )}
 
           {/* Banned IPs Tab */}
-          {activeTab === 'ips' && (
+          {activeTab === "ips" && (
             <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
               <div className="max-h-96 overflow-y-auto custom-scrollbar">
                 <table className="w-full">
@@ -338,7 +338,7 @@ export function BanManagementPanel() {
                         </td>
                         <td className="p-3">
                           <span className="text-white/80 text-sm">
-                            {ban.associated_username || 'Unknown'}
+                            {ban.associated_username || "Unknown"}
                           </span>
                         </td>
                         <td className="p-3">
@@ -359,7 +359,7 @@ export function BanManagementPanel() {
                         </td>
                         <td className="p-3">
                           <button
-                            onClick={() => handleUnban('ip', ban.ip_address, ban.ip_address)}
+                            onClick={() => handleUnban("ip", ban.ip_address, ban.ip_address)}
                             className="bg-green-500/80 hover:bg-green-600/90 text-white px-3 py-1 rounded-lg text-xs transition-all duration-200"
                           >
                             Unban
@@ -374,7 +374,7 @@ export function BanManagementPanel() {
           )}
 
           {/* Ban Logs Tab */}
-          {activeTab === 'logs' && (
+          {activeTab === "logs" && (
             <div className="bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
               <div className="max-h-96 overflow-y-auto custom-scrollbar">
                 <table className="w-full">
@@ -393,17 +393,17 @@ export function BanManagementPanel() {
                         <td className="p-3">
                           <span
                             className={`px-2 py-1 rounded text-xs ${
-                              log.action.includes('ban') && !log.action.includes('unban')
-                                ? 'bg-red-500/20 text-red-300'
-                                : 'bg-green-500/20 text-green-300'
+                              log.action.includes("ban") && !log.action.includes("unban")
+                                ? "bg-red-500/20 text-red-300"
+                                : "bg-green-500/20 text-green-300"
                             }`}
                           >
-                            {log.action.replace('_', ' ').toUpperCase()}
+                            {log.action.replace("_", " ").toUpperCase()}
                           </span>
                         </td>
                         <td className="p-3">
                           <span className="text-white/80 text-sm">
-                            {log.target_username || log.target_ip || 'Unknown'}
+                            {log.target_username || log.target_ip || "Unknown"}
                           </span>
                         </td>
                         <td className="p-3">
@@ -434,7 +434,7 @@ export function BanManagementPanel() {
             <div className="flex items-center gap-3 mb-4">
               <AlertTriangle className="w-6 h-6 text-red-400" />
               <h3 className="text-lg text-white font-medium">
-                Ban {banTarget.type === 'user' ? 'User' : 'IP Address'}
+                Ban {banTarget.type === "user" ? "User" : "IP Address"}
               </h3>
             </div>
 
@@ -442,7 +442,7 @@ export function BanManagementPanel() {
               <p className="text-white/80 text-sm mb-2">
                 Target: <strong>{banTarget.name}</strong>
               </p>
-              {banTarget.type === 'user' && (
+              {banTarget.type === "user" && (
                 <p className="text-white/60 text-xs">
                   Note: Banning a user will also automatically ban all IP addresses associated with
                   their account.
@@ -499,7 +499,7 @@ export function BanManagementPanel() {
                 disabled={!banReason.trim()}
                 className="flex-1 bg-red-500/80 hover:bg-red-600/90 text-white py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Ban {banTarget.type === 'user' ? 'User' : 'IP'}
+                Ban {banTarget.type === "user" ? "User" : "IP"}
               </button>
             </div>
           </div>

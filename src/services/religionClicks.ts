@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase";
 
 export interface ReligionClickData {
   religion: string;
@@ -9,12 +9,12 @@ export class ReligionClickService {
   // Get click counts for all religions
   static async getAllClickCounts(): Promise<ReligionClickData[]> {
     const { data, error } = await supabase
-      .from('religion_clicks')
-      .select('religion, click_count')
-      .order('religion');
+      .from("religion_clicks")
+      .select("religion, click_count")
+      .order("religion");
 
     if (error) {
-      console.error('Error fetching click counts:', error);
+      console.error("Error fetching click counts:", error);
       return [];
     }
 
@@ -26,13 +26,13 @@ export class ReligionClickService {
     try {
       // Try to increment existing record, or insert if it doesn't exist
       const { data: existingData, error: fetchError } = await supabase
-        .from('religion_clicks')
-        .select('*')
-        .eq('religion', religion)
+        .from("religion_clicks")
+        .select("*")
+        .eq("religion", religion)
         .maybeSingle();
 
       if (fetchError) {
-        console.error('Error fetching current count:', fetchError);
+        console.error("Error fetching current count:", fetchError);
         return false;
       }
 
@@ -40,29 +40,29 @@ export class ReligionClickService {
         // Update existing record
         const newCount = existingData.click_count + 1;
         const { error: updateError } = await supabase
-          .from('religion_clicks')
+          .from("religion_clicks")
           .update({ click_count: newCount })
-          .eq('religion', religion);
+          .eq("religion", religion);
 
         if (updateError) {
-          console.error('Error updating click count:', updateError);
+          console.error("Error updating click count:", updateError);
           return false;
         }
       } else {
         // Insert new record
         const { error: insertError } = await supabase
-          .from('religion_clicks')
+          .from("religion_clicks")
           .insert({ religion, click_count: 1 });
 
         if (insertError) {
-          console.error('Error inserting click count:', insertError);
+          console.error("Error inserting click count:", insertError);
           return false;
         }
       }
 
       return true;
     } catch (error) {
-      console.error('Error in incrementClickCount:', error);
+      console.error("Error in incrementClickCount:", error);
       return false;
     }
   }
@@ -70,13 +70,13 @@ export class ReligionClickService {
   // Get click count for a specific religion
   static async getClickCount(religion: string): Promise<number> {
     const { data, error } = await supabase
-      .from('religion_clicks')
-      .select('click_count')
-      .eq('religion', religion)
+      .from("religion_clicks")
+      .select("click_count")
+      .eq("religion", religion)
       .maybeSingle();
 
     if (error) {
-      console.error('Error fetching click count:', error);
+      console.error("Error fetching click count:", error);
       return 0;
     }
 
@@ -85,18 +85,18 @@ export class ReligionClickService {
 
   // Initialize click counts for all religions if they don't exist
   static async initializeClickCounts(): Promise<void> {
-    const religions = ['Christianity', 'Judaism', 'Islam', 'Hinduism', 'Nga', 'YZY'];
+    const religions = ["Christianity", "Judaism", "Islam", "Hinduism", "Nga", "YZY"];
 
     for (const religion of religions) {
       try {
         const { data: existing } = await supabase
-          .from('religion_clicks')
-          .select('id')
-          .eq('religion', religion)
+          .from("religion_clicks")
+          .select("id")
+          .eq("religion", religion)
           .maybeSingle();
 
         if (!existing) {
-          await supabase.from('religion_clicks').insert({ religion, click_count: 0 });
+          await supabase.from("religion_clicks").insert({ religion, click_count: 0 });
         }
       } catch (error) {
         console.error(`Error initializing ${religion} click count:`, error);

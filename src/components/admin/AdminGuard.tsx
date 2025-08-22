@@ -1,5 +1,5 @@
-import React from 'react';
-import { useAdmin } from '../../contexts/AdminContext';
+import React from "react";
+import { useAdmin } from "../../contexts/AdminContext";
 
 interface AdminGuardProps {
   children: React.ReactNode;

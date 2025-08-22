@@ -1,5 +1,5 @@
-import { AdminAnalytics } from './adminAnalytics';
-import { supabase } from '../lib/supabase';
+import { AdminAnalytics } from "./adminAnalytics";
+import { supabase } from "../lib/supabase";
 
 export class SessionTracking {
   private static sessionToken: string | null = null;
@@ -21,7 +21,7 @@ export class SessionTracking {
     this.isTracking = true;
 
     // Track initial page visit
-    this.trackPageVisit('/', userId);
+    this.trackPageVisit("/", userId);
 
     // Track user session if authenticated
     if (userId) {
@@ -47,10 +47,10 @@ export class SessionTracking {
 
   // Get or create visitor ID
   private static getOrCreateVisitorId(): string {
-    let visitorId = localStorage.getItem('religion_visitor_id');
+    let visitorId = localStorage.getItem("religion_visitor_id");
     if (!visitorId) {
       visitorId = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('religion_visitor_id', visitorId);
+      localStorage.setItem("religion_visitor_id", visitorId);
     }
     return visitorId;
   }
@@ -61,26 +61,27 @@ export class SessionTracking {
 
     try {
       const locationData = await this.getLocationData();
-      
+
       // Insert or update user session with IP and location data
-      const { error } = await supabase
-        .from('user_sessions')
-        .upsert({
+      const { error } = await supabase.from("user_sessions").upsert(
+        {
           user_id: userId,
           session_token: this.sessionToken,
-          ip_address: locationData.ip === 'unknown' ? null : locationData.ip,
+          ip_address: locationData.ip === "unknown" ? null : locationData.ip,
           location_data: locationData,
           is_active: true,
           last_activity: new Date().toISOString(),
-        }, {
-          onConflict: 'session_token'
-        });
+        },
+        {
+          onConflict: "session_token",
+        }
+      );
 
       if (error) {
-        console.error('Error tracking user session:', error);
+        console.error("Error tracking user session:", error);
       }
     } catch (error) {
-      console.error('Error tracking user session:', error);
+      console.error("Error tracking user session:", error);
     }
   }
 
@@ -92,7 +93,7 @@ export class SessionTracking {
       const locationData = await this.getLocationData();
       await AdminAnalytics.trackSiteVisit(this.visitorId, userId, pagePath, locationData);
     } catch (error) {
-      console.error('Error tracking page visit:', error);
+      console.error("Error tracking page visit:", error);
     }
   }
 
@@ -102,50 +103,50 @@ export class SessionTracking {
       // Check if Supabase environment variables are available
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || supabaseUrl.trim() === '' || supabaseKey.trim() === '') {
-        console.warn('Supabase environment variables not configured');
-        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.trim() === "" || supabaseKey.trim() === "") {
+        console.warn("Supabase environment variables not configured");
+        return { ip: "unknown", country: null, city: null, region: null, timezone: null };
       }
 
       // Validate URL format
       try {
         new URL(`${supabaseUrl}/functions/v1/get-location-data`);
       } catch (urlError) {
-        console.warn('Invalid Supabase URL format:', supabaseUrl);
-        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+        console.warn("Invalid Supabase URL format:", supabaseUrl);
+        return { ip: "unknown", country: null, city: null, region: null, timezone: null };
       }
 
       // Use Supabase Edge Function to get location data
       const apiUrl = `${supabaseUrl}/functions/v1/get-location-data`;
       const headers = {
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
       };
-      
-      const response = await fetch(apiUrl, { 
+
+      const response = await fetch(apiUrl, {
         headers,
-        method: 'GET',
-        signal: AbortSignal.timeout(10000) // 10 second timeout
+        method: "GET",
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         return data;
       } else {
-        console.warn('Edge function returned non-OK status:', response.status);
-        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+        console.warn("Edge function returned non-OK status:", response.status);
+        return { ip: "unknown", country: null, city: null, region: null, timezone: null };
       }
     } catch (error) {
-      console.warn('Error getting location data, using fallback:', error);
-      return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+      console.warn("Error getting location data, using fallback:", error);
+      return { ip: "unknown", country: null, city: null, region: null, timezone: null };
     }
   }
 
   // Setup activity tracking
   private static setupActivityTracking(): void {
     // Track mouse movement, clicks, and keyboard activity
-    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    const activityEvents = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
 
     let lastActivity = Date.now();
     const updateActivity = () => {
@@ -168,14 +169,14 @@ export class SessionTracking {
 
   // Setup page visibility tracking
   private static setupPageVisibilityTracking(): void {
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
         this.updateSessionActivity();
       }
     });
 
     // Track when user leaves the page
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       this.endSession();
     });
   }
@@ -185,15 +186,15 @@ export class SessionTracking {
     if (this.sessionToken && this.isTracking) {
       // Update last activity timestamp
       supabase
-        .from('user_sessions')
-        .update({ 
+        .from("user_sessions")
+        .update({
           last_activity: new Date().toISOString(),
-          is_active: true 
+          is_active: true,
         })
-        .eq('session_token', this.sessionToken)
+        .eq("session_token", this.sessionToken)
         .then(({ error }) => {
           if (error) {
-            console.error('Error updating session activity:', error);
+            console.error("Error updating session activity:", error);
           }
         });
     }
@@ -204,16 +205,16 @@ export class SessionTracking {
     if (this.sessionToken) {
       // Mark session as inactive
       supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({ is_active: false })
-        .eq('session_token', this.sessionToken)
+        .eq("session_token", this.sessionToken)
         .then(({ error }) => {
           if (error) {
-            console.error('Error ending session:', error);
+            console.error("Error ending session:", error);
           }
         });
     }
-    
+
     this.isTracking = false;
   }
 
@@ -224,7 +225,7 @@ export class SessionTracking {
     sessionId: string,
     religion: string,
     messageLength: number,
-    responseTimeMs?: number,
+    responseTimeMs?: number
   ): Promise<void> {
     try {
       await AdminAnalytics.trackMessage(
@@ -233,10 +234,10 @@ export class SessionTracking {
         sessionId,
         religion,
         messageLength,
-        responseTimeMs,
+        responseTimeMs
       );
     } catch (error) {
-      console.error('Error tracking message:', error);
+      console.error("Error tracking message:", error);
     }
   }
 

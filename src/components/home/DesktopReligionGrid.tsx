@@ -1,6 +1,6 @@
-import React from 'react';
-import { MAIN_RELIGIONS } from '../../config/religions';
-import { ReligionCard } from './ReligionCard';
+import React from "react";
+import { MAIN_RELIGIONS } from "../../config/religions";
+import { ReligionCard } from "./ReligionCard";
 
 interface DesktopReligionGridProps {
   onReligionClick: (religion: string) => void;
@@ -26,9 +26,12 @@ export function DesktopReligionGrid({
   return (
     <div
       className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${
-        (isTransitioning && !isTransitioningFromChat) || showRequestedReligions || showConfessions || showTools
-          ? 'opacity-0 scale-75 translate-y-8 pointer-events-none' 
-          : 'opacity-100 scale-100 translate-y-0'
+        (isTransitioning && !isTransitioningFromChat) ||
+        showRequestedReligions ||
+        showConfessions ||
+        showTools
+          ? "opacity-0 scale-75 translate-y-8 pointer-events-none"
+          : "opacity-100 scale-100 translate-y-0"
       }`}
     >
       <div className="flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 2xl:gap-12 px-4">

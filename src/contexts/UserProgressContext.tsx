@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
-import { supabase, UserProgress } from '../lib/supabase';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
+import { supabase, UserProgress } from "../lib/supabase";
 
 interface UserProgressContextType {
   progress: UserProgress | null;
   loading: boolean;
-  updateProgress: (updates: Partial<UserProgress['progress_data']>) => Promise<void>;
+  updateProgress: (updates: Partial<UserProgress["progress_data"]>) => Promise<void>;
   addAchievement: (achievement: string) => Promise<void>;
   incrementExperience: (amount: number) => Promise<void>;
   updateStreak: () => Promise<void>;
@@ -39,9 +39,9 @@ export function UserProgressProvider({ children }: { children: React.ReactNode }
 
     // Try to get existing progress
     const { data: existingData, error } = await supabase
-      .from('user_progress')
-      .select('*')
-      .eq('user_id', user.id)
+      .from("user_progress")
+      .select("*")
+      .eq("user_id", user.id)
       .maybeSingle();
 
     // If no progress exists, create initial progress
@@ -59,13 +59,13 @@ export function UserProgressProvider({ children }: { children: React.ReactNode }
       };
 
       const { data: newData, error: createError } = await supabase
-        .from('user_progress')
+        .from("user_progress")
         .insert(initialProgress)
         .select()
         .single();
 
       if (createError) {
-        console.error('Error creating user progress:', createError);
+        console.error("Error creating user progress:", createError);
       } else {
         setProgress(newData);
       }
@@ -76,7 +76,7 @@ export function UserProgressProvider({ children }: { children: React.ReactNode }
     setLoading(false);
   };
 
-  const updateProgress = async (updates: Partial<UserProgress['progress_data']>) => {
+  const updateProgress = async (updates: Partial<UserProgress["progress_data"]>) => {
     if (!user || !progress) return;
 
     const updatedData = {
@@ -86,14 +86,14 @@ export function UserProgressProvider({ children }: { children: React.ReactNode }
     };
 
     const { data, error } = await supabase
-      .from('user_progress')
+      .from("user_progress")
       .update({ progress_data: updatedData })
-      .eq('user_id', user.id)
+      .eq("user_id", user.id)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating progress:', error);
+      console.error("Error updating progress:", error);
     } else {
       setProgress(data);
     }
@@ -167,7 +167,7 @@ export function UserProgressProvider({ children }: { children: React.ReactNode }
 export function useUserProgress() {
   const context = useContext(UserProgressContext);
   if (context === undefined) {
-    throw new Error('useUserProgress must be used within a UserProgressProvider');
+    throw new Error("useUserProgress must be used within a UserProgressProvider");
   }
   return context;
 }

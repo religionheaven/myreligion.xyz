@@ -1,9 +1,9 @@
-import React from 'react';
-import { MessageBubble } from './MessageBubble';
+import React from "react";
+import { MessageBubble } from "./MessageBubble";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -21,7 +21,7 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
 
   const scrollToBottom = () => {
     if (shouldAutoScroll) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   };
 
@@ -51,11 +51,10 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
     >
       {messages.length === 0 && (
         <div className="text-center text-white/60 mt-20">
-          <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            {religion.toLowerCase() === 'nga' 
-               ? 'Welcome to the Nigga religion. Start fucking talkin.'
-               : `Welcome to your ${religion} chat. Ask me anything!`
-             }
+          <p style={{ fontFamily: "Poiret One, sans-serif" }}>
+            {religion.toLowerCase() === "nga"
+              ? "Welcome to the Nigga religion. Start fucking talkin."
+              : `Welcome to your ${religion} chat. Ask me anything!`}
           </p>
         </div>
       )}
@@ -70,15 +69,15 @@ export function ChatMessages({ messages, isLoading, religion }: ChatMessagesProp
             <div className="flex space-x-1">
               <div
                 className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDuration: '1.4s' }}
+                style={{ animationDuration: "1.4s" }}
               ></div>
               <div
                 className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.2s', animationDuration: '1.4s' }}
+                style={{ animationDelay: "0.2s", animationDuration: "1.4s" }}
               ></div>
               <div
                 className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.4s', animationDuration: '1.4s' }}
+                style={{ animationDelay: "0.4s", animationDuration: "1.4s" }}
               ></div>
             </div>
           </div>

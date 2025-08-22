@@ -1,10 +1,10 @@
-import React from 'react';
-import { ChatMessages } from './ChatMessages';
-import { ChatInput } from './ChatInput';
+import React from "react";
+import { ChatMessages } from "./ChatMessages";
+import { ChatInput } from "./ChatInput";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }

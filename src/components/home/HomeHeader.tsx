@@ -1,6 +1,6 @@
-import React from 'react';
-import { LogOut, User } from 'lucide-react';
-import { UserProfile } from '../../services/userProfile';
+import React from "react";
+import { LogOut, User } from "lucide-react";
+import { UserProfile } from "../../services/userProfile";
 
 interface HomeHeaderProps {
   onSignOut: () => void;
@@ -58,7 +58,7 @@ export function HomeHeader({ onSignOut, onShowProfile, userProfile }: HomeHeader
       <div className="relative z-10 flex justify-center mt-2">
         <p
           className="text-white/60 text-xs md:text-sm"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           powered by heaven
         </p>

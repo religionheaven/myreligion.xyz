@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Users, MapPin, Clock, Globe } from 'lucide-react';
-import { AdminAnalytics, LiveUser } from '../../services/adminAnalytics';
+import React, { useState, useEffect } from "react";
+import { Users, MapPin, Clock, Globe } from "lucide-react";
+import { AdminAnalytics, LiveUser } from "../../services/adminAnalytics";
 
-import { Globe2 } from 'lucide-react';
+import { Globe2 } from "lucide-react";
 
 export function LiveUsersPanel() {
   const [liveUsers, setLiveUsers] = useState<LiveUser[]>([]);
@@ -27,8 +27,8 @@ export function LiveUsersPanel() {
     const diff = Date.now() - new Date(timestamp).getTime();
     const minutes = Math.floor(diff / 60000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes === 1) return '1 minute ago';
+    if (minutes < 1) return "Just now";
+    if (minutes === 1) return "1 minute ago";
     return `${minutes} minutes ago`;
   };
 
@@ -37,7 +37,7 @@ export function LiveUsersPanel() {
       <div className="flex items-center justify-between">
         <h3
           className="text-lg text-white font-medium"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Live Users ({liveUsers.length})
         </h3>

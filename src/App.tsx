@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff } from 'lucide-react';
-import { AuthProvider } from './contexts/AuthContext';
-import { UserProgressProvider } from './contexts/UserProgressContext';
-import { AdminProvider } from './contexts/AdminContext';
-import { AuthGuard } from './components/AuthGuard';
-import { AdminGuard } from './components/admin/AdminGuard';
-import { AdminPanel } from './components/admin/AdminPanel';
-import { Home } from './components/Home';
-import { useAuth } from './contexts/AuthContext';
-import { useAdmin } from './contexts/AdminContext';
+import React, { useState } from "react";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { AuthProvider } from "./contexts/AuthContext";
+import { UserProgressProvider } from "./contexts/UserProgressContext";
+import { AdminProvider } from "./contexts/AdminContext";
+import { AuthGuard } from "./components/AuthGuard";
+import { AdminGuard } from "./components/admin/AdminGuard";
+import { AdminPanel } from "./components/admin/AdminPanel";
+import { Home } from "./components/Home";
+import { useAuth } from "./contexts/AuthContext";
+import { useAdmin } from "./contexts/AdminContext";
 
 function AuthForm() {
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ function AuthForm() {
 
     if (isSignUp) {
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
+        alert("Passwords do not match");
         return;
       }
       signUp(formData.username, formData.password).then(({ error }) => {
@@ -51,7 +51,7 @@ function AuthForm() {
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
-    setFormData({ username: '', password: '', confirmPassword: '' });
+    setFormData({ username: "", password: "", confirmPassword: "" });
   };
 
   return (
@@ -61,10 +61,10 @@ function AuthForm() {
         className="absolute inset-0 hidden md:block"
         style={{
           backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+            "url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -72,10 +72,10 @@ function AuthForm() {
       <div
         className="absolute inset-0 block md:hidden"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/llHxOih.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -91,7 +91,7 @@ function AuthForm() {
             />
             <h1
               className="text-3xl text-white mb-2"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               religion
             </h1>
@@ -113,8 +113,8 @@ function AuthForm() {
                     onClick={() => isSignUp && toggleMode()}
                     className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-500 transform hover:scale-105 ${
                       !isSignUp
-                        ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                        ? "bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     Sign In
@@ -124,8 +124,8 @@ function AuthForm() {
                     onClick={() => !isSignUp && toggleMode()}
                     className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-500 transform hover:scale-105 ${
                       isSignUp
-                        ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                        ? "bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     Create Account
@@ -150,7 +150,7 @@ function AuthForm() {
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -202,37 +202,39 @@ function AuthForm() {
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative z-10">{isSignUp ? 'Create Account' : 'Sign In'}</span>
+                  <span className="relative z-10">{isSignUp ? "Create Account" : "Sign In"}</span>
                 </button>
               </form>
 
               {/* Footer */}
               <div className="mt-6 text-center">
                 <p className="text-sm text-white/60">
-                  {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                  {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-white hover:text-white/80 font-medium transition-colors duration-300 underline decoration-white/40 hover:decoration-white/80"
                   >
-                    {isSignUp ? 'Sign in' : 'Create one'}
+                    {isSignUp ? "Sign in" : "Create one"}
                   </button>
                 </p>
               </div>
             </div>
           </div>
-            {/* Testing Notice */}
-            <div className="mt-6 bg-black/50 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-              <div className="text-center">
-                <p className="text-white/90 text-sm font-medium mb-2" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Here for testing? Use "religion" for your username and password!
-                </p>
-                <p className="text-white/70 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  NOTE: In the testing account other users will be able to view your AI messages.
-                </p>
-              </div>
+          {/* Testing Notice */}
+          <div className="mt-6 bg-black/50 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+            <div className="text-center">
+              <p
+                className="text-white/90 text-sm font-medium mb-2"
+                style={{ fontFamily: "Poiret One, sans-serif" }}
+              >
+                Here for testing? Use "religion" for your username and password!
+              </p>
+              <p className="text-white/70 text-xs" style={{ fontFamily: "Poiret One, sans-serif" }}>
+                NOTE: In the testing account other users will be able to view your AI messages.
+              </p>
             </div>
-
+          </div>
         </div>
       </div>
     </div>

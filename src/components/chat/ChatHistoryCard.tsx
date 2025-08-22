@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Trash2, Brain, MessageSquare } from 'lucide-react';
-import { ChatStore, ChatSession } from '../../services/chat/store';
+import React, { useState, useEffect } from "react";
+import { Trash2, Brain, MessageSquare } from "lucide-react";
+import { ChatStore, ChatSession } from "../../services/chat/store";
 
 interface ChatHistoryCardProps {
   session: ChatSession;
@@ -19,7 +19,7 @@ export function ChatHistoryCard({
   onDelete,
   isDeleting,
 }: ChatHistoryCardProps) {
-  const [preview, setPreview] = useState<string>('Loading...');
+  const [preview, setPreview] = useState<string>("Loading...");
   const [stats, setStats] = useState<{
     totalMessages: number;
     importantMessages: number;
@@ -31,20 +31,20 @@ export function ChatHistoryCard({
     const loadPreviewAndStats = async () => {
       try {
         const { session: sessionData, stats: sessionStats } = await ChatStore.getSessionWithStats(
-          session.id,
+          session.id
         );
         setStats(sessionStats);
 
         if (sessionStats.totalMessages === 0) {
-          setPreview('No messages yet');
+          setPreview("No messages yet");
         } else {
           const messages = await ChatStore.getSessionMessages(session.id);
           const lastMessage = messages[messages.length - 1];
           const truncated = lastMessage.content.substring(0, 80);
-          setPreview(truncated + (lastMessage.content.length > 80 ? '...' : ''));
+          setPreview(truncated + (lastMessage.content.length > 80 ? "..." : ""));
         }
       } catch (error) {
-        setPreview('Error loading preview');
+        setPreview("Error loading preview");
       }
     };
 
@@ -55,7 +55,7 @@ export function ChatHistoryCard({
     <div
       onClick={onClick}
       className={`bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/15 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden ${
-        isDeleting ? 'opacity-50 pointer-events-none' : ''
+        isDeleting ? "opacity-50 pointer-events-none" : ""
       }`}
     >
       {/* Delete button */}
@@ -75,7 +75,7 @@ export function ChatHistoryCard({
       <div className="relative z-10">
         <div
           className="text-white/80 text-xs mb-2"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           {formatDate(session.updated_at)}
         </div>

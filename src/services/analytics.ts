@@ -21,7 +21,7 @@ interface AnalyticsData {
 }
 
 export class Analytics {
-  private static readonly ANALYTICS_KEY = 'religion_analytics';
+  private static readonly ANALYTICS_KEY = "religion_analytics";
   private static readonly MAX_EVENTS = 1000;
 
   // Track an event
@@ -41,7 +41,7 @@ export class Analytics {
       const trimmedEvents = events.slice(-this.MAX_EVENTS);
       localStorage.setItem(this.ANALYTICS_KEY, JSON.stringify(trimmedEvents));
     } catch (error) {
-      console.error('Error tracking analytics:', error);
+      console.error("Error tracking analytics:", error);
     }
   }
 
@@ -76,12 +76,12 @@ export class Analytics {
           const stats = religionStats[event.religion];
           stats.lastUsed = Math.max(stats.lastUsed, event.timestamp);
 
-          if (event.event === 'session_started' && event.sessionId) {
+          if (event.event === "session_started" && event.sessionId) {
             sessionIds.add(event.sessionId);
             stats.sessions++;
           }
 
-          if (event.event === 'message_sent') {
+          if (event.event === "message_sent") {
             stats.messages++;
           }
         }
@@ -117,13 +117,13 @@ export class Analytics {
 
       return {
         totalSessions: sessionIds.size,
-        totalMessages: recentEvents.filter((e) => e.event === 'message_sent').length,
+        totalMessages: recentEvents.filter((e) => e.event === "message_sent").length,
         religionStats,
         dailyUsage,
         averageSessionLength,
       };
     } catch (error) {
-      console.error('Error getting analytics:', error);
+      console.error("Error getting analytics:", error);
       return {
         totalSessions: 0,
         totalMessages: 0,
@@ -158,7 +158,7 @@ export class Analytics {
       const parsed = JSON.parse(stored);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.error('Error parsing analytics:', error);
+      console.error("Error parsing analytics:", error);
       return [];
     }
   }

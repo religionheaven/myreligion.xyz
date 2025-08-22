@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
-import { supabase } from '../lib/supabase';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
+import { supabase } from "../lib/supabase";
 
 interface AdminUser {
   id: string;
   user_id: string;
-  role: 'admin' | 'super_admin';
+  role: "admin" | "super_admin";
   permissions: {
     manage_users?: boolean;
     view_analytics?: boolean;
@@ -20,8 +20,8 @@ interface AdminContextType {
   isAdmin: boolean;
   adminUser: AdminUser | null;
   loading: boolean;
-  permissions: AdminUser['permissions'];
-  hasPermission: (permission: keyof AdminUser['permissions']) => boolean;
+  permissions: AdminUser["permissions"];
+  hasPermission: (permission: keyof AdminUser["permissions"]) => boolean;
   refreshAdminStatus: () => Promise<void>;
 }
 
@@ -45,14 +45,14 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
+        .from("admin_users")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error checking admin status:', error);
+      if (error && error.code !== "PGRST116") {
+        console.error("Error checking admin status:", error);
         setIsAdmin(false);
         setAdminUser(null);
       } else if (data) {
@@ -63,7 +63,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         setAdminUser(null);
       }
     } catch (error) {
-      console.error('Error in admin check:', error);
+      console.error("Error in admin check:", error);
       setIsAdmin(false);
       setAdminUser(null);
     } finally {
@@ -83,7 +83,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user]);
 
-  const hasPermission = (permission: keyof AdminUser['permissions']): boolean => {
+  const hasPermission = (permission: keyof AdminUser["permissions"]): boolean => {
     return adminUser?.permissions?.[permission] === true;
   };
 
@@ -106,7 +106,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 export function useAdmin() {
   const context = useContext(AdminContext);
   if (context === undefined) {
-    throw new Error('useAdmin must be used within an AdminProvider');
+    throw new Error("useAdmin must be used within an AdminProvider");
   }
   return context;
 }

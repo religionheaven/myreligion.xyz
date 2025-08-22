@@ -1,8 +1,8 @@
-import { ChatMessage } from '../../lib/supabase';
+import { ChatMessage } from "../../lib/supabase";
 
 export interface ContextMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
   importance_score: number;
@@ -30,7 +30,7 @@ export class MemoryManager {
    */
   static getOptimalContext(
     messages: ChatMessage[],
-    config: MemoryConfig = MemoryManager.DEFAULT_CONFIG,
+    config: MemoryConfig = MemoryManager.DEFAULT_CONFIG
   ): ContextMessage[] {
     if (messages.length === 0) return [];
 
@@ -58,7 +58,7 @@ export class MemoryManager {
    */
   private static selectSmartContext(
     messages: ContextMessage[],
-    config: MemoryConfig,
+    config: MemoryConfig
   ): ContextMessage[] {
     // Get recent messages (always include for conversation flow)
     const recentMessages = messages.slice(-config.recentMessages);
@@ -80,7 +80,7 @@ export class MemoryManager {
 
     // Combine and sort chronologically
     const selectedMessages = [...importantEarlier, ...recentMessages].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
     );
 
     // Ensure we don't exceed token limits
@@ -95,7 +95,7 @@ export class MemoryManager {
       message.importance_score >= 3 || // High importance score
       message.islamic_content || // Contains religious content
       message.content.length > 100 || // Long message
-      message.role === 'assistant' // AI responses are often important
+      message.role === "assistant" // AI responses are often important
     );
   }
 
@@ -104,7 +104,7 @@ export class MemoryManager {
    */
   private static enforceTokenLimits(
     messages: ContextMessage[],
-    maxTokens: number,
+    maxTokens: number
   ): ContextMessage[] {
     let totalTokens = messages.reduce((sum, msg) => sum + msg.content.length / 4, 0);
 
@@ -146,9 +146,9 @@ export class MemoryManager {
   static buildMessageHistory(
     messages: ChatMessage[],
     systemPrompt: string,
-    config?: MemoryConfig,
+    config?: MemoryConfig
   ): Array<{ role: string; content: string }> {
-    const history = [{ role: 'system', content: systemPrompt }];
+    const history = [{ role: "system", content: systemPrompt }];
 
     const contextMessages = MemoryManager.getOptimalContext(messages, config);
 

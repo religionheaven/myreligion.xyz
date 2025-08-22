@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { MessageSquare, MapPin, Clock, AlertTriangle, TrendingUp } from 'lucide-react';
-import { AdminAnalytics, MessageAnalytics } from '../../services/adminAnalytics';
+import React, { useState, useEffect } from "react";
+import { MessageSquare, MapPin, Clock, AlertTriangle, TrendingUp } from "lucide-react";
+import { AdminAnalytics, MessageAnalytics } from "../../services/adminAnalytics";
 
 export function MessageMonitorPanel() {
   const [messages, setMessages] = useState<MessageAnalytics[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'sensitive' | 'recent'>('all');
+  const [filter, setFilter] = useState<"all" | "sensitive" | "recent">("all");
 
   useEffect(() => {
     loadMessages();
@@ -23,8 +23,8 @@ export function MessageMonitorPanel() {
   };
 
   const filteredMessages = messages.filter((message) => {
-    if (filter === 'sensitive') return message.contains_sensitive;
-    if (filter === 'recent') return Date.now() - new Date(message.created_at).getTime() < 3600000; // Last hour
+    if (filter === "sensitive") return message.contains_sensitive;
+    if (filter === "recent") return Date.now() - new Date(message.created_at).getTime() < 3600000; // Last hour
     return true;
   });
 
@@ -33,21 +33,21 @@ export function MessageMonitorPanel() {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     return `${hours}h ago`;
   };
 
   const getSentimentColor = (score: number) => {
-    if (score > 0.3) return 'text-green-400';
-    if (score < -0.3) return 'text-red-400';
-    return 'text-yellow-400';
+    if (score > 0.3) return "text-green-400";
+    if (score < -0.3) return "text-red-400";
+    return "text-yellow-400";
   };
 
   const getSentimentLabel = (score: number) => {
-    if (score > 0.3) return 'Positive';
-    if (score < -0.3) return 'Negative';
-    return 'Neutral';
+    if (score > 0.3) return "Positive";
+    if (score < -0.3) return "Negative";
+    return "Neutral";
   };
 
   return (
@@ -55,7 +55,7 @@ export function MessageMonitorPanel() {
       <div className="flex items-center justify-between">
         <h3
           className="text-lg text-white font-medium"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Message Monitor ({filteredMessages.length})
         </h3>
@@ -127,7 +127,7 @@ export function MessageMonitorPanel() {
                 {Math.round(
                   messages.reduce((sum, m) => sum + (m.response_time_ms || 0), 0) /
                     messages.length /
-                    1000,
+                    1000
                 ) || 0}
                 s
               </div>
@@ -178,7 +178,7 @@ export function MessageMonitorPanel() {
                         <MapPin className="w-3 h-3" />
                         <span>
                           {message.location_data.city && `${message.location_data.city}, `}
-                          {message.location_data.country || 'Unknown'}
+                          {message.location_data.country || "Unknown"}
                         </span>
                       </div>
                     </td>

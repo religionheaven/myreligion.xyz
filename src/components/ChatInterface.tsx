@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { ChatHeader } from './chat/ChatHeader';
-import { ChatControls } from './chat/ChatControls';
-import { ChatHistoryView } from './chat/ChatHistoryView';
-import { ChatView } from './chat/ChatView';
-import { useAuth } from '../contexts/AuthContext';
-import { ChatStore, ChatSession } from '../services/chat/store';
-import { MemoryManager } from '../services/chat/memoryManager';
-import { MessageCache } from '../services/messageCache';
-import { DraftManager } from '../services/draftManager';
-import { ChatExport } from '../services/chatExport';
-import { Analytics } from '../services/analytics';
-import { ExportModal } from './chat/ExportModal';
-import { SessionTracking } from '../services/sessionTracking';
+import React, { useState } from "react";
+import { ChatHeader } from "./chat/ChatHeader";
+import { ChatControls } from "./chat/ChatControls";
+import { ChatHistoryView } from "./chat/ChatHistoryView";
+import { ChatView } from "./chat/ChatView";
+import { useAuth } from "../contexts/AuthContext";
+import { ChatStore, ChatSession } from "../services/chat/store";
+import { MemoryManager } from "../services/chat/memoryManager";
+import { MessageCache } from "../services/messageCache";
+import { DraftManager } from "../services/draftManager";
+import { ChatExport } from "../services/chatExport";
+import { Analytics } from "../services/analytics";
+import { ExportModal } from "./chat/ExportModal";
+import { SessionTracking } from "../services/sessionTracking";
 
 interface ChatInterfaceProps {
   religion: string;
@@ -21,7 +21,7 @@ interface ChatInterfaceProps {
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -35,7 +35,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
@@ -57,7 +57,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         // Find active session for this specific religion
         const activeSession = sessions.find(
           (session) =>
-            session.is_active && session.title?.toLowerCase().includes(religion.toLowerCase()),
+            session.is_active && session.title?.toLowerCase().includes(religion.toLowerCase())
         );
 
         if (activeSession) {
@@ -100,11 +100,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           }
 
           // Track session start
-          Analytics.trackEvent('session_started', religion, activeSession.id);
+          Analytics.trackEvent("session_started", religion, activeSession.id);
         }
       } catch (error) {
-        console.error('Error loading active session:', error);
-        setConnectionError('Failed to load chat history. You can still start a new conversation.');
+        console.error("Error loading active session:", error);
+        setConnectionError("Failed to load chat history. You can still start a new conversation.");
       }
     };
 
@@ -142,7 +142,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // Clear all chat state when user signs out
       setMessages([]);
       setCurrentSessionId(null);
-      setInputValue('');
+      setInputValue("");
       setIsLoading(false);
       setShowHistory(false);
       setChatSessions([]);
@@ -173,7 +173,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
-      role: 'user',
+      role: "user",
       content: inputValue.trim(),
       timestamp: new Date(),
     };
@@ -181,7 +181,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     const currentInput = inputValue;
-    setInputValue('');
+    setInputValue("");
 
     // Clear draft since message is being sent
     if (currentSessionId) {
@@ -194,18 +194,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       if (!sessionId) {
         const newSession = await ChatStore.createSession(
           user.id,
-          `${religion} Chat - ${new Date().toLocaleDateString()}`,
+          `${religion} Chat - ${new Date().toLocaleDateString()}`
         );
         if (!newSession) {
-          throw new Error('Failed to create chat session');
+          throw new Error("Failed to create chat session");
         }
         sessionId = newSession.id;
         setCurrentSessionId(sessionId);
-        Analytics.trackEvent('session_started', religion, sessionId);
+        Analytics.trackEvent("session_started", religion, sessionId);
       }
 
       // Save user message to database
-      const savedUserMessage = await ChatStore.addMessage(sessionId, 'user', currentInput);
+      const savedUserMessage = await ChatStore.addMessage(sessionId, "user", currentInput);
 
       // Track message analytics
       SessionTracking.trackMessage(
@@ -213,7 +213,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         user.id,
         sessionId,
         religion,
-        currentInput.length,
+        currentInput.length
       );
 
       // Add to cache
@@ -221,16 +221,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         sessionId,
         {
           id: userMessage.id,
-          role: 'user',
+          role: "user",
           content: currentInput,
           timestamp: new Date(),
           sessionId,
         },
-        religion,
+        religion
       );
 
       // Track message
-      Analytics.trackEvent('message_sent', religion, sessionId);
+      Analytics.trackEvent("message_sent", religion, sessionId);
 
       // Get all messages for context building
       const allMessages = await ChatStore.getSessionMessages(sessionId);
@@ -239,8 +239,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const aiMessageId = crypto.randomUUID();
       const aiMessage: Message = {
         id: aiMessageId,
-        role: 'assistant',
-        content: '',
+        role: "assistant",
+        content: "",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
@@ -248,22 +248,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // Build optimized message history using memory manager
       const messageHistory = MemoryManager.buildMessageHistory(
         allMessages,
-        '', // System prompt will be added by the edge function
+        "", // System prompt will be added by the edge function
         {
           maxMessages: 6,
           recentMessages: 3,
           importantMessages: 2,
           maxTokens: 1500,
-        },
+        }
       );
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ask-religion`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             message: currentInput,
@@ -271,7 +271,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             messageHistory: messageHistory.slice(1), // Exclude system prompt, edge function will add it
           }),
           signal: controller.signal, // Add abort signal
-        },
+        }
       );
 
       if (!response.ok) {
@@ -281,9 +281,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       // Handle streaming response
       const reader = response.body?.getReader();
-      if (!reader) throw new Error('No response body');
+      if (!reader) throw new Error("No response body");
 
-      let fullResponse = '';
+      let fullResponse = "";
       const decoder = new TextDecoder();
 
       try {
@@ -297,31 +297,31 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           if (done) break;
 
           const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
+          const lines = chunk.split("\n");
 
           for (const line of lines) {
-            if (line.startsWith('data: ')) {
+            if (line.startsWith("data: ")) {
               const data = line.slice(6);
-              if (data === '[DONE]') continue;
+              if (data === "[DONE]") continue;
 
               try {
                 const parsed = JSON.parse(data);
                 const content = parsed.choices?.[0]?.delta?.content;
                 if (content) {
                   fullResponse += content;
-                  
+
                   // Apply Nga-specific text replacement in real-time
                   let displayResponse = fullResponse;
-                  if (religion.toLowerCase() === 'nga') {
-                    displayResponse = fullResponse.replace(/\*g/gi, 'ig');
+                  if (religion.toLowerCase() === "nga") {
+                    displayResponse = fullResponse.replace(/\*g/gi, "ig");
                   }
-                  
+
                   // Add a small delay for smoother typing effect
                   setTimeout(() => {
                     setMessages((prev) =>
                       prev.map((msg) =>
-                        msg.id === aiMessageId ? { ...msg, content: displayResponse } : msg,
-                      ),
+                        msg.id === aiMessageId ? { ...msg, content: displayResponse } : msg
+                      )
                     );
                   }, 50); // 50ms delay for smoother appearance
                 }
@@ -340,86 +340,84 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       if (fullResponse) {
         // Apply Nga-specific text replacement
         let processedResponse = fullResponse;
-        if (religion.toLowerCase() === 'nga') {
-          console.log('Original response:', fullResponse);
-          processedResponse = fullResponse.replace(/\*g/gi, 'ig');
-          console.log('Processed response:', processedResponse);
-          console.log('Replacement made:', fullResponse !== processedResponse);
+        if (religion.toLowerCase() === "nga") {
+          console.log("Original response:", fullResponse);
+          processedResponse = fullResponse.replace(/\*g/gi, "ig");
+          console.log("Processed response:", processedResponse);
+          console.log("Replacement made:", fullResponse !== processedResponse);
         }
 
         // Update the final message with processed response
         setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === aiMessageId ? { ...msg, content: processedResponse } : msg,
-          ),
+          prev.map((msg) => (msg.id === aiMessageId ? { ...msg, content: processedResponse } : msg))
         );
 
-        await ChatStore.addMessage(sessionId, 'assistant', processedResponse);
+        await ChatStore.addMessage(sessionId, "assistant", processedResponse);
 
         // Add to cache
         MessageCache.addMessageToCache(
           sessionId,
           {
             id: aiMessageId,
-            role: 'assistant',
+            role: "assistant",
             content: processedResponse,
             timestamp: new Date(),
             sessionId,
           },
-          religion,
+          religion
         );
 
-        Analytics.trackEvent('ai_response_received', religion, sessionId);
+        Analytics.trackEvent("ai_response_received", religion, sessionId);
       } else {
-        const errorMsg = 'Sorry, I encountered an error while processing your question.';
+        const errorMsg = "Sorry, I encountered an error while processing your question.";
         setMessages((prev) =>
-          prev.map((msg) => (msg.id === aiMessageId ? { ...msg, content: errorMsg } : msg)),
+          prev.map((msg) => (msg.id === aiMessageId ? { ...msg, content: errorMsg } : msg))
         );
-        await ChatStore.addMessage(sessionId, 'assistant', errorMsg);
+        await ChatStore.addMessage(sessionId, "assistant", errorMsg);
       }
 
       // Update session title if this is the first message
       if (messages.length === 0) {
-        const title = `${religion}: ${currentInput.length > 40 ? currentInput.substring(0, 40) + '...' : currentInput}`;
+        const title = `${religion}: ${currentInput.length > 40 ? currentInput.substring(0, 40) + "..." : currentInput}`;
         await ChatStore.updateSessionTitle(sessionId, title);
       }
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         // Request was aborted by user
-        console.log('AI response was stopped by user');
+        console.log("AI response was stopped by user");
         // Remove the empty AI message
-        setMessages((prev) => prev.filter((msg) => msg.content !== ''));
+        setMessages((prev) => prev.filter((msg) => msg.content !== ""));
       } else {
-        console.error('Error calling AI:', error);
+        console.error("Error calling AI:", error);
 
         // Set user-friendly error message
-        const errorMsg = error.message.includes('AI service error')
-          ? 'The AI service is temporarily unavailable. Please try again.'
-          : 'Connection failed. Please check your internet and try again.';
+        const errorMsg = error.message.includes("AI service error")
+          ? "The AI service is temporarily unavailable. Please try again."
+          : "Connection failed. Please check your internet and try again.";
 
         setConnectionError(errorMsg);
         setRetryCount((prev) => prev + 1);
 
         const errorMessage: Message = {
           id: crypto.randomUUID(),
-          role: 'assistant',
+          role: "assistant",
           content: errorMsg,
           timestamp: new Date(),
         };
         setMessages((prev) =>
-          prev.map((msg) => (msg.role === 'assistant' && msg.content === '' ? errorMessage : msg)),
+          prev.map((msg) => (msg.role === "assistant" && msg.content === "" ? errorMessage : msg))
         );
 
         // Save error message to database if we have a session
         if (currentSessionId) {
           try {
-            await ChatStore.addMessage(currentSessionId, 'assistant', errorMessage.content);
+            await ChatStore.addMessage(currentSessionId, "assistant", errorMessage.content);
           } catch (dbError) {
-            console.error('Error saving error message to database:', dbError);
+            console.error("Error saving error message to database:", dbError);
           }
         }
 
-        Analytics.trackEvent('error_occurred', religion, currentSessionId);
+        Analytics.trackEvent("error_occurred", religion, currentSessionId);
       }
     } finally {
       setIsLoading(false);
@@ -431,14 +429,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleRetry = () => {
     if (connectionError && retryCount < 3) {
       // Re-add the last user message to input
-      const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
+      const lastUserMessage = messages.filter((m) => m.role === "user").pop();
       if (lastUserMessage) {
         setInputValue(lastUserMessage.content);
         // Remove the failed messages
         setMessages((prev) =>
           prev.filter(
-            (m) => !(m.role === 'assistant' && m.content.includes('temporarily unavailable')),
-          ),
+            (m) => !(m.role === "assistant" && m.content.includes("temporarily unavailable"))
+          )
         );
       }
       setConnectionError(null);
@@ -463,9 +461,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setCurrentSessionId(null);
     setShowHistory(false);
     setConnectionError(null);
-    setInputValue('');
+    setInputValue("");
 
-    Analytics.trackEvent('new_chat_started', religion);
+    Analytics.trackEvent("new_chat_started", religion);
   };
 
   // Load chat history
@@ -477,14 +475,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const allSessions = await ChatStore.getUserSessions(user.id);
       // Filter sessions for this specific religion
       const religionSessions = allSessions.filter((session) =>
-        session.title?.toLowerCase().includes(religion.toLowerCase()),
+        session.title?.toLowerCase().includes(religion.toLowerCase())
       );
       setChatSessions(religionSessions);
       setShowHistory(true);
-      Analytics.trackEvent('chat_history_viewed', religion);
+      Analytics.trackEvent("chat_history_viewed", religion);
     } catch (error) {
-      console.error('Error loading chat history:', error);
-      setConnectionError('Failed to load chat history. Please try again.');
+      console.error("Error loading chat history:", error);
+      setConnectionError("Failed to load chat history. Please try again.");
     } finally {
       setLoadingHistory(false);
     }
@@ -519,7 +517,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           setInputValue(draft);
         }
 
-        Analytics.trackEvent('session_loaded', religion, sessionId);
+        Analytics.trackEvent("session_loaded", religion, sessionId);
         return;
       }
 
@@ -550,10 +548,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setInputValue(draft);
       }
 
-      Analytics.trackEvent('session_loaded', religion, sessionId);
+      Analytics.trackEvent("session_loaded", religion, sessionId);
     } catch (error) {
-      console.error('Error loading session messages:', error);
-      setConnectionError('Failed to load chat session. Please try again.');
+      console.error("Error loading session messages:", error);
+      setConnectionError("Failed to load chat session. Please try again.");
     } finally {
       setLoadingSession(false);
     }
@@ -572,17 +570,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       MessageCache.cacheMessages(sessionId, [], religion);
       DraftManager.clearDraft(sessionId);
 
-      Analytics.trackEvent('session_deleted', religion, sessionId);
+      Analytics.trackEvent("session_deleted", religion, sessionId);
     } catch (error) {
-      console.error('Error deleting session:', error);
-      setConnectionError('Failed to delete chat session. Please try again.');
+      console.error("Error deleting session:", error);
+      setConnectionError("Failed to delete chat session. Please try again.");
     } finally {
       setDeletingSessionId(null);
     }
   };
 
   // Export chat
-  const handleExportChat = (format: 'text' | 'json' | 'markdown') => {
+  const handleExportChat = (format: "text" | "json" | "markdown") => {
     if (messages.length === 0) return;
 
     const exportMessages = messages.map((msg) => ({
@@ -594,18 +592,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const sessionTitle = chatSessions.find((s) => s.id === currentSessionId)?.title;
 
     switch (format) {
-      case 'text':
+      case "text":
         ChatExport.exportAsText(exportMessages, religion, sessionTitle);
         break;
-      case 'json':
+      case "json":
         ChatExport.exportAsJSON(exportMessages, religion, sessionTitle);
         break;
-      case 'markdown':
+      case "markdown":
         ChatExport.exportAsMarkdown(exportMessages, religion, sessionTitle);
         break;
     }
 
-    Analytics.trackEvent('chat_exported', religion, currentSessionId);
+    Analytics.trackEvent("chat_exported", religion, currentSessionId);
   };
 
   const formatDate = (dateString: string) => {
@@ -614,8 +612,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
+    if (diffDays === 1) return "Today";
+    if (diffDays === 2) return "Yesterday";
     if (diffDays <= 7) return `${diffDays - 1} days ago`;
     return date.toLocaleDateString();
   };
@@ -629,10 +627,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         className="absolute inset-0 hidden md:block"
         style={{
           backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+            "url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -640,10 +638,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div
         className="absolute inset-0 block md:hidden"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/llHxOih.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 

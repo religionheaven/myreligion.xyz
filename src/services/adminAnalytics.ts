@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase";
 
 export interface LiveUser {
   id: string;
@@ -74,19 +74,19 @@ export class AdminAnalytics {
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getLiveUsers`;
       const headers = {
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
       };
 
       const response = await fetch(apiUrl, { headers });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const liveUsers = await response.json();
       return liveUsers;
     } catch (error) {
-      console.error('Error in getLiveUsers:', error);
+      console.error("Error in getLiveUsers:", error);
       return [];
     }
   }
@@ -95,13 +95,13 @@ export class AdminAnalytics {
   static async getSiteVisits(limit: number = 100): Promise<SiteVisit[]> {
     try {
       const { data: visits, error } = await supabase
-        .from('site_visits')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("site_visits")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
-        console.error('Error fetching site visits:', error);
+        console.error("Error fetching site visits:", error);
         return [];
       }
 
@@ -111,7 +111,7 @@ export class AdminAnalytics {
 
       // Deduplicate by visitor_id, keeping the most recent visit
       const visitorMap = new Map();
-      visits.forEach(visit => {
+      visits.forEach((visit) => {
         const existing = visitorMap.get(visit.visitor_id);
         if (!existing || new Date(visit.created_at) > new Date(existing.created_at)) {
           visitorMap.set(visit.visitor_id, visit);
@@ -121,18 +121,18 @@ export class AdminAnalytics {
       const uniqueVisits = Array.from(visitorMap.values());
 
       // Get unique user IDs
-      const userIds = [...new Set(uniqueVisits.map(v => v.user_id).filter(Boolean))];
-      
+      const userIds = [...new Set(uniqueVisits.map((v) => v.user_id).filter(Boolean))];
+
       const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase
-          .from('user_profiles')
-          .select('user_id, username')
-          .in('user_id', userIds);
+          .from("user_profiles")
+          .select("user_id, username")
+          .in("user_id", userIds);
 
         if (!profilesError && profiles) {
-          profiles.forEach(profile => {
+          profiles.forEach((profile) => {
             usernameMap.set(profile.user_id, profile.username);
           });
         }
@@ -142,7 +142,7 @@ export class AdminAnalytics {
         id: visit.id,
         visitor_id: visit.visitor_id,
         user_id: visit.user_id,
-        username: visit.user_id ? (usernameMap.get(visit.user_id) || 'Unknown User') : 'Anonymous',
+        username: visit.user_id ? usernameMap.get(visit.user_id) || "Unknown User" : "Anonymous",
         page_path: visit.page_path,
         referrer: visit.referrer,
         location_data: visit.location_data || {},
@@ -150,7 +150,7 @@ export class AdminAnalytics {
         created_at: visit.created_at,
       }));
     } catch (error) {
-      console.error('Error in getSiteVisits:', error);
+      console.error("Error in getSiteVisits:", error);
       return [];
     }
   }
@@ -159,13 +159,13 @@ export class AdminAnalytics {
   static async getMessageAnalytics(limit: number = 100): Promise<MessageAnalytics[]> {
     try {
       const { data: messages, error } = await supabase
-        .from('message_analytics')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("message_analytics")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
-        console.error('Error fetching message analytics:', error);
+        console.error("Error fetching message analytics:", error);
         return [];
       }
 
@@ -174,18 +174,18 @@ export class AdminAnalytics {
       }
 
       // Get unique user IDs
-      const userIds = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
-      
+      const userIds = [...new Set(messages.map((m) => m.user_id).filter(Boolean))];
+
       const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase
-          .from('user_profiles')
-          .select('user_id, username')
-          .in('user_id', userIds);
+          .from("user_profiles")
+          .select("user_id, username")
+          .in("user_id", userIds);
 
         if (!profilesError && profiles) {
-          profiles.forEach(profile => {
+          profiles.forEach((profile) => {
             usernameMap.set(profile.user_id, profile.username);
           });
         }
@@ -194,7 +194,7 @@ export class AdminAnalytics {
       return messages.map((msg) => ({
         id: msg.id,
         user_id: msg.user_id,
-        username: usernameMap.get(msg.user_id) || 'Unknown User',
+        username: usernameMap.get(msg.user_id) || "Unknown User",
         religion: msg.religion,
         message_length: msg.message_length,
         response_time_ms: msg.response_time_ms,
@@ -204,7 +204,7 @@ export class AdminAnalytics {
         created_at: msg.created_at,
       }));
     } catch (error) {
-      console.error('Error in getMessageAnalytics:', error);
+      console.error("Error in getMessageAnalytics:", error);
       return [];
     }
   }
@@ -213,12 +213,12 @@ export class AdminAnalytics {
   static async getUserRequests(): Promise<UserRequest[]> {
     try {
       const { data: requests, error } = await supabase
-        .from('user_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("user_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Error fetching user requests:', error);
+        console.error("Error fetching user requests:", error);
         return [];
       }
 
@@ -227,18 +227,18 @@ export class AdminAnalytics {
       }
 
       // Get unique user IDs
-      const userIds = [...new Set(requests.map(r => r.user_id).filter(Boolean))];
-      
+      const userIds = [...new Set(requests.map((r) => r.user_id).filter(Boolean))];
+
       const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase
-          .from('user_profiles')
-          .select('user_id, username')
-          .in('user_id', userIds);
+          .from("user_profiles")
+          .select("user_id, username")
+          .in("user_id", userIds);
 
         if (!profilesError && profiles) {
-          profiles.forEach(profile => {
+          profiles.forEach((profile) => {
             usernameMap.set(profile.user_id, profile.username);
           });
         }
@@ -247,13 +247,13 @@ export class AdminAnalytics {
       return requests.map((request) => ({
         id: request.id,
         user_id: request.user_id,
-        username: usernameMap.get(request.user_id) || 'Unknown User',
+        username: usernameMap.get(request.user_id) || "Unknown User",
         request_type: request.request_type,
         request_text: request.request_text,
         created_at: request.created_at,
       }));
     } catch (error) {
-      console.error('Error in getUserRequests:', error);
+      console.error("Error in getUserRequests:", error);
       return [];
     }
   }
@@ -262,10 +262,10 @@ export class AdminAnalytics {
   static async getAdminStats(): Promise<AdminStats> {
     try {
       const [totalUsersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
-        supabase.from('user_profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('site_visits').select('*', { count: 'exact', head: true }),
-        supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
-        supabase.from('user_requests').select('*', { count: 'exact', head: true }),
+        supabase.from("user_profiles").select("*", { count: "exact", head: true }),
+        supabase.from("site_visits").select("*", { count: "exact", head: true }),
+        supabase.from("message_analytics").select("*", { count: "exact", head: true }),
+        supabase.from("user_requests").select("*", { count: "exact", head: true }),
       ]);
 
       // Get total registered users (same as totalUsers for now)
@@ -274,9 +274,9 @@ export class AdminAnalytics {
 
       // Get top countries
       const { data: countryData } = await supabase
-        .from('site_visits')
-        .select('location_data')
-        .not('location_data->country', 'is', null);
+        .from("site_visits")
+        .select("location_data")
+        .not("location_data->country", "is", null);
 
       const countryCount: Record<string, number> = {};
       countryData?.forEach((visit) => {
@@ -292,7 +292,7 @@ export class AdminAnalytics {
         .slice(0, 5);
 
       // Get top religions
-      const { data: religionData } = await supabase.from('message_analytics').select('religion');
+      const { data: religionData } = await supabase.from("message_analytics").select("religion");
 
       const religionCount: Record<string, number> = {};
       religionData?.forEach((msg) => {
@@ -309,9 +309,9 @@ export class AdminAnalytics {
 
       // Get recent activity (last hour)
       const { count: recentActivity } = await supabase
-        .from('site_visits')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
+        .from("site_visits")
+        .select("*", { count: "exact", head: true })
+        .gte("created_at", new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
       return {
         totalUsers: totalUsers,
@@ -324,7 +324,7 @@ export class AdminAnalytics {
         recentActivity: recentActivity || 0,
       };
     } catch (error) {
-      console.error('Error fetching admin stats:', error);
+      console.error("Error fetching admin stats:", error);
       return {
         totalUsers: 0,
         activeUsers: 0,
@@ -342,10 +342,10 @@ export class AdminAnalytics {
   static async trackUserSession(
     userId: string,
     sessionToken: string,
-    locationData?: any,
+    locationData?: any
   ): Promise<void> {
     try {
-      await supabase.from('user_sessions').upsert({
+      await supabase.from("user_sessions").upsert({
         user_id: userId,
         session_token: sessionToken,
         location_data: locationData || {},
@@ -353,7 +353,7 @@ export class AdminAnalytics {
         last_activity: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Error tracking user session:', error);
+      console.error("Error tracking user session:", error);
     }
   }
 
@@ -361,11 +361,11 @@ export class AdminAnalytics {
   static async trackSiteVisit(
     visitorId: string,
     userId?: string,
-    pagePath: string = '/',
-    locationData?: any,
+    pagePath: string = "/",
+    locationData?: any
   ): Promise<void> {
     try {
-      await supabase.from('site_visits').insert({
+      await supabase.from("site_visits").insert({
         visitor_id: visitorId,
         user_id: userId,
         page_path: pagePath,
@@ -373,7 +373,7 @@ export class AdminAnalytics {
         location_data: locationData || {},
       });
     } catch (error) {
-      console.error('Error tracking site visit:', error);
+      console.error("Error tracking site visit:", error);
     }
   }
 
@@ -384,10 +384,10 @@ export class AdminAnalytics {
     sessionId: string,
     religion: string,
     messageLength: number,
-    responseTimeMs?: number,
+    responseTimeMs?: number
   ): Promise<void> {
     try {
-      await supabase.from('message_analytics').insert({
+      await supabase.from("message_analytics").insert({
         message_id: messageId,
         user_id: userId,
         session_id: sessionId,
@@ -398,7 +398,7 @@ export class AdminAnalytics {
         contains_sensitive: false, // Could be enhanced with content analysis
       });
     } catch (error) {
-      console.error('Error tracking message analytics:', error);
+      console.error("Error tracking message analytics:", error);
     }
   }
 
@@ -408,10 +408,10 @@ export class AdminAnalytics {
     action: string,
     targetType?: string,
     targetId?: string,
-    details?: any,
+    details?: any
   ): Promise<void> {
     try {
-      await supabase.from('admin_logs').insert({
+      await supabase.from("admin_logs").insert({
         admin_user_id: adminUserId,
         action,
         target_type: targetType,
@@ -419,7 +419,7 @@ export class AdminAnalytics {
         details: details || {},
       });
     } catch (error) {
-      console.error('Error logging admin action:', error);
+      console.error("Error logging admin action:", error);
     }
   }
 }

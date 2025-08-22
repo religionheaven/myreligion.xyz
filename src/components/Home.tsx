@@ -1,23 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import { useAuth } from '../contexts/AuthContext';
-import { RequestsPage } from './RequestsPage';
-import { ChatInterface } from './ChatInterface';
-import LiveChat from './livechat';
-import { ReligionClickService, ReligionClickData } from '../services/religionClicks';
-import { ProfileModal } from './ProfileModal';
-import { UserProfileService, UserProfile } from '../services/userProfile';
-import { useConfessions } from '../hooks/useConfessions';
-import { ConfessionsModal } from './confessions/ConfessionsModal';
+import { useAuth } from "../contexts/AuthContext";
+import { RequestsPage } from "./RequestsPage";
+import { ChatInterface } from "./ChatInterface";
+import LiveChat from "./livechat";
+import { ReligionClickService, ReligionClickData } from "../services/religionClicks";
+import { ProfileModal } from "./ProfileModal";
+import { UserProfileService, UserProfile } from "../services/userProfile";
+import { useConfessions } from "../hooks/useConfessions";
+import { ConfessionsModal } from "./confessions/ConfessionsModal";
 
 // Import new components
-import { HomeHeader } from './home/HomeHeader';
-import { HomeButtons } from './home/HomeButtons';
-import { ToolsSection } from './home/ToolsSection';
-import { DesktopReligionGrid } from './home/DesktopReligionGrid';
-import { DesktopRequestedReligions } from './home/DesktopRequestedReligions';
-import { MobileReligionCards } from './home/MobileReligionCards';
-import { MobileRequestedReligionCards } from './home/MobileRequestedReligionCards';
+import { HomeHeader } from "./home/HomeHeader";
+import { HomeButtons } from "./home/HomeButtons";
+import { ToolsSection } from "./home/ToolsSection";
+import { DesktopReligionGrid } from "./home/DesktopReligionGrid";
+import { DesktopRequestedReligions } from "./home/DesktopRequestedReligions";
+import { MobileReligionCards } from "./home/MobileReligionCards";
+import { MobileRequestedReligionCards } from "./home/MobileRequestedReligionCards";
 
 interface HomeProps {
   showRequests?: boolean;
@@ -44,7 +44,7 @@ export function Home({
   const [showConfessions, setShowConfessions] = React.useState(false);
   const [showLiveChat, setShowLiveChat] = React.useState(false);
   const [showTools, setShowTools] = React.useState(false);
-  const [selectedTool, setSelectedTool] = React.useState<'avatar' | 'discovery'>('avatar');
+  const [selectedTool, setSelectedTool] = React.useState<"avatar" | "discovery">("avatar");
   const [isTransitioningToChat, setIsTransitioningToChat] = React.useState(false);
   const [isTransitioningFromChat, setIsTransitioningFromChat] = React.useState(false);
   const [lastSelectedReligion, setLastSelectedReligion] = React.useState<string | null>(null);
@@ -92,7 +92,7 @@ export function Home({
       if (profile) {
         setUserProfile(profile);
       } else {
-        const username = user.user_metadata?.username || 'User';
+        const username = user.user_metadata?.username || "User";
         const newProfile = await UserProfileService.initializeUserProfile(user.id, username);
         setUserProfile(newProfile);
       }
@@ -134,7 +134,7 @@ export function Home({
   const handleReligionClick = (religion: string) => {
     // Start transition animation
     setIsTransitioningToChat(true);
-    
+
     ReligionClickService.incrementClickCount(religion).then((success) => {
       if (success) {
         setClickCounts((prev) => {
@@ -161,13 +161,13 @@ export function Home({
   const handleBackFromChat = () => {
     // Start back transition animation
     setIsTransitioningFromChat(true);
-    
+
     // Clear the selected religion after a delay to show the animation
     setTimeout(() => {
       setIsTransitioningFromChat(false);
       setLastSelectedReligion(null);
     }, 600); // Longer delay to show the animation
-    
+
     setSelectedReligion(null);
   };
 
@@ -181,11 +181,10 @@ export function Home({
   };
 
   const getClickCount = (religion: string) => {
-    if (loadingCounts) return '...';
+    if (loadingCounts) return "...";
     const found = clickCounts.find((item) => item.religion === religion);
     return found?.click_count || 0;
   };
-
 
   if (showRequests) {
     return <RequestsPage onBack={onHideRequests || (() => {})} />;
@@ -193,7 +192,6 @@ export function Home({
 
   if (selectedReligion) {
     return (
-      
       <ChatInterface
         religion={selectedReligion}
         onBack={handleBackFromChat}
@@ -209,10 +207,10 @@ export function Home({
         className="absolute inset-0 hidden md:block"
         style={{
           backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+            "url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -220,10 +218,10 @@ export function Home({
       <div
         className="absolute inset-0 block md:hidden"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/llHxOih.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -268,7 +266,7 @@ export function Home({
       {!showRequestedReligions && (
         <div
           className={`transition-opacity duration-300 ${
-            showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            showConfessions ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
           <MobileReligionCards
@@ -319,7 +317,7 @@ export function Home({
             <button
               onClick={() => setShowLiveChat(false)}
               className="mt-4 bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               Close Chat
             </button>
@@ -349,7 +347,7 @@ export function Home({
           <button
             onClick={() => setShowConfessions(false)}
             className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+            style={{ fontFamily: "Poiret One, sans-serif" }}
           >
             Close Confessions
           </button>

@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Users } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import { LiveChatProps, ChatMessage } from './types';
-import { SPAM_DETECTION_CONFIG } from './constants';
-import { getCachedMessages, cacheMessages } from './utils';
-import { detectSpam, detectProhibitedContent, checkRateLimit } from './SpamDetection';
-import { ChatMessage as ChatMessageComponent } from './ChatMessage';
-import { ChatInput } from './ChatInput';
-import { WarningPopup } from './WarningPopup';
-import { BanCheck } from '../../services/banCheck';
+import React, { useState, useEffect, useRef } from "react";
+import { MessageCircle, Users } from "lucide-react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../contexts/AuthContext";
+import { LiveChatProps, ChatMessage } from "./types";
+import { SPAM_DETECTION_CONFIG } from "./constants";
+import { getCachedMessages, cacheMessages } from "./utils";
+import { detectSpam, detectProhibitedContent, checkRateLimit } from "./SpamDetection";
+import { ChatMessage as ChatMessageComponent } from "./ChatMessage";
+import { ChatInput } from "./ChatInput";
+import { WarningPopup } from "./WarningPopup";
+import { BanCheck } from "../../services/banCheck";
 
 const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const { user } = useAuth();
 
   // State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
   const [showLinkWarning, setShowLinkWarning] = useState(false);
-  const [warningMessage, setWarningMessage] = useState('🚫 Links are not allowed in chat');
+  const [warningMessage, setWarningMessage] = useState("🚫 Links are not allowed in chat");
   const [isWarningFadingOut, setIsWarningFadingOut] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -37,8 +37,8 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   useEffect(() => {
     const checkScreen = () => setIsMobile(window.innerWidth < 768);
     checkScreen();
-    window.addEventListener('resize', checkScreen);
-    return () => window.removeEventListener('resize', checkScreen);
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   // Cooldown countdown
@@ -61,26 +61,26 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
 
     if (isInitialLoad) {
       setIsInitialLoad(false);
-      scrollToEnd('auto');
+      scrollToEnd("auto");
     } else if (isAtBottom) {
-      scrollToEnd('smooth');
+      scrollToEnd("smooth");
     }
   }, [messages.length, isInitialLoad, isAtBottom]);
 
   // Load + realtime subscription
   useEffect(() => {
     if (!isVisible) return;
-    
+
     const checkBanStatus = async () => {
       if (!user) return;
-      
+
       try {
         const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
         if (isBanned) {
           return;
         }
       } catch (error) {
-        console.error('Error checking ban status:', error);
+        console.error("Error checking ban status:", error);
       }
     };
 
@@ -102,7 +102,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   useEffect(() => {
     if (!user) {
       setMessages([]);
-      setInputValue('');
+      setInputValue("");
       setIsLoading(false);
       setCooldownTime(0);
       setIsInitialLoad(true);
@@ -118,7 +118,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
 
   const scrollToBottomForced = () => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       setIsAtBottom(true);
     }, 200);
   };
@@ -149,13 +149,13 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
       if (cached.length > 0) setMessages(cached);
 
       const { data, error } = await supabase
-        .from('live_chat_messages')
-        .select('id, user_id, content, created_at')
-        .order('created_at', { ascending: false })
+        .from("live_chat_messages")
+        .select("id, user_id, content, created_at")
+        .order("created_at", { ascending: false })
         .limit(100);
 
       if (error) {
-        console.error('Error loading messages:', error);
+        console.error("Error loading messages:", error);
         return;
       }
 
@@ -166,22 +166,22 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
 
       const uniqueUserIds = [...new Set(data.map((m) => m.user_id))];
       const { data: profiles } = await supabase
-        .from('user_profiles')
-        .select('user_id, username, profile_photo_url')
-        .in('user_id', uniqueUserIds);
+        .from("user_profiles")
+        .select("user_id, username, profile_photo_url")
+        .in("user_id", uniqueUserIds);
 
       const userMap = new Map(
         (profiles || []).map((p) => [
           p.user_id,
           { username: p.username, profile_photo_url: p.profile_photo_url },
-        ]),
+        ])
       );
 
       const formatted: ChatMessage[] = data
         .map((msg) => ({
           id: msg.id,
           user_id: msg.user_id,
-          username: userMap.get(msg.user_id)?.username || 'Anonymous',
+          username: userMap.get(msg.user_id)?.username || "Anonymous",
           profile_photo_url: userMap.get(msg.user_id)?.profile_photo_url || null,
           content: msg.content,
           created_at: msg.created_at,
@@ -191,27 +191,27 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
       setMessages(formatted);
       cacheMessages(formatted);
     } catch (err) {
-      console.error('Error in loadMessages:', err);
+      console.error("Error in loadMessages:", err);
     }
   };
 
   const setupRealtimeSubscription = () => {
     const channel = supabase
-      .channel('live_chat')
+      .channel("live_chat")
       .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'live_chat_messages' },
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "live_chat_messages" },
         async (payload) => {
           const { data: userProfile } = await supabase
-            .from('user_profiles')
-            .select('username, profile_photo_url')
-            .eq('user_id', payload.new.user_id)
+            .from("user_profiles")
+            .select("username, profile_photo_url")
+            .eq("user_id", payload.new.user_id)
             .maybeSingle();
 
           const newMsg: ChatMessage = {
             id: payload.new.id,
             user_id: payload.new.user_id,
-            username: userProfile?.username || 'Anonymous',
+            username: userProfile?.username || "Anonymous",
             profile_photo_url: userProfile?.profile_photo_url || null,
             content: payload.new.content,
             created_at: payload.new.created_at,
@@ -223,7 +223,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
             cacheMessages(trimmed);
             return trimmed;
           });
-        },
+        }
       )
       .subscribe();
 
@@ -235,18 +235,18 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || !user || isLoading || cooldownTime > 0) return;
-    
+
     try {
       const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
       if (isBanned) {
         return;
       }
     } catch (error) {
-      console.error('Error checking ban status:', error);
+      console.error("Error checking ban status:", error);
     }
 
     if (inputValue.length > 200) {
-      alert('Message too long! Maximum 200 characters.');
+      alert("Message too long! Maximum 200 characters.");
       return;
     }
 
@@ -271,23 +271,23 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
 
     setIsLoading(true);
     const messageContent = inputValue.trim();
-    setInputValue('');
+    setInputValue("");
 
     try {
-      const { error } = await supabase.from('live_chat_messages').insert({
+      const { error } = await supabase.from("live_chat_messages").insert({
         user_id: user.id,
         content: messageContent,
       });
 
       if (error) {
-        console.error('Error sending message:', error);
+        console.error("Error sending message:", error);
         setInputValue(messageContent);
 
-        if (error.message.includes('rate limit') || error.message.includes('cooldown')) {
-          alert('Please wait before sending another message.');
+        if (error.message.includes("rate limit") || error.message.includes("cooldown")) {
+          alert("Please wait before sending another message.");
           setCooldownTime(SPAM_DETECTION_CONFIG.RATE_LIMIT_COOLDOWN / 1000);
         } else {
-          alert('Failed to send message. Please try again.');
+          alert("Failed to send message. Please try again.");
         }
       } else {
         updateSpamTracking(messageContent);
@@ -295,9 +295,9 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
         setTimeout(loadMessages, 100);
       }
     } catch (err) {
-      console.error('Error in handleSubmit:', err);
+      console.error("Error in handleSubmit:", err);
       setInputValue(messageContent);
-      alert('Failed to send message. Please try again.');
+      alert("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -308,7 +308,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   if (isMobile) {
     return (
       <div className="w-full max-w-md mx-auto p-6 text-center bg-black/40 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl">
-        <p className="text-white/80 font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <p className="text-white/80 font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
           Live Chat is only available on desktop.
         </p>
       </div>
@@ -325,7 +325,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
               <MessageCircle className="w-5 h-5 text-white" />
               <h3
                 className="text-white font-medium"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
+                style={{ fontFamily: "Poiret One, sans-serif" }}
               >
                 Live Chat
               </h3>
@@ -346,7 +346,7 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
           {messages.length === 0 ? (
             <div className="text-center text-white/60 mt-20">
               <MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              <p style={{ fontFamily: "Poiret One, sans-serif" }}>
                 No messages yet. Start the conversation!
               </p>
             </div>

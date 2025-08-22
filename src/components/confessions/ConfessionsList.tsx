@@ -1,21 +1,24 @@
-import React from 'react';
-import { Confession } from '../../services/confessions';
-import { ConfessionCard } from './ConfessionCard';
+import React from "react";
+import { Confession } from "../../services/confessions";
+import { ConfessionCard } from "./ConfessionCard";
 
 interface ConfessionsListProps {
   confessions: Confession[];
   loading: boolean;
-  onVote: (confessionId: string, voteType: 'upvote' | 'downvote') => void;
+  onVote: (confessionId: string, voteType: "upvote" | "downvote") => void;
   formatTimeAgo: (timestamp: string) => string;
 }
 
-export function ConfessionsList({ confessions, loading, onVote, formatTimeAgo }: ConfessionsListProps) {
+export function ConfessionsList({
+  confessions,
+  loading,
+  onVote,
+  formatTimeAgo,
+}: ConfessionsListProps) {
   if (loading) {
     return (
       <div className="text-center text-white/60 mt-10 md:mt-20">
-        <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-          Loading confessions...
-        </p>
+        <p style={{ fontFamily: "Poiret One, sans-serif" }}>Loading confessions...</p>
       </div>
     );
   }
@@ -23,7 +26,7 @@ export function ConfessionsList({ confessions, loading, onVote, formatTimeAgo }:
   if (confessions.length === 0) {
     return (
       <div className="text-center text-white/60 mt-10 md:mt-20">
-        <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <p style={{ fontFamily: "Poiret One, sans-serif" }}>
           No confessions yet. Be the first to share...
         </p>
       </div>

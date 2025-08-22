@@ -1,5 +1,5 @@
-import React from 'react';
-import { Send, Square } from 'lucide-react';
+import React from "react";
+import { Send, Square } from "lucide-react";
 
 interface ChatInputProps {
   value: string;
@@ -19,7 +19,7 @@ export function ChatInput({
   religion,
 }: ChatInputProps) {
   const getPlaceholder = () => {
-    if (religion.toLowerCase() === 'nga') {
+    if (religion.toLowerCase() === "nga") {
       return "Don't get offended...";
     }
     return `Ask about ${religion}...`;

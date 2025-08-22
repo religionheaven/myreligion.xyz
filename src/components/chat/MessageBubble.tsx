@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import React, { useState } from "react";
+import { Copy, Check } from "lucide-react";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -21,14 +21,14 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy message:', error);
+      console.error("Failed to copy message:", error);
     }
   };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: true,
     });
   };
@@ -52,13 +52,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       if (trimmedLine.match(/^###\s*\*\*.*\*\*.*$/)) {
         const headerMatch = trimmedLine.match(/^###\s*\*\*(.*?)\*\*(.*?)$/);
         if (headerMatch) {
-          const headerText = headerMatch[1].trim() + (headerMatch[2] ? headerMatch[2].trim() : '');
+          const headerText = headerMatch[1].trim() + (headerMatch[2] ? headerMatch[2].trim() : "");
           elements.push(
             <div key={`header-${lineIndex}`} className="mt-4 mb-3">
               <div className="text-white font-bold text-base bg-white/10 rounded-lg px-4 py-2 border-l-4 border-white/40">
                 {headerText}
               </div>
-            </div>,
+            </div>
           );
           return;
         }
@@ -67,26 +67,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       // Handle numbered headers like "1. **text**"
       const numberMatch = trimmedLine.match(/^(\d+)\.\s*\*\*(.*?)\*\*(.*)$/);
       if (numberMatch) {
-        const numberText = `${numberMatch[1]}. ${numberMatch[2].trim()}${numberMatch[3] ? numberMatch[3].trim() : ''}`;
+        const numberText = `${numberMatch[1]}. ${numberMatch[2].trim()}${numberMatch[3] ? numberMatch[3].trim() : ""}`;
         elements.push(
           <div key={`number-header-${lineIndex}`} className="mt-4 mb-3">
             <div className="text-white font-bold text-lg bg-white/15 rounded-lg px-4 py-2 border-l-4 border-blue-400/60">
               {numberText}
             </div>
-          </div>,
+          </div>
         );
         return;
       }
 
       // Handle bullet points starting with -
       if (trimmedLine.match(/^\s*-\s+/)) {
-        const bulletText = trimmedLine.replace(/^\s*-\s+/, '');
+        const bulletText = trimmedLine.replace(/^\s*-\s+/, "");
         const formattedBullet = formatInlineText(bulletText);
         elements.push(
           <div key={`bullet-${lineIndex}`} className="ml-4 mb-2 flex items-start">
             <span className="text-white/60 mr-3 mt-1 text-base">•</span>
             <div className="text-white/90 text-base leading-relaxed flex-1">{formattedBullet}</div>
-          </div>,
+          </div>
         );
         return;
       }
@@ -96,7 +96,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       elements.push(
         <div key={`text-${lineIndex}`} className="mb-2">
           <div className="text-white/90 leading-relaxed text-base">{formattedLine}</div>
-        </div>,
+        </div>
       );
     });
 
@@ -127,7 +127,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             elements.push(
               <span key={`bold-italic-${keyCounter++}`} className="font-bold italic text-gray-900">
                 {italicText}
-              </span>,
+              </span>
             );
           } else {
             // Just bold text
@@ -135,7 +135,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               elements.push(
                 <span key={`bold-${keyCounter++}`} className="font-bold text-gray-900">
                   {italicPart}
-                </span>,
+                </span>
               );
             }
           }
@@ -151,7 +151,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             elements.push(
               <span key={`italic-${keyCounter++}`} className="italic text-white/80">
                 {italicText}
-              </span>,
+              </span>
             );
           } else {
             // Regular text
@@ -167,37 +167,37 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   };
 
   return (
-    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
       <div
-        className={`group relative max-w-lg lg:max-w-4xl ${message.role === 'user' ? 'ml-12' : 'mr-12'}`}
+        className={`group relative max-w-lg lg:max-w-4xl ${message.role === "user" ? "ml-12" : "mr-12"}`}
       >
         {/* Message bubble */}
         <div
           className={`px-5 py-4 rounded-2xl ${
-            message.role === 'user'
-              ? 'bg-white/90 text-black text-base'
-              : 'bg-black/50 text-white border border-white/30 transition-all duration-200 ease-out text-base'
+            message.role === "user"
+              ? "bg-white/90 text-black text-base"
+              : "bg-black/50 text-white border border-white/30 transition-all duration-200 ease-out text-base"
           }`}
         >
-          {message.role === 'assistant' ? (
+          {message.role === "assistant" ? (
             <div className="leading-relaxed space-y-1">
-              <div className="space-y-2">{formatMessageContent(message.content ?? '')}</div>
+              <div className="space-y-2">{formatMessageContent(message.content ?? "")}</div>
             </div>
           ) : (
-            <p className="leading-relaxed">{message.content ?? ''}</p>
+            <p className="leading-relaxed">{message.content ?? ""}</p>
           )}
         </div>
 
         {/* Timestamp and actions */}
         <div
           className={`flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-            message.role === 'user' ? 'justify-end' : 'justify-start'
+            message.role === "user" ? "justify-end" : "justify-start"
           }`}
         >
           <span className="text-white/50 text-xs">{formatTime(message.timestamp)}</span>
 
           {/* Copy button for AI messages */}
-          {message.role === 'assistant' && (
+          {message.role === "assistant" && (
             <button
               onClick={handleCopy}
               className="p-1 rounded hover:bg-white/10 transition-colors duration-200"

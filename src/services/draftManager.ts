@@ -1,5 +1,5 @@
 export class DraftManager {
-  private static readonly DRAFT_KEY_PREFIX = 'religion_draft_';
+  private static readonly DRAFT_KEY_PREFIX = "religion_draft_";
   private static readonly DRAFT_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days
 
   // Save draft for a session
@@ -17,7 +17,7 @@ export class DraftManager {
 
       localStorage.setItem(`${this.DRAFT_KEY_PREFIX}${sessionId}`, JSON.stringify(draft));
     } catch (error) {
-      console.error('Error saving draft:', error);
+      console.error("Error saving draft:", error);
     }
   }
 
@@ -25,20 +25,20 @@ export class DraftManager {
   static getDraft(sessionId: string): string {
     try {
       const stored = localStorage.getItem(`${this.DRAFT_KEY_PREFIX}${sessionId}`);
-      if (!stored) return '';
+      if (!stored) return "";
 
       const draft = JSON.parse(stored);
 
       // Check if draft is expired
       if (Date.now() - draft.timestamp > this.DRAFT_EXPIRY) {
         this.clearDraft(sessionId);
-        return '';
+        return "";
       }
 
-      return draft.content || '';
+      return draft.content || "";
     } catch (error) {
-      console.error('Error reading draft:', error);
-      return '';
+      console.error("Error reading draft:", error);
+      return "";
     }
   }
 
@@ -47,7 +47,7 @@ export class DraftManager {
     try {
       localStorage.removeItem(`${this.DRAFT_KEY_PREFIX}${sessionId}`);
     } catch (error) {
-      console.error('Error clearing draft:', error);
+      console.error("Error clearing draft:", error);
     }
   }
 
@@ -72,7 +72,7 @@ export class DraftManager {
         }
       });
     } catch (error) {
-      console.error('Error cleaning up drafts:', error);
+      console.error("Error cleaning up drafts:", error);
     }
   }
 }

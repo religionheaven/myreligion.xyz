@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { MessageCircle, User, Clock, Tag } from 'lucide-react';
-import { AdminAnalytics, UserRequest } from '../../services/adminAnalytics';
+import React, { useState, useEffect } from "react";
+import { MessageCircle, User, Clock, Tag } from "lucide-react";
+import { AdminAnalytics, UserRequest } from "../../services/adminAnalytics";
 
 export function RequestsPanel() {
   const [requests, setRequests] = useState<UserRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'General' | 'Add Religion'>('all');
+  const [filter, setFilter] = useState<"all" | "General" | "Add Religion">("all");
 
   useEffect(() => {
     loadRequests();
@@ -19,7 +19,7 @@ export function RequestsPanel() {
   };
 
   const filteredRequests = requests.filter((request) => {
-    if (filter === 'all') return true;
+    if (filter === "all") return true;
     return request.request_type === filter;
   });
 
@@ -29,7 +29,7 @@ export function RequestsPanel() {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return `${days}d ago`;
@@ -37,12 +37,12 @@ export function RequestsPanel() {
 
   const getRequestTypeColor = (type: string) => {
     switch (type) {
-      case 'Add Religion':
-        return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-      case 'General':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      case "Add Religion":
+        return "bg-purple-500/20 text-purple-300 border-purple-500/30";
+      case "General":
+        return "bg-blue-500/20 text-blue-300 border-blue-500/30";
       default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
@@ -51,7 +51,7 @@ export function RequestsPanel() {
       <div className="flex items-center justify-between">
         <h3
           className="text-lg text-white font-medium"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           User Requests ({filteredRequests.length})
         </h3>
@@ -93,7 +93,7 @@ export function RequestsPanel() {
             <Tag className="w-5 h-5 text-purple-400" />
             <div>
               <div className="text-lg font-bold text-white">
-                {requests.filter((r) => r.request_type === 'Add Religion').length}
+                {requests.filter((r) => r.request_type === "Add Religion").length}
               </div>
               <div className="text-white/60 text-xs">Add Religion</div>
             </div>

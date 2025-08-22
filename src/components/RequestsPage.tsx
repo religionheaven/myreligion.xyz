@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../contexts/AuthContext";
 
 interface RequestsPageProps {
   onBack: () => void;
@@ -9,8 +9,8 @@ interface RequestsPageProps {
 
 export function RequestsPage({ onBack }: RequestsPageProps) {
   const { user } = useAuth();
-  const [requestType, setRequestType] = useState<'General' | 'Add Religion'>('General');
-  const [requestText, setRequestText] = useState('');
+  const [requestType, setRequestType] = useState<"General" | "Add Religion">("General");
+  const [requestText, setRequestText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -21,22 +21,22 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from('user_requests').insert({
+      const { error } = await supabase.from("user_requests").insert({
         user_id: user.id,
         request_type: requestType,
         request_text: requestText.trim(),
       });
 
       if (error) {
-        console.error('Error submitting request:', error);
-        alert('Failed to submit request. Please try again.');
+        console.error("Error submitting request:", error);
+        alert("Failed to submit request. Please try again.");
       } else {
         setSubmitted(true);
-        setRequestText('');
+        setRequestText("");
       }
     } catch (error) {
-      console.error('Error submitting request:', error);
-      alert('Failed to submit request. Please try again.');
+      console.error("Error submitting request:", error);
+      alert("Failed to submit request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -47,10 +47,10 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
       <div
         className="min-h-screen relative overflow-hidden bg-white"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/ocIai0k.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/ocIai0k.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         {/* Back button */}
@@ -70,7 +70,7 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
             <div className="relative z-10">
               <h2
                 className="text-2xl text-white mb-4"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
+                style={{ fontFamily: "Poiret One, sans-serif" }}
               >
                 Request Submitted
               </h2>
@@ -80,7 +80,7 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
               <button
                 onClick={() => setSubmitted(false)}
                 className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
+                style={{ fontFamily: "Poiret One, sans-serif" }}
               >
                 Submit Another Request
               </button>
@@ -98,10 +98,10 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
         className="absolute inset-0 hidden md:block"
         style={{
           backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+            "url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -109,10 +109,10 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
       <div
         className="absolute inset-0 block md:hidden"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/llHxOih.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -138,7 +138,7 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
           <div className="relative z-10">
             <h2
               className="text-2xl text-white mb-6 text-center"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               Submit a Request
             </h2>
@@ -148,32 +148,32 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
               <div>
                 <label
                   className="block text-white/80 text-sm font-medium mb-3"
-                  style={{ fontFamily: 'Poiret One, sans-serif' }}
+                  style={{ fontFamily: "Poiret One, sans-serif" }}
                 >
                   Type of Request
                 </label>
                 <div className="flex bg-white/20 backdrop-blur-sm rounded-2xl p-1 border border-white/20">
                   <button
                     type="button"
-                    onClick={() => setRequestType('General')}
+                    onClick={() => setRequestType("General")}
                     className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
-                      requestType === 'General'
-                        ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                      requestType === "General"
+                        ? "bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
-                    style={{ fontFamily: 'Poiret One, sans-serif' }}
+                    style={{ fontFamily: "Poiret One, sans-serif" }}
                   >
                     General
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRequestType('Add Religion')}
+                    onClick={() => setRequestType("Add Religion")}
                     className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
-                      requestType === 'Add Religion'
-                        ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                      requestType === "Add Religion"
+                        ? "bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
-                    style={{ fontFamily: 'Poiret One, sans-serif' }}
+                    style={{ fontFamily: "Poiret One, sans-serif" }}
                   >
                     Add Religion
                   </button>
@@ -184,7 +184,7 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
               <div>
                 <label
                   className="block text-white/80 text-sm font-medium mb-3"
-                  style={{ fontFamily: 'Poiret One, sans-serif' }}
+                  style={{ fontFamily: "Poiret One, sans-serif" }}
                 >
                   Your Request
                 </label>
@@ -209,12 +209,12 @@ export function RequestsPage({ onBack }: RequestsPageProps) {
                 type="submit"
                 disabled={isSubmitting || !requestText.trim()}
                 className="w-full bg-black/80 backdrop-blur-sm text-white py-4 rounded-2xl font-medium hover:bg-black/90 transform hover:scale-[1.02] transition-all duration-500 shadow-2xl hover:shadow-white/20 border border-white/20 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
+                style={{ fontFamily: "Poiret One, sans-serif" }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative z-10">
-                  {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                  {isSubmitting ? "Submitting..." : "Submit Request"}
                 </span>
               </button>
             </form>

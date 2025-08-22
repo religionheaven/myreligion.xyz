@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, MapPin, ExternalLink, User, Clock } from 'lucide-react';
-import { AdminAnalytics, SiteVisit } from '../../services/adminAnalytics';
+import React, { useState, useEffect } from "react";
+import { Eye, MapPin, ExternalLink, User, Clock } from "lucide-react";
+import { AdminAnalytics, SiteVisit } from "../../services/adminAnalytics";
 
 export function SiteVisitsPanel() {
   const [visits, setVisits] = useState<SiteVisit[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'authenticated' | 'anonymous'>('all');
+  const [filter, setFilter] = useState<"all" | "authenticated" | "anonymous">("all");
 
   useEffect(() => {
     loadVisits();
@@ -19,8 +19,8 @@ export function SiteVisitsPanel() {
   };
 
   const filteredVisits = visits.filter((visit) => {
-    if (filter === 'authenticated') return visit.user_id;
-    if (filter === 'anonymous') return !visit.user_id;
+    if (filter === "authenticated") return visit.user_id;
+    if (filter === "anonymous") return !visit.user_id;
     return true;
   });
 
@@ -30,7 +30,7 @@ export function SiteVisitsPanel() {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return `${days}d ago`;
@@ -47,7 +47,7 @@ export function SiteVisitsPanel() {
       <div className="flex items-center justify-between">
         <h3
           className="text-lg text-white font-medium"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Site Visits ({filteredVisits.length})
         </h3>
@@ -118,7 +118,7 @@ export function SiteVisitsPanel() {
                         <MapPin className="w-3 h-3" />
                         <span>
                           {visit.location_data.city && `${visit.location_data.city}, `}
-                          {visit.location_data.country || 'Unknown'}
+                          {visit.location_data.country || "Unknown"}
                         </span>
                       </div>
                     </td>

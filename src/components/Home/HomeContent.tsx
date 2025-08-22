@@ -1,15 +1,15 @@
-import React from 'react';
-import { LogOut } from 'lucide-react';
-import { ReligionClickData } from '../../services/religionClicks';
-import { UserProfile } from '../../services/userProfile';
-import { Confession, SortOption } from '../../services/confessions';
-import { MobileReligionCards } from './MobileReligionCards';
-import { DesktopReligionCards } from './DesktopReligionCards';
-import { RequestedReligionCards } from './RequestedReligionCards';
-import { ActionButtons } from './ActionButtons';
-import { ProfileModal } from '../ProfileModal';
-import LiveChat from '../LiveChat';
-import { ConfessionsModal } from '../confessions/ConfessionsModal';
+import React from "react";
+import { LogOut } from "lucide-react";
+import { ReligionClickData } from "../../services/religionClicks";
+import { UserProfile } from "../../services/userProfile";
+import { Confession, SortOption } from "../../services/confessions";
+import { MobileReligionCards } from "./MobileReligionCards";
+import { DesktopReligionCards } from "./DesktopReligionCards";
+import { RequestedReligionCards } from "./RequestedReligionCards";
+import { ActionButtons } from "./ActionButtons";
+import { ProfileModal } from "../ProfileModal";
+import LiveChat from "../LiveChat";
+import { ConfessionsModal } from "../confessions/ConfessionsModal";
 
 interface HomeContentProps {
   onReligionClick: (religion: string) => void;
@@ -36,7 +36,7 @@ interface HomeContentProps {
   confessionSortBy: SortOption;
   setConfessionSortBy: (sort: SortOption) => void;
   loadingConfessions: boolean;
-  handleVoteOnConfession: (confessionId: string, voteType: 'upvote' | 'downvote') => void;
+  handleVoteOnConfession: (confessionId: string, voteType: "upvote" | "downvote") => void;
   formatTimeAgo: (timestamp: string) => string;
   showConfessions: boolean;
   setShowConfessions: (show: boolean) => void;
@@ -79,7 +79,7 @@ export function HomeContent({
   isWarningFadingOut,
 }: HomeContentProps) {
   const getClickCount = (religion: string) => {
-    if (loadingCounts) return '...';
+    if (loadingCounts) return "...";
     const found = clickCounts.find((item) => item.religion === religion);
     return found?.click_count || 0;
   };
@@ -91,10 +91,10 @@ export function HomeContent({
         className="absolute inset-0 hidden md:block"
         style={{
           backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+            "url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -102,10 +102,10 @@ export function HomeContent({
       <div
         className="absolute inset-0 block md:hidden"
         style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: "url(https://i.imgur.com/llHxOih.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -154,7 +154,10 @@ export function HomeContent({
 
       {/* Powered by heaven text */}
       <div className="relative z-10 flex justify-center mt-2">
-        <p className="text-white/60 text-xs md:text-sm" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <p
+          className="text-white/60 text-xs md:text-sm"
+          style={{ fontFamily: "Poiret One, sans-serif" }}
+        >
           powered by heaven
         </p>
       </div>
@@ -164,17 +167,17 @@ export function HomeContent({
         <div className="flex flex-col items-center gap-2">
           <button
             onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'hidden' : 'block'}`}
+            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? "hidden" : "block"}`}
           >
-            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              {showRequestedReligions ? 'back' : 'requested religions'}
+            <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
+              {showRequestedReligions ? "back" : "requested religions"}
             </span>
           </button>
           <button
             onClick={() => setShowConfessions(!showConfessions)}
-            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? 'hidden' : 'block'}`}
+            className={`bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 ${showConfessions ? "hidden" : "block"}`}
           >
-            <span className="text-sm font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            <span className="text-sm font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
               confessions
             </span>
           </button>
@@ -219,7 +222,9 @@ export function HomeContent({
       />
 
       {/* Image at bottom right */}
-      <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div
+        className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+      >
         <a
           href="https://x.com/religionheaven"
           target="_blank"
@@ -251,7 +256,7 @@ export function HomeContent({
             <button
               onClick={() => setShowLiveChat(false)}
               className="mt-4 bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               Close Chat
             </button>
@@ -283,7 +288,7 @@ export function HomeContent({
           <button
             onClick={() => setShowConfessions(false)}
             className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+            style={{ fontFamily: "Poiret One, sans-serif" }}
           >
             Close Confessions
           </button>

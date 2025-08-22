@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
-import { SessionTracking } from '../services/sessionTracking';
-import { BanCheck } from '../services/banCheck';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "../lib/supabase";
+import { SessionTracking } from "../services/sessionTracking";
+import { BanCheck } from "../services/banCheck";
 
 interface AuthContextType {
   user: User | null;
@@ -87,21 +87,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       // Use local scope to only clear local session storage
-      await supabase.auth.signOut({ scope: 'local' });
+      await supabase.auth.signOut({ scope: "local" });
     } catch (error) {
-      console.error('Error during sign out:', error);
+      console.error("Error during sign out:", error);
     } finally {
       // Force clear Supabase auth tokens from storage
-      localStorage.removeItem('sb-nzijprktpelrarzobcwm-auth-token');
-      sessionStorage.removeItem('sb-nzijprktpelrarzobcwm-auth-token');
+      localStorage.removeItem("sb-nzijprktpelrarzobcwm-auth-token");
+      sessionStorage.removeItem("sb-nzijprktpelrarzobcwm-auth-token");
 
       // Clear local state
       setUser(null);
       setSession(null);
 
       // Clear any cached data
-      localStorage.removeItem('religion_chat_cache');
-      localStorage.removeItem('live_chat_messages');
+      localStorage.removeItem("religion_chat_cache");
+      localStorage.removeItem("live_chat_messages");
 
       // Clear session tracking
       SessionTracking.initialize();
@@ -129,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

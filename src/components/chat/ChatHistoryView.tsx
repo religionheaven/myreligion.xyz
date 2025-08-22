@@ -1,11 +1,11 @@
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { ChatSession } from '../../services/chat/store';
-import { ChatHistoryCard } from './ChatHistoryCard';
+import React from "react";
+import { ArrowLeft } from "lucide-react";
+import { ChatSession } from "../../services/chat/store";
+import { ChatHistoryCard } from "./ChatHistoryCard";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -46,7 +46,7 @@ export function ChatHistoryView({
 
       {/* Chat History Title */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl text-white" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <h2 className="text-2xl text-white" style={{ fontFamily: "Poiret One, sans-serif" }}>
           Chat History
         </h2>
       </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowLeft, LogOut } from 'lucide-react';
+import React from "react";
+import { ArrowLeft, LogOut } from "lucide-react";
 
 interface ChatHeaderProps {
   onBack: () => void;
@@ -47,7 +47,7 @@ export function ChatHeader({ onBack, onSignOut }: ChatHeaderProps) {
 
       {/* Powered by heaven text */}
       <div className="hidden md:flex justify-center mt-2">
-        <p className="text-white/60 text-xs" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+        <p className="text-white/60 text-xs" style={{ fontFamily: "Poiret One, sans-serif" }}>
           powered by heaven
         </p>
       </div>

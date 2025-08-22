@@ -1,5 +1,5 @@
-import React from 'react';
-import { Send } from 'lucide-react';
+import React from "react";
+import { Send } from "lucide-react";
 
 interface ChatInputProps {
   inputValue: string;

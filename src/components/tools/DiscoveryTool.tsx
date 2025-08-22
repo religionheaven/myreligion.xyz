@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Globe, ExternalLink } from 'lucide-react';
+import React, { useState } from "react";
+import { Globe, ExternalLink } from "lucide-react";
 
 export function DiscoveryTool() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="h-full flex items-center justify-center">
@@ -10,7 +10,7 @@ export function DiscoveryTool() {
         <Globe className="w-12 lg:w-14 xl:w-16 h-12 lg:h-14 xl:h-16 text-white/60 mx-auto mb-4 lg:mb-6" />
         <h3
           className="text-white font-medium text-lg lg:text-xl xl:text-2xl mb-3 lg:mb-4"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Discovery Tool
         </h3>
@@ -18,7 +18,7 @@ export function DiscoveryTool() {
           SDK Integration with heaven.xyz coming soon
         </p>
         <p className="text-white/40 text-xs lg:text-sm mb-6 lg:mb-8 leading-relaxed">
-          This tool will help users find upcoming token runners through heaven.xyz integration, 
+          This tool will help users find upcoming token runners through heaven.xyz integration,
           enabling better trading decisions with real-time market data and analytics.
         </p>
         <a

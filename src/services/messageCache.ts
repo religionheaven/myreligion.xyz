@@ -1,6 +1,6 @@
 interface CachedMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
   sessionId: string;
@@ -14,7 +14,7 @@ interface CachedSession {
 }
 
 export class MessageCache {
-  private static readonly CACHE_KEY = 'religion_chat_cache';
+  private static readonly CACHE_KEY = "religion_chat_cache";
   private static readonly MAX_SESSIONS = 10;
   private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -30,7 +30,7 @@ export class MessageCache {
 
       return [];
     } catch (error) {
-      console.error('Error reading message cache:', error);
+      console.error("Error reading message cache:", error);
       return [];
     }
   }
@@ -58,7 +58,7 @@ export class MessageCache {
       const trimmedCache = cache.slice(0, this.MAX_SESSIONS);
       localStorage.setItem(this.CACHE_KEY, JSON.stringify(trimmedCache));
     } catch (error) {
-      console.error('Error caching messages:', error);
+      console.error("Error caching messages:", error);
     }
   }
 
@@ -94,13 +94,13 @@ export class MessageCache {
       const parsed = JSON.parse(cached);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.error('Error parsing cache:', error);
+      console.error("Error parsing cache:", error);
       return [];
     }
   }
 
   private static isValidCache(lastUpdated: Date | string): boolean {
-    const date = typeof lastUpdated === 'string' ? new Date(lastUpdated) : lastUpdated;
+    const date = typeof lastUpdated === "string" ? new Date(lastUpdated) : lastUpdated;
     return Date.now() - date.getTime() < this.CACHE_DURATION;
   }
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Religion } from '../../config/religions';
+import React from "react";
+import { Religion } from "../../config/religions";
 
 interface RequestedReligionCardProps {
   religion: Religion;
@@ -9,12 +9,12 @@ interface RequestedReligionCardProps {
   isHighlighted?: boolean;
 }
 
-export function RequestedReligionCard({ 
-  religion, 
-  onClick, 
-  getClickCount, 
-  className = '', 
-  isHighlighted = false 
+export function RequestedReligionCard({
+  religion,
+  onClick,
+  getClickCount,
+  className = "",
+  isHighlighted = false,
 }: RequestedReligionCardProps) {
   return (
     <div className={`relative ${className}`}>
@@ -22,9 +22,9 @@ export function RequestedReligionCard({
         src={religion.image}
         alt={religion.name}
         className={`w-full h-auto transition-all duration-500 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 rounded-lg cursor-pointer transform active:scale-95 ${
-          isHighlighted 
-            ? 'border-white/80 shadow-2xl shadow-white/50 scale-110 animate-pulse' 
-            : 'border-transparent hover:border-white/80'
+          isHighlighted
+            ? "border-white/80 shadow-2xl shadow-white/50 scale-110 animate-pulse"
+            : "border-transparent hover:border-white/80"
         }`}
         onClick={() => onClick(religion.name)}
       />

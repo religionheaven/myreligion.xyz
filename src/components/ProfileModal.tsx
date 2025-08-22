@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { X, Camera, User } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { UserProfileService, UserProfile } from '../services/userProfile';
+import React, { useState } from "react";
+import { X, Camera, User } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { UserProfileService, UserProfile } from "../services/userProfile";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export function ProfileModal({ isOpen, onClose, onProfileUpdate }: ProfileModalP
         setProfile(userProfile);
       } else {
         // Initialize profile if it doesn't exist
-        const username = user.user_metadata?.username || 'User';
+        const username = user.user_metadata?.username || "User";
         const newProfile = await UserProfileService.initializeUserProfile(user.id, username);
         setProfile(newProfile);
       }
@@ -54,11 +54,11 @@ export function ProfileModal({ isOpen, onClose, onProfileUpdate }: ProfileModalP
         // Notify parent component of profile update
         onProfileUpdate?.();
       } else {
-        alert('Failed to upload photo. Please try again.');
+        alert("Failed to upload photo. Please try again.");
       }
     } catch (error) {
-      console.error('Error uploading photo:', error);
-      alert('Failed to upload photo. Please try again.');
+      console.error("Error uploading photo:", error);
+      alert("Failed to upload photo. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -92,7 +92,7 @@ export function ProfileModal({ isOpen, onClose, onProfileUpdate }: ProfileModalP
           <div className="flex items-center justify-between mb-6">
             <h3
               className="text-xl text-white font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
               Profile
             </h3>
@@ -148,9 +148,9 @@ export function ProfileModal({ isOpen, onClose, onProfileUpdate }: ProfileModalP
             <div className="text-white/60 text-sm mb-1">Username</div>
             <div
               className="text-white text-lg font-medium"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              style={{ fontFamily: "Poiret One, sans-serif" }}
             >
-              {profile?.username || 'User'}
+              {profile?.username || "User"}
             </div>
           </div>
 
@@ -158,7 +158,7 @@ export function ProfileModal({ isOpen, onClose, onProfileUpdate }: ProfileModalP
           <button
             onClick={onClose}
             className="w-full bg-black/80 backdrop-blur-sm text-white py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+            style={{ fontFamily: "Poiret One, sans-serif" }}
           >
             Close
           </button>

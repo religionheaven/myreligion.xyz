@@ -11,22 +11,22 @@ export const SPAM_DETECTION_CONFIG = {
   MAX_PUNCTUATION_RATIO: 0.3,
   COOLDOWN_DURATION: 3000, // 3 seconds base cooldown (matches existing)
   RATE_LIMIT_COOLDOWN: 5000, // 5 seconds for rate limit violations
-  
+
   // Progressive rate limiting
   RATE_LIMIT_WINDOWS: {
     SHORT: { duration: 15000, maxMessages: 5 }, // 5 messages in 15 seconds
     MEDIUM: { duration: 30000, maxMessages: 9 }, // 9 messages in 30 seconds (your original idea)
     LONG: { duration: 60000, maxMessages: 15 }, // 15 messages in 1 minute
   },
-  
+
   // Progressive penalties
   PENALTIES: {
-    FIRST_VIOLATION: 90000,   // 1 minute 30 seconds total
+    FIRST_VIOLATION: 90000, // 1 minute 30 seconds total
     SECOND_VIOLATION: 180000, // 3 minutes total
-    THIRD_VIOLATION: 300000,  // 5 minutes total
+    THIRD_VIOLATION: 300000, // 5 minutes total
     PERSISTENT_VIOLATION: 600000, // 10 minutes total
   },
-  
+
   // Reset violation count after this period of good behavior
   VIOLATION_RESET_TIME: 300000, // 5 minutes
 };

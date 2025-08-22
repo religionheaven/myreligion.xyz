@@ -1,10 +1,10 @@
-import React from 'react';
-import { X, FileText, Code, Hash } from 'lucide-react';
+import React from "react";
+import { X, FileText, Code, Hash } from "lucide-react";
 
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (format: 'text' | 'json' | 'markdown') => void;
+  onExport: (format: "text" | "json" | "markdown") => void;
   religion: string;
   messageCount: number;
 }
@@ -18,7 +18,7 @@ export function ExportModal({
 }: ExportModalProps) {
   if (!isOpen) return null;
 
-  const handleExport = (format: 'text' | 'json' | 'markdown') => {
+  const handleExport = (format: "text" | "json" | "markdown") => {
     onExport(format);
     onClose();
   };
@@ -30,7 +30,7 @@ export function ExportModal({
         <div className="flex items-center justify-between mb-6">
           <h3
             className="text-xl text-white font-medium"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+            style={{ fontFamily: "Poiret One, sans-serif" }}
           >
             Export Chat
           </h3>
@@ -55,7 +55,7 @@ export function ExportModal({
         {/* Export options */}
         <div className="space-y-3">
           <button
-            onClick={() => handleExport('text')}
+            onClick={() => handleExport("text")}
             className="w-full flex items-center gap-3 p-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 transition-all duration-300 hover:scale-105"
           >
             <FileText className="w-5 h-5 text-white/80" />
@@ -66,7 +66,7 @@ export function ExportModal({
           </button>
 
           <button
-            onClick={() => handleExport('markdown')}
+            onClick={() => handleExport("markdown")}
             className="w-full flex items-center gap-3 p-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 transition-all duration-300 hover:scale-105"
           >
             <Hash className="w-5 h-5 text-white/80" />
@@ -77,7 +77,7 @@ export function ExportModal({
           </button>
 
           <button
-            onClick={() => handleExport('json')}
+            onClick={() => handleExport("json")}
             className="w-full flex items-center gap-3 p-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 transition-all duration-300 hover:scale-105"
           >
             <Code className="w-5 h-5 text-white/80" />

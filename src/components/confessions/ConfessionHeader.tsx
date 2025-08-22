@@ -1,5 +1,5 @@
-import React from 'react';
-import { SortOption } from '../../services/confessions';
+import React from "react";
+import { SortOption } from "../../services/confessions";
 
 interface ConfessionHeaderProps {
   sortBy: SortOption;
@@ -12,39 +12,39 @@ export function ConfessionHeader({ sortBy, setSortBy }: ConfessionHeaderProps) {
       <div className="flex items-center justify-between">
         <h3
           className="text-white font-medium text-lg md:text-xl"
-          style={{ fontFamily: 'Poiret One, sans-serif' }}
+          style={{ fontFamily: "Poiret One, sans-serif" }}
         >
           Confessions
         </h3>
-        
+
         {/* Sort Options */}
         <div className="flex gap-2">
           <button
-            onClick={() => setSortBy('recent')}
+            onClick={() => setSortBy("recent")}
             className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-              sortBy === 'recent'
-                ? 'bg-white/20 text-white'
-                : 'text-white/60 hover:text-white hover:bg-white/10'
+              sortBy === "recent"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:text-white hover:bg-white/10"
             }`}
           >
             Recent
           </button>
           <button
-            onClick={() => setSortBy('top')}
+            onClick={() => setSortBy("top")}
             className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-              sortBy === 'top'
-                ? 'bg-white/20 text-white'
-                : 'text-white/60 hover:text-white hover:bg-white/10'
+              sortBy === "top"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:text-white hover:bg-white/10"
             }`}
           >
             Top
           </button>
           <button
-            onClick={() => setSortBy('lowest')}
+            onClick={() => setSortBy("lowest")}
             className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
-              sortBy === 'lowest'
-                ? 'bg-white/20 text-white'
-                : 'text-white/60 hover:text-white hover:bg-white/10'
+              sortBy === "lowest"
+                ? "bg-white/20 text-white"
+                : "text-white/60 hover:text-white hover:bg-white/10"
             }`}
           >
             Lowest

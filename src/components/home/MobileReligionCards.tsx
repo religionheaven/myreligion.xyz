@@ -1,5 +1,5 @@
-import React from 'react';
-import { MAIN_RELIGIONS } from '../../config/religions';
+import React from "react";
+import { MAIN_RELIGIONS } from "../../config/religions";
 
 interface MobileReligionCardsProps {
   onReligionClick: (religion: string) => void;
@@ -45,7 +45,7 @@ export function MobileReligionCards({
   return (
     <div
       className={`absolute inset-0 z-10 md:hidden flex items-center justify-center transition-all duration-700 ease-in-out ${
-        isTransitioning ? 'opacity-0 scale-75 translate-y-8' : 'opacity-100 scale-100 translate-y-0'
+        isTransitioning ? "opacity-0 scale-75 translate-y-8" : "opacity-100 scale-100 translate-y-0"
       }`}
     >
       <div className="w-full h-full flex items-center justify-center px-8">
@@ -87,8 +87,8 @@ export function MobileReligionCards({
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? 'bg-white shadow-lg scale-110'
-                    : 'bg-white/50 hover:bg-white/70'
+                    ? "bg-white shadow-lg scale-110"
+                    : "bg-white/50 hover:bg-white/70"
                 }`}
                 onClick={() => setCurrentIndex(index)}
               />

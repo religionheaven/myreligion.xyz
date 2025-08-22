@@ -1,8 +1,8 @@
-import React from 'react';
-import { ChatMessage as ChatMessageType } from './types';
-import { formatTime } from './utils';
-import { formatMessageContent } from './MessageFormatter';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { ChatMessage as ChatMessageType } from "./types";
+import { formatTime } from "./utils";
+import { formatMessageContent } from "./MessageFormatter";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -14,7 +14,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div
       key={message.id}
-      className={`flex gap-3 ${message.user_id === user?.id ? 'flex-row-reverse' : ''}`}
+      className={`flex gap-3 ${message.user_id === user?.id ? "flex-row-reverse" : ""}`}
     >
       <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
         {message.profile_photo_url ? (
@@ -31,7 +31,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
       </div>
       <div className="flex-1 min-w-0">
         <div
-          className={`flex items-center gap-2 mb-1 ${message.user_id === user?.id ? 'flex-row-reverse' : ''}`}
+          className={`flex items-center gap-2 mb-1 ${message.user_id === user?.id ? "flex-row-reverse" : ""}`}
         >
           <span className="text-white/80 text-sm font-medium">{message.username}</span>
           <span className="text-white/40 text-xs">{formatTime(message.created_at)}</span>
@@ -39,12 +39,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div
           className={`backdrop-blur-sm rounded-2xl px-4 py-2 border ${
             message.user_id === user?.id
-              ? 'bg-white/70 text-gray-800 border-white/50 max-w-fit ml-auto'
-              : 'bg-white/10 text-white border-white/20 max-w-fit'
+              ? "bg-white/70 text-gray-800 border-white/50 max-w-fit ml-auto"
+              : "bg-white/10 text-white border-white/20 max-w-fit"
           }`}
         >
           <div className="text-sm leading-relaxed break-words space-y-1">
-            <div className="space-y-2">{formatMessageContent(message.content ?? '')}</div>
+            <div className="space-y-2">{formatMessageContent(message.content ?? "")}</div>
           </div>
         </div>
       </div>
