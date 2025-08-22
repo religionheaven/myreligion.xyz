@@ -632,11 +632,9 @@ function HomeContent({
               </button>
             </div>
           </div>
-          <div className={`h-full pb-16 ${showTools ? '' : 'pointer-events-none'}`}>
+          <div className="h-full pb-16">
             {selectedTool === 'avatar' && <AvatarTool />}
-            {selectedTool === 'discovery' && (
-              <DiscoveryTool />
-            )}
+            {selectedTool === 'discovery' && <DiscoveryTool />}
           </div>
         </div>
       </div>
