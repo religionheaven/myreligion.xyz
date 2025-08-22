@@ -635,7 +635,9 @@ function HomeContent({
             {selectedTool === 'avatar' && <AvatarTool />}
             {selectedTool === 'discovery' && (
               <div className="text-center">
-                <p className="text-white/60">Discovery tool coming soon...</p>
+                <p className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  SDK Integration coming soon to help you find the best upcoming runners on heaven.xyz
+                </p>
               </div>
             )}
           </div>
