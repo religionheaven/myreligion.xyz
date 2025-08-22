@@ -209,10 +209,8 @@ function OverviewTab({
           <div className="flex items-center gap-3">
             <Activity className="w-8 h-8 text-yellow-400" />
             <div>
-              <div className="text-2xl font-bold text-white">
-                {systemStats?.recentActivity || 0}
-              </div>
-              <div className="text-white/60 text-sm">Recent Activity</div>
+              <div className="text-2xl font-bold text-white">{systemStats?.activeUsers || 0}</div>
+              <div className="text-white/60 text-sm">Total Accounts</div>
             </div>
           </div>
         </div>
@@ -272,7 +270,7 @@ function OverviewTab({
           <div>
             <div className="text-2xl font-bold text-white">
               {Math.round(
-                ((systemStats?.totalMessages || 0) / (systemStats?.totalUsers || 1)) * 10,
+            {systemStats?.recentActivity || 0}
               ) / 10}
             </div>
             <div className="text-white/60 text-sm">Msgs/User</div>
@@ -283,7 +281,7 @@ function OverviewTab({
                 10}
             </div>
             <div className="text-white/60 text-sm">Visits/User</div>
-          </div>
+          <div className="text-white/60 text-sm">Recent Activity</div>
         </div>
       </div>
     </div>
