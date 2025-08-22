@@ -9,7 +9,11 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ["**/*.{ts,tsx}"],
-    languageOptions: { parserOptions: { project: "./tsconfig.json" } },
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.eslint.json", // ✅ use the dedicated eslint tsconfig
+      },
+    },
     plugins: {
       react,
       "react-hooks": reactHooks,
