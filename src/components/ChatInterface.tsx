@@ -623,16 +623,30 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // Add transition overlay for going back too
   if (isTransitioning) {
     return (
-      <div
-        className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center"
-        style={{
-          backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
+        {/* Desktop background */}
+        <div
+          className="absolute inset-0 hidden md:block"
+          style={{
+            backgroundImage:
+              'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        {/* Mobile background */}
+        <div
+          className="absolute inset-0 block md:hidden"
+          style={{
+            backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
         <div className="text-center">
           {/* Animated logo during transition */}
           <div className="relative mb-3">
@@ -668,7 +682,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-white">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Desktop background */}
       <div
         className="absolute inset-0 hidden md:block"
