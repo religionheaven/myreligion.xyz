@@ -325,6 +325,7 @@ function MobileRequestedReligionCards({
   const requestedReligions = [
     { name: 'Nga', image: 'https://i.imgur.com/5eZqdQy.png' },
     { name: 'YZY', image: 'https://i.imgur.com/OZ097br.png' },
+    { name: 'Degen', image: 'https://i.imgur.com/kyc0s9S.png' },
   ];
 
   const minSwipeDistance = 50;
@@ -851,10 +852,16 @@ function HomeContent({
               {getClickCount('YZY')}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
-            <span className="text-white/60 text-center" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-              Vote for the next religion on X
-            </span>
+          <div className="relative">
+            <img
+              src="https://i.imgur.com/kyc0s9S.png"
+              alt="Degen"
+              className="w-60 h-auto transition-all duration-700 ease-out hover:scale-110 hover:shadow-2xl hover:shadow-white/50 border-2 border-transparent hover:border-white/80 rounded-lg cursor-pointer transform"
+              onClick={() => onReligionClick('Degen')}
+            />
+            <div className="absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm text-black text-xs font-bold px-1.5 py-0.5 rounded-full border border-white/50 shadow-lg">
+              {getClickCount('Degen')}
+            </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">
             <span className="text-white/60 text-center" style={{ fontFamily: 'Poiret One, sans-serif' }}>
