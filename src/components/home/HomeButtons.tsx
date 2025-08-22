@@ -78,6 +78,10 @@ export function HomeButtons({
       {/* Desktop Confessions Button */}
       <div
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[80px] lg:translate-y-[90px] xl:translate-y-[100px] 2xl:translate-y-[110px] z-20 hidden md:block transition-opacity duration-300 ${
+          showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
+        <div
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[160px] lg:translate-y-[180px] xl:translate-y-[200px] 2xl:translate-y-[220px] z-20 hidden md:block transition-opacity duration-300 ${
           showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
@@ -93,6 +97,7 @@ export function HomeButtons({
             {showConfessions ? 'close confessions' : 'confessions'}
           </span>
         </button>
+      </div>
       </div>
 
       {/* Live Chat Button */}
