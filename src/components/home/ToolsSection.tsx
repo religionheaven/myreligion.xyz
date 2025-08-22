@@ -19,19 +19,14 @@ export function ToolsSection({
     <>
       {/* Tools Button - Desktop Only */}
       <div className="relative z-20 flex justify-center mt-8 hidden md:flex">
-        <div className="absolute top-1/2 left-1/2 transform translate-x-[120px] -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px]">
-          <button
-            onClick={handleToolsClick}
-            className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-          >
-            <span
-              className="text-sm lg:text-base font-medium"
-              style={{ fontFamily: "Poiret One, sans-serif" }}
-            >
-              {showTools ? "close tools" : "tools"}
-            </span>
-          </button>
-        </div>
+        <button
+          onClick={handleToolsClick}
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-lg font-medium" style={{ fontFamily: "Poiret One, sans-serif" }}>
+            {showTools ? "close tools" : "tools"}
+          </span>
+        </button>
       </div>
 
       {/* Tool Navigation Buttons */}
