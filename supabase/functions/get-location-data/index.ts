@@ -9,7 +9,7 @@ Deno.serve(async (req: Request) => {
     if (req.method === "OPTIONS") {
       return new Response(null, {
         status: 200,
-        signal: AbortSignal.timeout(10000) // 10 second timeout
+        headers: corsHeaders,
       });
     }
 
