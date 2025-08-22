@@ -58,7 +58,7 @@ export function HomeButtons({
 
       {/* Desktop Requested Religion Button */}
       <div
-        className={`absolute top-1/2 left-4 lg:left-6 xl:left-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px] z-20 hidden md:block transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -77,7 +77,7 @@ export function HomeButtons({
 
       {/* Desktop Confessions Button */}
       <div
-        className={`absolute top-1/2 right-4 lg:right-6 xl:right-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[120px] lg:translate-y-[140px] xl:translate-y-[160px] 2xl:translate-y-[180px] z-20 hidden md:block transition-opacity duration-300 ${
           showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
