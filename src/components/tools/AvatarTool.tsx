@@ -189,7 +189,7 @@ export function AvatarTool() {
                 />
                 <div className="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:scale-105 text-center">
                   <img 
-                    src="https://i.imgur.com/PlWBSjs.gif" 
+                    src="https://i.imgur.com/5YjvR61.png" 
                     alt="Upload" 
                     className="w-6 h-6 mx-auto mb-2" 
                   />
