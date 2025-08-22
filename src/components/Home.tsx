@@ -246,6 +246,7 @@ export function Home({
         getClickCount={getClickCount}
         isTransitioning={isTransitioningToChat}
         showRequestedReligions={showRequestedReligions}
+        setShowRequestedReligions={setShowRequestedReligions}
         showConfessions={showConfessions}
         showTools={showTools}
         isTransitioningFromChat={isTransitioningFromChat}

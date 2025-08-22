@@ -40,25 +40,6 @@ export function HomeButtons({
         </div>
       </div>
 
-      {/* Desktop Requested Religion Button */}
-      <div
-        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px] z-20 hidden md:block transition-opacity duration-300 ${
-          showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-      >
-        <button
-          onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <span
-            className="text-sm lg:text-base font-medium"
-            style={{ fontFamily: "Poiret One, sans-serif" }}
-          >
-            {showRequestedReligions ? "back" : "requested religions"}
-          </span>
-        </button>
-      </div>
-
       {/* Live Chat and Confessions Buttons */}
       <div
         className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${
