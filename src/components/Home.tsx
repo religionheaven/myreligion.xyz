@@ -344,7 +344,7 @@ export function Home({
       />
 
       {showConfessions && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-60 md:hidden">
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-60 md:hidden">
           <button
             onClick={() => setShowConfessions(false)}
             className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
