@@ -1,33 +1,8 @@
 import React, { useState } from 'react';
-import { Search, TrendingUp, Users, Globe, Star } from 'lucide-react';
+import { Search, TrendingUp, Zap, Globe, Code, ExternalLink } from 'lucide-react';
 
 export function DiscoveryTool() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<'trending' | 'popular' | 'new'>('trending');
-
-  // Mock data for discovery - this would come from your API in the future
-  const discoveryItems = {
-    trending: [
-      { id: 1, name: 'Christianity Chat', users: 1247, category: 'Religion', rating: 4.8 },
-      { id: 2, name: 'Islamic Studies', users: 892, category: 'Religion', rating: 4.9 },
-      { id: 3, name: 'Buddhist Meditation', users: 634, category: 'Spirituality', rating: 4.7 },
-      { id: 4, name: 'Jewish Traditions', users: 423, category: 'Religion', rating: 4.6 },
-    ],
-    popular: [
-      { id: 5, name: 'Prayer Groups', users: 2156, category: 'Community', rating: 4.9 },
-      { id: 6, name: 'Scripture Study', users: 1834, category: 'Education', rating: 4.8 },
-      { id: 7, name: 'Faith Discussions', users: 1567, category: 'Discussion', rating: 4.7 },
-      { id: 8, name: 'Spiritual Guidance', users: 1234, category: 'Support', rating: 4.8 },
-    ],
-    new: [
-      { id: 9, name: 'Modern Faith', users: 156, category: 'Discussion', rating: 4.5 },
-      { id: 10, name: 'Youth Ministry', users: 234, category: 'Community', rating: 4.6 },
-      { id: 11, name: 'Interfaith Dialogue', users: 89, category: 'Discussion', rating: 4.4 },
-      { id: 12, name: 'Digital Worship', users: 67, category: 'Innovation', rating: 4.3 },
-    ],
-  };
-
-  const currentItems = discoveryItems[selectedCategory];
 
   return (
     <div className="flex flex-col h-full">
@@ -40,113 +15,110 @@ export function DiscoveryTool() {
           Discovery
         </h3>
         <p className="text-white/60 text-sm">
-          Explore trending religious content and communities on heaven.xyz
+          SDK integration with heaven.xyz to discover upcoming token runners for better trading
         </p>
       </div>
 
-      {/* Search Bar */}
+      {/* SDK Status */}
       <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for religious content..."
-            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300"
-          />
+        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
+          <div className="flex items-center gap-3 mb-4">
+            <Code className="w-6 h-6 text-blue-400" />
+            <h4 className="text-white font-medium text-lg" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              Heaven.xyz SDK Integration
+            </h4>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-white/80">Connection Status</span>
+              <span className="text-yellow-400 text-sm">Pending Integration</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/80">API Version</span>
+              <span className="text-white/60 text-sm">v1.0 (Coming Soon)</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/80">Token Discovery</span>
+              <span className="text-white/60 text-sm">Not Available</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setSelectedCategory('trending')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            selectedCategory === 'trending'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <TrendingUp className="w-4 h-4" />
-          <span className="text-sm font-medium">Trending</span>
-        </button>
-        <button
-          onClick={() => setSelectedCategory('popular')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            selectedCategory === 'popular'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span className="text-sm font-medium">Popular</span>
-        </button>
-        <button
-          onClick={() => setSelectedCategory('new')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-            selectedCategory === 'new'
-              ? 'bg-white/20 text-white border border-white/30'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <Star className="w-4 h-4" />
-          <span className="text-sm font-medium">New</span>
-        </button>
-      </div>
-
-      {/* Discovery Items */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      {/* Features Preview */}
+      <div className="mb-6">
+        <h4 className="text-white font-medium mb-4" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+          Planned Features
+        </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {currentItems
-            .filter((item) =>
-              searchQuery === '' ||
-              item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.category.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .map((item) => (
-              <div
-                key={item.id}
-                className="bg-white/10 rounded-2xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 cursor-pointer group"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="text-white font-medium text-lg mb-1">{item.name}</h4>
-                    <span className="text-white/60 text-sm">{item.category}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-white/80 text-sm">{item.rating}</span>
-                  </div>
-                </div>
+          <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <div className="flex items-center gap-3 mb-2">
+              <TrendingUp className="w-5 h-5 text-green-400" />
+              <span className="text-white font-medium">Token Runners</span>
+            </div>
+            <p className="text-white/60 text-sm">
+              Real-time discovery of upcoming token launches and trending opportunities
+            </p>
+          </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white/60 text-sm">
-                    <Users className="w-4 h-4" />
-                    <span>{item.users.toLocaleString()} users</span>
-                  </div>
-                  <button className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-lg text-sm transition-all duration-200 opacity-0 group-hover:opacity-100">
-                    Explore
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <div className="flex items-center gap-3 mb-2">
+              <Zap className="w-5 h-5 text-yellow-400" />
+              <span className="text-white font-medium">Trading Signals</span>
+            </div>
+            <p className="text-white/60 text-sm">
+              Advanced analytics and signals for better trading decisions
+            </p>
+          </div>
+
+          <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <div className="flex items-center gap-3 mb-2">
+              <Search className="w-5 h-5 text-purple-400" />
+              <span className="text-white font-medium">Market Research</span>
+            </div>
+            <p className="text-white/60 text-sm">
+              Deep market analysis and research tools for informed trading
+            </p>
+          </div>
+
+          <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
+            <div className="flex items-center gap-3 mb-2">
+              <Globe className="w-5 h-5 text-blue-400" />
+              <span className="text-white font-medium">Cross-Platform</span>
+            </div>
+            <p className="text-white/60 text-sm">
+              Seamless integration across multiple trading platforms and exchanges
+            </p>
+          </div>
         </div>
+      </div>
 
-        {/* Coming Soon Notice */}
-        <div className="mt-8 text-center">
-          <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
-            <Globe className="w-12 h-12 text-white/60 mx-auto mb-3" />
+      {/* Integration Status */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-white/10 rounded-2xl p-8 border border-white/20 max-w-md">
+            <Globe className="w-16 h-16 text-white/60 mx-auto mb-4" />
             <h4
-              className="text-white font-medium text-lg mb-2"
+              className="text-white font-medium text-xl mb-3"
               style={{ fontFamily: 'Poiret One, sans-serif' }}
             >
-              More Coming Soon
+              SDK Integration In Progress
             </h4>
-            <p className="text-white/60 text-sm">
-              We're building an extensive discovery platform to help you find the best religious
-              content and communities. Stay tuned for updates!
+            <p className="text-white/60 text-sm mb-6 leading-relaxed">
+              We're currently developing the SDK integration with heaven.xyz to bring you powerful 
+              token discovery and trading tools. This will enable real-time access to upcoming 
+              token runners and advanced trading analytics.
             </p>
+            <a
+              href="https://heaven.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border border-white/20"
+            >
+              <span className="text-sm font-medium">Visit Heaven.xyz</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>
