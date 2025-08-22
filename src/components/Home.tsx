@@ -1,361 +1,224 @@
 import React from 'react';
+import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import { Confession, SortOption } from '../../services/confessions';
+import { WarningPopup } from './WarningPopup';
 
-import { useAuth } from '../contexts/AuthContext';
-import { RequestsPage } from './RequestsPage';
-import { ChatInterface } from './ChatInterface';
-import LiveChat from './LiveChat';
-import { ReligionClickService, ReligionClickData } from '../services/religionClicks';
-import { ProfileModal } from './ProfileModal';
-import { UserProfileService, UserProfile } from '../services/userProfile';
-import { useConfessions } from '../hooks/useConfessions';
-import { ConfessionsModal } from './confessions/ConfessionsModal';
-import { HomeContent } from './Home/HomeContent';
-
-// Import new components
-import { HomeHeader } from './home/HomeHeader';
-import { HomeButtons } from './home/HomeButtons';
-import { ToolsSection } from './home/ToolsSection';
-import { DesktopReligionGrid } from './home/DesktopReligionGrid';
-import { DesktopRequestedReligions } from './home/DesktopRequestedReligions';
-import { MobileReligionCards } from './home/MobileReligionCards';
-import { MobileRequestedReligionCards } from './home/MobileRequestedReligionCards';
-
-interface HomeProps {
-  showRequests?: boolean;
-  onShowRequests?: () => void;
-  onHideRequests?: () => void;
-  onShowAdmin?: () => void;
+interface ConfessionsModalProps {
+  showConfessions: boolean;
+  confessions: Confession[];
+  confessionText: string;
+  setConfessionText: (text: string) => void;
+  isSubmittingConfession: boolean;
+  handleSubmitConfession: () => void;
+  confessionSortBy: SortOption;
+  setConfessionSortBy: (sort: SortOption) => void;
+  loadingConfessions: boolean;
+  handleVoteOnConfession: (confessionId: string, voteType: 'upvote' | 'downvote') => void;
+  formatTimeAgo: (timestamp: string) => string;
+  showWarning: boolean;
+  warningMessage: string;
+  isWarningFadingOut: boolean;
 }
 
-export function Home({
-  showRequests = false,
-  onShowRequests,
-  onHideRequests,
-  onShowAdmin,
-}: HomeProps) {
-  const { signOut, user } = useAuth();
-  const [selectedReligion, setSelectedReligion] = React.useState<string | null>(null);
-  const [showProfileModal, setShowProfileModal] = React.useState(false);
-  const [isTransitioning, setIsTransitioning] = React.useState(false);
-  const [isExiting, setIsExiting] = React.useState(false);
-  const [clickCounts, setClickCounts] = React.useState<ReligionClickData[]>([]);
-  const [loadingCounts, setLoadingCounts] = React.useState(true);
-  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
-  const [showRequestedReligions, setShowRequestedReligions] = React.useState(false);
-  const [showConfessions, setShowConfessions] = React.useState(false);
-  const [showLiveChat, setShowLiveChat] = React.useState(false);
-  const [showTools, setShowTools] = React.useState(false);
-  const [selectedTool, setSelectedTool] = React.useState<'avatar' | 'discovery'>('avatar');
-  const [isTransitioningToChat, setIsTransitioningToChat] = React.useState(false);
-  const [isTransitioningFromChat, setIsTransitioningFromChat] = React.useState(false);
-  const [lastSelectedReligion, setLastSelectedReligion] = React.useState<string | null>(null);
-
-  // Use confessions hook
-  const {
-    confessions,
-    confessionText,
-    setConfessionText,
-    isSubmittingConfession,
-    handleSubmitConfession,
-    confessionSortBy,
-    setConfessionSortBy,
-    loadingConfessions,
-    handleVoteOnConfession,
-    formatTimeAgo,
-    loadConfessions,
-    showWarning,
-    warningMessage,
-    isWarningFadingOut,
-  } = useConfessions();
-
-  // Load click counts on component mount
-  React.useEffect(() => {
-    const loadClickCounts = async () => {
-      setLoadingCounts(true);
-      await ReligionClickService.initializeClickCounts();
-      const counts = await ReligionClickService.getAllClickCounts();
-      setClickCounts(counts);
-      setLoadingCounts(false);
-    };
-
-    loadClickCounts();
-  }, []);
-
-  // Load user profile
-  React.useEffect(() => {
-    const loadUserProfile = async () => {
-      if (!user) {
-        setUserProfile(null);
-        return;
-      }
-
-      const profile = await UserProfileService.getUserProfile(user.id);
-      if (profile) {
-        setUserProfile(profile);
-      } else {
-        const username = user.user_metadata?.username || 'User';
-        const newProfile = await UserProfileService.initializeUserProfile(user.id, username);
-        setUserProfile(newProfile);
-      }
-    };
-
-    loadUserProfile();
-  }, [user]);
-
-  // Reset state when user signs out
-  React.useEffect(() => {
-    if (!user) {
-      setSelectedReligion(null);
-      setIsTransitioning(false);
-      setIsExiting(false);
-      setShowProfileModal(false);
-      setUserProfile(null);
-      setShowRequestedReligions(false);
-      setShowTools(false);
-    }
-  }, [user]);
-
-  // Load confessions when modal opens
-  React.useEffect(() => {
-    if (showConfessions) {
-      loadConfessions();
-    }
-  }, [showConfessions]);
-
-  const handleProfileUpdate = async () => {
-    if (!user) return;
-    const updatedProfile = await UserProfileService.getUserProfile(user.id);
-    setUserProfile(updatedProfile);
-  };
-
-  const handleSignOut = () => {
-    signOut();
-  };
-
-  const handleReligionClick = (religion: string) => {
-    // Start transition animation
-    setIsTransitioningToChat(true);
-    
-    ReligionClickService.incrementClickCount(religion).then((success) => {
-      if (success) {
-        setClickCounts((prev) => {
-          const existingItem = prev.find((item) => item.religion === religion);
-          if (existingItem) {
-            return prev.map((item) =>
-              item.religion === religion ? { ...item, click_count: item.click_count + 1 } : item
-            );
-          } else {
-            return [...prev, { religion, click_count: 1 }];
-          }
-        });
-      }
-    });
-
-    // Delay setting the religion to allow animation to start
-    setTimeout(() => {
-      setSelectedReligion(religion);
-      setLastSelectedReligion(religion);
-      setIsTransitioningToChat(false);
-    }, 300);
-  };
-
-  const handleBackFromChat = () => {
-    // Start back transition animation
-    setIsTransitioningFromChat(true);
-    
-    // Clear the selected religion after a delay to show the animation
-    setTimeout(() => {
-      setIsTransitioningFromChat(false);
-      setLastSelectedReligion(null);
-    }, 600); // Longer delay to show the animation
-    
-    setSelectedReligion(null);
-  };
-
-  const handleToolsClick = () => {
-    setShowTools(!showTools);
-    if (!showTools) {
-      setShowRequestedReligions(false);
-      setShowConfessions(false);
-      setShowLiveChat(false);
-    }
-  };
-
-  const getClickCount = (religion: string) => {
-    if (loadingCounts) return '...';
-    const found = clickCounts.find((item) => item.religion === religion);
-    return found?.click_count || 0;
-  };
-
-
-  if (showRequests) {
-    return <RequestsPage onBack={onHideRequests || (() => {})} />;
-  }
-
-  if (selectedReligion) {
-    return (
-      
-      <ChatInterface
-        religion={selectedReligion}
-        onBack={handleBackFromChat}
-        isTransitioning={false}
-      />
-    );
-  }
+export function ConfessionsModal({
+  showConfessions,
+  setShowConfessions,
+  confessions,
+  confessionText,
+  setConfessionText,
+  isSubmittingConfession,
+  handleSubmitConfession,
+  confessionSortBy,
+  setConfessionSortBy,
+  loadingConfessions,
+  handleVoteOnConfession,
+  formatTimeAgo,
+  showWarning,
+  warningMessage,
+  isWarningFadingOut,
+}: ConfessionsModalProps) {
+  if (!showConfessions) return null;
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-white">
-      {/* Desktop background */}
-      <div
-        className="absolute inset-0 hidden md:block"
-        style={{
-          backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-
-      {/* Mobile background */}
-      <div
-        className="absolute inset-0 block md:hidden"
-        style={{
-          backgroundImage: 'url(https://i.imgur.com/llHxOih.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-
-      {/* Header */}
-      <HomeHeader
-        onSignOut={handleSignOut}
-        onShowProfile={() => setShowProfileModal(true)}
-        userProfile={userProfile}
-      />
-
-      {/* Tools Section */}
-      <ToolsSection
-        showTools={showTools}
-        selectedTool={selectedTool}
-        setSelectedTool={setSelectedTool}
-        handleToolsClick={handleToolsClick}
-      />
-
-      {/* Desktop Religion Grids */}
-      <DesktopReligionGrid
-        onReligionClick={handleReligionClick}
-        getClickCount={getClickCount}
-        isTransitioning={isTransitioningToChat}
-        showRequestedReligions={showRequestedReligions}
-        showConfessions={showConfessions}
-        showTools={showTools}
-        isTransitioningFromChat={isTransitioningFromChat}
-        lastSelectedReligion={lastSelectedReligion}
-      />
-
-      <DesktopRequestedReligions
-        onReligionClick={handleReligionClick}
-        getClickCount={getClickCount}
-        showRequestedReligions={showRequestedReligions}
-        showConfessions={showConfessions}
-        showTools={showTools}
-        isTransitioningFromChat={isTransitioningFromChat}
-        lastSelectedReligion={lastSelectedReligion}
-      />
-
-      {/* Mobile Religion Cards */}
-      {!showRequestedReligions && (
-        <div
-          className={`transition-opacity duration-300 ${
-            showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <MobileReligionCards
-            onReligionClick={handleReligionClick}
-            getClickCount={getClickCount}
-            isTransitioning={isTransitioningToChat}
-          />
-        </div>
-      )}
-
-      {/* Mobile Requested Religion Cards */}
-      {showRequestedReligions && !showConfessions && (
-        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
-          <div className="w-full h-full flex items-center justify-center px-8">
-            <MobileRequestedReligionCards
-              onReligionClick={handleReligionClick}
-              getClickCount={getClickCount}
-            />
+    <div className="absolute bottom-72 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-4xl mx-2 md:mx-4">
+      <div className="h-[50vh] md:h-[60vh] bg-black/50 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
+        {/* Confessions Header */}
+        <div className="bg-black/30 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 border-b border-white/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowConfessions(false)}
+                className="text-white/60 hover:text-white transition-colors duration-200 p-1 hover:bg-white/10 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h3
+                className="text-white font-medium text-lg md:text-xl"
+                style={{ fontFamily: 'Poiret One, sans-serif' }}
+              >
+                Confessions
+              </h3>
+            </div>
+            
+            {/* Sort Options */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfessionSortBy('recent')}
+                className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
+                  confessionSortBy === 'recent'
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Recent
+              </button>
+              <button
+                onClick={() => setConfessionSortBy('top')}
+                className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
+                  confessionSortBy === 'top'
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Top
+              </button>
+              <button
+                onClick={() => setConfessionSortBy('lowest')}
+                className={`px-2 md:px-3 py-1 rounded-lg text-xs transition-all duration-200 ${
+                  confessionSortBy === 'lowest'
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/60 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Lowest
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* All Buttons */}
-      <HomeButtons
-        showRequestedReligions={showRequestedReligions}
-        setShowRequestedReligions={setShowRequestedReligions}
-        showConfessions={showConfessions}
-        setShowConfessions={setShowConfessions}
-        setShowLiveChat={setShowLiveChat}
-        onShowRequests={onShowRequests}
-        onShowAdmin={onShowAdmin}
-        showTools={showTools}
-      />
-
-      {/* Modals */}
-      <ProfileModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        onProfileUpdate={handleProfileUpdate}
-      />
-
-      {showLiveChat && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="relative flex flex-col items-center">
-            <div className="w-full max-w-5xl px-4">
-              <LiveChat isVisible={true} />
+        {/* Confessions List */}
+        <div className="flex-1 p-3 md:p-6 overflow-y-auto">
+          {loadingConfessions ? (
+            <div className="text-center text-white/60 mt-10 md:mt-20">
+              <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                Loading confessions...
+              </p>
             </div>
+          ) : confessions.length === 0 ? (
+            <div className="text-center text-white/60 mt-10 md:mt-20">
+              <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                No confessions yet. Be the first to share...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 md:space-y-4">
+              {confessions.map((confession) => (
+                <div
+                  key={confession.id}
+                  className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 md:p-4 border border-white/20"
+                >
+                  {/* Own confession indicator */}
+                  {confession.is_own && (
+                    <div className="mb-1 md:mb-2">
+                      <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 md:py-1 rounded-full border border-blue-500/30">
+                        Yours
+                      </span>
+                    </div>
+                  )}
+                  
+                  <p className="text-white/90 text-sm leading-relaxed mb-2 md:mb-3">
+                    {confession.content}
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {/* Upvote Button */}
+                      <button
+                        onClick={() => handleVoteOnConfession(confession.id, 'upvote')}
+                        className={`flex items-center gap-1 px-1.5 md:px-2 py-1 rounded-lg transition-all duration-200 ${
+                          confession.user_vote === 'upvote'
+                            ? 'bg-green-500/20 text-green-400'
+                            : 'text-white/60 hover:text-green-400 hover:bg-green-500/10'
+                        }`}
+                      >
+                        <ChevronUp className="w-3 md:w-4 h-3 md:h-4" />
+                        <span className="text-xs">{confession.upvotes}</span>
+                      </button>
+                      
+                      {/* Downvote Button */}
+                      <button
+                        onClick={() => handleVoteOnConfession(confession.id, 'downvote')}
+                        className={`flex items-center gap-1 px-1.5 md:px-2 py-1 rounded-lg transition-all duration-200 ${
+                          confession.user_vote === 'downvote'
+                            ? 'bg-red-500/20 text-red-400'
+                            : 'text-white/60 hover:text-red-400 hover:bg-red-500/10'
+                        }`}
+                      >
+                        <ChevronDown className="w-3 md:w-4 h-3 md:h-4" />
+                        <span className="text-xs">{confession.downvotes}</span>
+                      </button>
+                      
+                      {/* Score */}
+                      <div className="text-white/60 text-xs">
+                        Score: {confession.score}
+                      </div>
+                    </div>
+                    
+                    {/* Timestamp */}
+                    <div className="text-white/40 text-xs">
+                      {formatTimeAgo(confession.created_at)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Confession Input - Fixed at bottom */}
+        <div className="border-t border-white/20 p-3 md:p-6 bg-black/20 backdrop-blur-sm">
+          <div className="flex gap-2 md:gap-3">
+            <textarea
+              value={confessionText}
+              onChange={(e) => setConfessionText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (confessionText.trim() && !isSubmittingConfession) {
+                    handleSubmitConfession();
+                  }
+                }
+              }}
+              placeholder="Write your confession anonymously... (No links or contact info)"
+              maxLength={500}
+              className="flex-1 p-3 md:p-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl md:rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/50 transition-all duration-300 text-white placeholder-white/60 hover:bg-white/15 resize-none min-h-[80px] md:min-h-[100px] max-h-[100px] md:max-h-[120px] confession-textarea text-sm"
+              style={{ fontFamily: 'Poiret One, sans-serif' }}
+              disabled={isSubmittingConfession}
+            />
             <button
-              onClick={() => setShowLiveChat(false)}
-              className="mt-4 bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
+              onClick={handleSubmitConfession}
+              disabled={!confessionText.trim() || isSubmittingConfession}
+              className="px-4 md:px-6 py-3 md:py-4 bg-white/80 backdrop-blur-sm text-black rounded-xl md:rounded-2xl hover:bg-white/90 transition-all duration-300 hover:scale-105 border border-white/20 self-end text-sm"
               style={{ fontFamily: 'Poiret One, sans-serif' }}
             >
-              Close Chat
+              {isSubmittingConfession ? 'Submitting...' : 'Submit'}
             </button>
           </div>
+          <div className="mt-1 md:mt-2 flex flex-col md:flex-row justify-between text-white/40 text-xs gap-1 md:gap-0">
+            <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+              <span className="hidden md:inline">Anonymous posting • Max 2 confessions per user • NO CONTACT INFO ALLOWED • Press Enter to submit</span>
+              <span className="md:hidden">Anonymous • Max 2 per user • Enter to submit</span>
+            </p>
+            <p className="md:self-end">{confessionText.length}/500</p>
+          </div>
         </div>
-      )}
+      </div>
 
-      <ConfessionsModal
-        showConfessions={showConfessions}
-        confessions={confessions}
-        confessionText={confessionText}
-        setConfessionText={setConfessionText}
-        isSubmittingConfession={isSubmittingConfession}
-        handleSubmitConfession={handleSubmitConfession}
-        confessionSortBy={confessionSortBy}
-        setConfessionSortBy={setConfessionSortBy}
-        loadingConfessions={loadingConfessions}
-        handleVoteOnConfession={handleVoteOnConfession}
-        formatTimeAgo={formatTimeAgo}
+      <WarningPopup
         showWarning={showWarning}
         warningMessage={warningMessage}
         isWarningFadingOut={isWarningFadingOut}
       />
-
-      {showConfessions && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
-          <button
-            onClick={() => setShowConfessions(false)}
-            className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-2xl font-medium hover:bg-black/90 transition-all duration-300 hover:scale-105 border border-white/20"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
-          >
-            Close Confessions
-          </button>
-        </div>
-      )}
     </div>
   );
 }
