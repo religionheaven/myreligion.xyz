@@ -68,7 +68,7 @@ export class SessionTracking {
         .upsert({
           user_id: userId,
           session_token: this.sessionToken,
-          ip_address: locationData.ip,
+          ip_address: locationData.ip === 'unknown' ? null : locationData.ip,
           location_data: locationData,
           is_active: true,
           last_activity: new Date().toISOString(),
