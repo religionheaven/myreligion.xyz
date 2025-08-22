@@ -99,9 +99,6 @@ export function AvatarTool() {
             ))}
           </div>
         </div>
-            </div>
-          </label>
-        </div>
 
         {/* Background Controls */}
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
