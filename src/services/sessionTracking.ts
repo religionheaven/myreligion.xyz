@@ -103,8 +103,16 @@ export class SessionTracking {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
-      if (!supabaseUrl || !supabaseKey) {
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.trim() === '' || supabaseKey.trim() === '') {
         console.warn('Supabase environment variables not configured');
+        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+      }
+
+      // Validate URL format
+      try {
+        new URL(`${supabaseUrl}/functions/v1/get-location-data`);
+      } catch (urlError) {
+        console.warn('Invalid Supabase URL format:', supabaseUrl);
         return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
       }
 
@@ -118,7 +126,7 @@ export class SessionTracking {
       const response = await fetch(apiUrl, { 
         headers,
         method: 'GET',
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: AbortSignal.timeout(10000) // 10 second timeout
       });
       
       if (response.ok) {
