@@ -115,17 +115,18 @@ Deno.serve(async (req) => {
       }
 
       case 'getTotalUserCount': {
-        const { count, error } = await supabaseClient.auth.admin.listUsers({
-          page: 1,
-          perPage: 1
-        });
+        // Get total count of user profiles (which represents actual users)
+        const { count, error } = await supabaseClient
+          .from('user_profiles')
+          .select('*', { count: 'exact', head: true });
         
         if (error) {
+          console.error('Error getting user count:', error);
           throw error;
         }
 
         return new Response(
-          JSON.stringify({ count: count || 0 }),
+          JSON.stringify({ total: count || 0 }),
           {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }

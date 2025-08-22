@@ -262,11 +262,13 @@ export class AdminAnalytics {
   static async getAdminStats(): Promise<AdminStats> {
     try {
       const [usersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
-        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getTotalUserCount`, {
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup`, {
+          method: 'POST',
           headers: {
             'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ action: 'getTotalUserCount' }),
         }).then(res => res.json()),
         supabase.from('site_visits').select('*', { count: 'exact', head: true }),
         supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
@@ -321,7 +323,7 @@ export class AdminAnalytics {
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
       return {
-        totalUsers: usersResult?.count || 0,
+        totalUsers: usersResult?.total || 0,
         activeUsers: activeUsers || 0,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,
