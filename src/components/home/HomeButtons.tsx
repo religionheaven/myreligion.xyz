@@ -75,43 +75,38 @@ export function HomeButtons({
         </button>
       </div>
 
-      {/* Desktop Confessions Button */}
-      <div
-        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[120px] lg:translate-y-[140px] xl:translate-y-[160px] 2xl:translate-y-[180px] z-20 hidden md:block transition-opacity duration-300 ${
-          showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
-        <button
-          onClick={() => setShowConfessions(!showConfessions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <span
-            className="text-sm lg:text-base font-medium"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
-          >
-            {showConfessions ? 'close confessions' : 'confessions'}
-          </span>
-        </button>
-      </div>
-
-      {/* Live Chat Button */}
+      {/* Live Chat and Confessions Buttons */}
       <div
         className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
-        <button
-          onClick={() => setShowLiveChat(true)}
-          className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-          <span
-            className="text-xs md:text-sm font-medium"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowLiveChat(true)}
+            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
           >
-            heaven, live
-          </span>
-        </button>
+            <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+            <span
+              className="text-xs md:text-sm font-medium"
+              style={{ fontFamily: 'Poiret One, sans-serif' }}
+            >
+              heaven, live
+            </span>
+          </button>
+          
+          <button
+            onClick={() => setShowConfessions(!showConfessions)}
+            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          >
+            <span
+              className="text-xs md:text-sm font-medium"
+              style={{ fontFamily: 'Poiret One, sans-serif' }}
+            >
+              {showConfessions ? 'close confessions' : 'confessions'}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Bottom Left Buttons */}
