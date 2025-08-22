@@ -492,10 +492,22 @@ function HomeContent({
 }: HomeContentProps) {
   const [showTools, setShowTools] = React.useState(false);
 
+  const [showTools, setShowTools] = React.useState(false);
+
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
     const found = clickCounts.find((item) => item.religion === religion);
     return found?.click_count || 0;
+  };
+
+  const handleToolsClick = () => {
+    setShowTools(!showTools);
+    // Close other modals when tools is activated
+    if (!showTools) {
+      setShowRequestedReligions(false);
+      setShowConfessions(false);
+      setShowLiveChat(false);
+    }
   };
 
   const handleToolsClick = () => {
@@ -580,6 +592,18 @@ function HomeContent({
         <p className="text-white/60 text-xs md:text-sm" style={{ fontFamily: 'Poiret One, sans-serif' }}>
           powered by heaven
         </p>
+      </div>
+
+      {/* Tools Button - Desktop Only, positioned above cards */}
+      <div className="relative z-20 flex justify-center mt-8 hidden md:block">
+        <button
+          onClick={handleToolsClick}
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-lg font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            {showTools ? 'close tools' : 'tools'}
+          </span>
+        </button>
       </div>
 
       {/* Tools Button - Desktop Only, positioned above cards */}
