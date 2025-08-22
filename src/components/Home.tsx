@@ -492,8 +492,6 @@ function HomeContent({
 }: HomeContentProps) {
   const [showTools, setShowTools] = React.useState(false);
 
-  const [showTools, setShowTools] = React.useState(false);
-
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
     const found = clickCounts.find((item) => item.religion === religion);
@@ -510,15 +508,6 @@ function HomeContent({
     }
   };
 
-  const handleToolsClick = () => {
-    setShowTools(!showTools);
-    // Close other modals when tools is activated
-    if (!showTools) {
-      setShowRequestedReligions(false);
-      setShowConfessions(false);
-      setShowLiveChat(false);
-    }
-  };
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
       {/* Desktop background */}
