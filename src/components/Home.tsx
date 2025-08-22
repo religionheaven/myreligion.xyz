@@ -317,12 +317,6 @@ export function Home({
           <div className="w-full h-full flex items-center justify-center px-8">
             <MobileRequestedReligionCards
               onReligionClick={handleReligionClick}
-              getClickCount={getClickCount}
-            />
-          </div>
-        </div>
-      )}
-
       {/* All Buttons */}
       <HomeButtons
         showRequestedReligions={showRequestedReligions}
