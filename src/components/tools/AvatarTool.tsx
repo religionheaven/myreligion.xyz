@@ -84,7 +84,7 @@ export function AvatarTool() {
   const avatarOptions = [
     { id: 'white', name: 'White', url: 'https://i.imgur.com/5YjvR61.png' },
     { id: 'black', name: 'Black', url: 'https://i.imgur.com/YF9ZSrq.png' },
-    { id: 'yzy', name: 'Yzy', url: 'https://i.imgur.com/yzy.png' },
+    { id: 'yzy', name: 'YZY', url: 'https://i.imgur.com/OZ097br.png' },
     { id: 'christian', name: 'Christian', url: 'https://i.imgur.com/KLkXhhW.png' },
     { id: 'jewish', name: 'Jewish', url: 'https://i.imgur.com/WaBoB1X.png' },
     { id: 'islamic', name: 'Islamic', url: 'https://i.imgur.com/JkLEbS3.png' },
