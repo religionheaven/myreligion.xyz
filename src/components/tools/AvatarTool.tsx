@@ -7,6 +7,79 @@ export function AvatarTool() {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [backgroundType, setBackgroundType] = useState<'color' | 'image'>('color');
 
+  const downloadAvatar = async () => {
+    if (!selectedAvatar) return;
+
+    try {
+      // Create a canvas element
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = 500;
+      canvas.height = 500;
+
+      // Draw background
+      if (backgroundType === 'color') {
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, 500, 500);
+      } else if (backgroundType === 'image' && backgroundImage) {
+        const bgImg = new Image();
+        bgImg.crossOrigin = 'anonymous';
+        await new Promise((resolve) => {
+          bgImg.onload = resolve;
+          bgImg.src = backgroundImage;
+        });
+        ctx.drawImage(bgImg, 0, 0, 500, 500);
+      } else {
+        // Default white background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 500, 500);
+      }
+
+      // Draw avatar
+      const avatarImg = new Image();
+      avatarImg.crossOrigin = 'anonymous';
+      await new Promise((resolve) => {
+        avatarImg.onload = resolve;
+        avatarImg.src = selectedAvatar;
+      });
+
+      // Calculate dimensions to fit avatar within canvas while maintaining aspect ratio
+      const aspectRatio = avatarImg.width / avatarImg.height;
+      let drawWidth = 500;
+      let drawHeight = 500;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (aspectRatio > 1) {
+        drawHeight = 500 / aspectRatio;
+        offsetY = (500 - drawHeight) / 2;
+      } else {
+        drawWidth = 500 * aspectRatio;
+        offsetX = (500 - drawWidth) / 2;
+      }
+
+      ctx.drawImage(avatarImg, offsetX, offsetY, drawWidth, drawHeight);
+
+      // Download the image
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'avatar.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error downloading avatar:', error);
+    }
+  };
+
   // Predefined avatar options from database
   const avatarOptions = [
     { id: 'white', name: 'White', url: 'https://i.imgur.com/5YjvR61.png' },
@@ -126,6 +199,7 @@ export function AvatarTool() {
         {/* Download Button */}
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <button
+            onClick={downloadAvatar}
             disabled={!selectedAvatar}
             className="w-full bg-white/80 hover:bg-white/90 text-black py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
