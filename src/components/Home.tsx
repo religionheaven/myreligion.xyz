@@ -584,7 +584,7 @@ function HomeContent({
       </div>
 
       {/* Tools Button - Desktop Only, positioned above cards */}
-      <div className="relative z-20 flex justify-center mt-8 hidden md:block">
+      <div className="relative z-20 flex justify-center mt-8 hidden md:flex">
         <button
           onClick={handleToolsClick}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
@@ -593,6 +593,25 @@ function HomeContent({
             {showTools ? 'close tools' : 'tools'}
           </span>
         </button>
+      </div>
+
+      {/* Tools Window - Large black window that opens below tools button */}
+      <div
+        className={`absolute top-64 left-8 right-8 bottom-32 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block ${
+          showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="p-8 h-full">
+          <div className="text-center">
+            <h3
+              className="text-2xl text-white mb-4"
+              style={{ fontFamily: 'Poiret One, sans-serif' }}
+            >
+              Tools
+            </h3>
+            <p className="text-white/60">Tools content will go here...</p>
+          </div>
+        </div>
       </div>
 
       {/* Mobile Requested Religion and Confessions Buttons - positioned below "powered by heaven" */}
