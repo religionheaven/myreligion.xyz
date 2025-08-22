@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, X } from "lucide-react";
 import { Confession, SortOption } from "../../services/confessions";
 import { WarningPopup } from "./WarningPopup";
 
@@ -18,6 +18,7 @@ interface ConfessionsModalProps {
   showWarning: boolean;
   warningMessage: string;
   isWarningFadingOut: boolean;
+  setShowConfessions: (show: boolean) => void;
 }
 
 export function ConfessionsModal({
@@ -35,6 +36,7 @@ export function ConfessionsModal({
   showWarning,
   warningMessage,
   isWarningFadingOut,
+  setShowConfessions,
 }: ConfessionsModalProps) {
   if (!showConfessions) return null;
 
@@ -44,12 +46,20 @@ export function ConfessionsModal({
         {/* Confessions Header */}
         <div className="bg-black/30 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 border-b border-white/20">
           <div className="flex items-center justify-between">
-            <h3
-              className="text-white font-medium text-lg md:text-xl"
-              style={{ fontFamily: "Poiret One, sans-serif" }}
-            >
-              Confessions
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3
+                className="text-white font-medium text-lg md:text-xl"
+                style={{ fontFamily: "Poiret One, sans-serif" }}
+              >
+                Confessions
+              </h3>
+              <button
+                onClick={() => setShowConfessions(false)}
+                className="text-white/60 hover:text-white transition-colors duration-200 p-1 hover:bg-white/10 rounded-lg"
+              >
+                <X className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            </div>
 
             {/* Sort Options */}
             <div className="flex gap-2">
