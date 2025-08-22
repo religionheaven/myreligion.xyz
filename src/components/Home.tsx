@@ -305,15 +305,15 @@ export function Home({
         </div>
       )}
 
+      {/* Mobile Requested Religion Cards */}
+      {showRequestedReligions && !showConfessions && (
+        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center"
         style={{
           backgroundImage: 'url(https://i.imgur.com/ocIai0k.gif)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-        }}
-      {/* Mobile Requested Religion Cards */}
-      {showRequestedReligions && !showConfessions && (
-        <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
+        }}>
           <div className="w-full h-full flex items-center justify-center px-8">
             <MobileRequestedReligionCards
               onReligionClick={handleReligionClick}
