@@ -34,11 +34,11 @@ export function ToolsSection({
 
       {/* Tool Navigation Buttons */}
       <div
-        className={`relative z-20 flex justify-center mt-4 hidden md:flex transition-all duration-500 ease-in-out ${
+        className={`absolute top-12 left-8 z-25 hidden md:flex transition-all duration-500 ease-in-out ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           <button
             onClick={() => setSelectedTool('avatar')}
             className={`text-xl font-medium transition-colors duration-200 ${
@@ -48,7 +48,7 @@ export function ToolsSection({
           >
             Avatar
           </button>
-          <span className="text-white/40 text-xl">|</span>
+          <span className="text-white/40 text-lg">|</span>
           <button
             onClick={() => setSelectedTool('discovery')}
             className={`text-xl font-medium transition-colors duration-200 ${
