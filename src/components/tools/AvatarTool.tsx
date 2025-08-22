@@ -43,64 +43,9 @@ export function AvatarTool() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 h-full">
-      {/* Avatar Preview */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="relative">
-          <div
-            className="w-[500px] h-[500px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
-            style={getBackgroundStyle()}
-          >
-            {selectedAvatar ? (
-              <img
-                src={selectedAvatar}
-                alt="Avatar"
-                className="max-w-full max-h-full object-contain"
-              />
-            ) : (
-              <div className="text-white/60 text-center">
-                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Select an avatar
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="w-full lg:w-80 space-y-6">
-        {/* Avatar Selection */}
-        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
-          <h3
-            className="text-white font-medium mb-4 text-lg"
-            style={{ fontFamily: 'Poiret One, sans-serif' }}
-          >
-            Choose Avatar
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {avatarOptions.map((avatar) => (
-              <button
-                key={avatar.id}
-                onClick={() => setSelectedAvatar(avatar.url)}
-                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
-                  selectedAvatar === avatar.url
-                    ? 'border-white/60 bg-white/20'
-                    : 'border-white/20 bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                <img
-                  src={avatar.url}
-                  alt={avatar.name}
-                  className="w-full h-16 object-contain mb-2"
-                />
-                <span className="text-white/80 text-xs block">{avatar.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Background Controls */}
+    <div className="flex gap-8 h-full">
+      {/* Background Controls - Left Side */}
+      <div className="w-80 space-y-6">
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <h3
             className="text-white font-medium mb-4 text-lg"
@@ -185,6 +130,62 @@ export function AvatarTool() {
           >
             Download Avatar
           </button>
+        </div>
+      </div>
+
+      {/* Avatar Preview - Center */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="relative">
+          <div
+            className="w-[500px] h-[500px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
+            style={getBackgroundStyle()}
+          >
+            {selectedAvatar ? (
+              <img
+                src={selectedAvatar}
+                alt="Avatar"
+                className="max-w-full max-h-full object-contain"
+              />
+            ) : (
+              <div className="text-white/60 text-center">
+                <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
+                  Select an avatar
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Avatar Selection - Right Side */}
+      <div className="w-80">
+        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
+          <h3
+            className="text-white font-medium mb-4 text-lg"
+            style={{ fontFamily: 'Poiret One, sans-serif' }}
+          >
+            Choose Avatar
+          </h3>
+          <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
+            {avatarOptions.map((avatar) => (
+              <button
+                key={avatar.id}
+                onClick={() => setSelectedAvatar(avatar.url)}
+                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                  selectedAvatar === avatar.url
+                    ? 'border-white/60 bg-white/20'
+                    : 'border-white/20 bg-white/10 hover:bg-white/20'
+                }`}
+              >
+                <img
+                  src={avatar.url}
+                  alt={avatar.name}
+                  className="w-full h-16 object-contain mb-2"
+                />
+                <span className="text-white/80 text-xs block">{avatar.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
