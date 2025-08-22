@@ -6,5 +6,4 @@ export { checkRateLimit, detectSpam, detectProhibitedContent } from "./SpamDetec
 export * from "./types";
 export * from "./constants";
 export * from "./utils";
-
-export default from;
+export { default } from "./LiveChat";
