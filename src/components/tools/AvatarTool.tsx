@@ -264,16 +264,17 @@ export function AvatarTool() {
               <button
                 key={avatar.id}
                 onClick={() => setSelectedAvatar(avatar.url)}
-                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
                   selectedAvatar === avatar.url
                     ? 'border-white/60 bg-white/20'
                     : 'border-white/20 bg-white/10 hover:bg-white/20'
-                }`}
+                } z-10`}
+                style={{ pointerEvents: 'auto' }}
               >
                 <img
                   src={avatar.url}
                   alt={avatar.name}
-                  className="w-full h-16 object-contain mb-2"
+                  className="w-full h-16 object-contain mb-2 pointer-events-none"
                 />
                 <span className="text-white/80 text-xs block">{avatar.name}</span>
               </button>
