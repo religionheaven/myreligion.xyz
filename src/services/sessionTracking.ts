@@ -138,9 +138,9 @@ export class SessionTracking {
         return { ip: "unknown", country: null, city: null, region: null, timezone: null };
       }
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         console.warn("Location data request timed out, using fallback");
-      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+      } else if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
         console.warn("Network error fetching location data, using fallback");
       } else {
         console.warn("Error getting location data, using fallback:", error);
