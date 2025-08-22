@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { RequestsPage } from './RequestsPage';
 import { ChatInterface } from './ChatInterface';
-import { LiveChat } from './LiveChat';
+import LiveChat from './LiveChat';
 import { ReligionClickService, ReligionClickData } from '../services/religionClicks';
 import { ProfileModal } from './ProfileModal';
 import { UserProfileService, UserProfile } from '../services/userProfile';
