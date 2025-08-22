@@ -84,12 +84,13 @@ export function AvatarTool() {
   const avatarOptions = [
     { id: 'white', name: 'White', url: 'https://i.imgur.com/5YjvR61.png' },
     { id: 'black', name: 'Black', url: 'https://i.imgur.com/YF9ZSrq.png' },
-    { id: 'yzy', name: 'YZY', url: 'https://i.imgur.com/OZ097br.png' },
     { id: 'christian', name: 'Christian', url: 'https://i.imgur.com/KLkXhhW.png' },
     { id: 'jewish', name: 'Jewish', url: 'https://i.imgur.com/WaBoB1X.png' },
     { id: 'islamic', name: 'Islamic', url: 'https://i.imgur.com/JkLEbS3.png' },
     { id: 'hindu', name: 'Hindu', url: 'https://i.imgur.com/fhaXuTH.png' },
     { id: 'nga', name: 'Nigga', url: 'https://i.imgur.com/5eZqdQy.png' },
+    { id: 'yzy', name: 'YZY', url: 'https://i.imgur.com/OZ097br.png' },
+    { id: 'degen', name: 'Degenerate', url: 'https://i.imgur.com/kyc0s9S.png' },
   ];
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
