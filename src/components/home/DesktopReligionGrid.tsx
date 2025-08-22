@@ -7,7 +7,6 @@ interface DesktopReligionGridProps {
   getClickCount: (religion: string) => string | number;
   isTransitioning: boolean;
   showRequestedReligions: boolean;
-  setShowRequestedReligions: (show: boolean) => void;
   showConfessions: boolean;
   showTools: boolean;
   isTransitioningFromChat: boolean;
@@ -19,7 +18,6 @@ export function DesktopReligionGrid({
   getClickCount,
   isTransitioning,
   showRequestedReligions,
-  setShowRequestedReligions,
   showConfessions,
   showTools,
   isTransitioningFromChat,
@@ -37,35 +35,7 @@ export function DesktopReligionGrid({
       }`}
     >
       <div className="flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 2xl:gap-12 px-4">
-        {/* Requested Religions Button positioned above Christian card */}
-        <div className="flex flex-col items-center gap-4 lg:gap-6">
-          <div
-            className={`transition-opacity duration-300 ${
-              showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
-            }`}
-          >
-            <button
-              onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-              className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
-            >
-              <span
-                className="text-sm lg:text-base font-medium"
-                style={{ fontFamily: "Poiret One, sans-serif" }}
-              >
-                {showRequestedReligions ? "back" : "requested religions"}
-              </span>
-            </button>
-          </div>
-          <ReligionCard
-            key={MAIN_RELIGIONS[0].name}
-            religion={MAIN_RELIGIONS[0]}
-            onClick={onReligionClick}
-            getClickCount={getClickCount}
-            isHighlighted={isTransitioningFromChat && lastSelectedReligion === MAIN_RELIGIONS[0].name}
-            className="w-[clamp(180px,15vw,280px)] h-auto"
-          />
-        </div>
-        {MAIN_RELIGIONS.slice(1).map((religion) => (
+        {MAIN_RELIGIONS.map((religion) => (
           <ReligionCard
             key={religion.name}
             religion={religion}
