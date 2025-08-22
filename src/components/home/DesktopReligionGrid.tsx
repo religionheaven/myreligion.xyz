@@ -19,6 +19,7 @@ export function DesktopReligionGrid({
   getClickCount,
   isTransitioning,
   showRequestedReligions,
+  setShowRequestedReligions,
   showConfessions,
   showTools,
   isTransitioningFromChat,
