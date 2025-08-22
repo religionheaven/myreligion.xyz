@@ -275,8 +275,11 @@ export class AdminAnalytics {
         supabase.from('user_requests').select('*', { count: 'exact', head: true }),
       ]);
 
-      // Get total number of user accounts (same as total users for now)
-      const activeUsers = usersResult?.total || 0;
+      const { count: activeUsers } = await supabase
+        .from('user_sessions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true)
+        .gte('last_activity', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
       // Get top countries
       const { data: countryData } = await supabase
@@ -321,7 +324,7 @@ export class AdminAnalytics {
 
       return {
         totalUsers: usersResult?.total || 0,
-        activeUsers: activeUsers,
+        activeUsers: activeUsers || 0,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,
         totalRequests: requestsResult.count || 0,
