@@ -85,7 +85,7 @@ export class ReligionClickService {
 
   // Initialize click counts for all religions if they don't exist
   static async initializeClickCounts(): Promise<void> {
-    const religions = ['Christianity', 'Judaism', 'Islam', 'Hinduism'];
+    const religions = ['Christianity', 'Judaism', 'Islam', 'Hinduism', 'Nga', 'YZY'];
 
     for (const religion of religions) {
       try {

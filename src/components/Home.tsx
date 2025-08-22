@@ -1,13 +1,13 @@
 import React from 'react';
+
 import { useAuth } from '../contexts/AuthContext';
 import { RequestsPage } from './RequestsPage';
 import { ChatInterface } from './ChatInterface';
 import { ReligionClickService, ReligionClickData } from '../services/religionClicks';
 import { ProfileModal } from './ProfileModal';
 import { UserProfileService, UserProfile } from '../services/userProfile';
-import LiveChat from './LiveChat';
-import { ConfessionsModal } from './confessions/ConfessionsModal';
 import { useConfessions } from '../hooks/useConfessions';
+import { HomeContent } from './Home/HomeContent';
 
 // Import new components
 import { HomeHeader } from './home/HomeHeader';
@@ -185,12 +185,14 @@ export function Home({
     return found?.click_count || 0;
   };
 
+
   if (showRequests) {
     return <RequestsPage onBack={onHideRequests || (() => {})} />;
   }
 
   if (selectedReligion) {
     return (
+      
       <ChatInterface
         religion={selectedReligion}
         onBack={handleBackFromChat}
