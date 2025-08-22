@@ -597,7 +597,7 @@ function HomeContent({
 
       {/* Tools Window - Large black window that opens below tools button */}
       <div
-        className={`absolute top-64 left-8 right-8 bottom-32 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block ${
+        className={`absolute top-64 left-8 right-8 bottom-16 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
