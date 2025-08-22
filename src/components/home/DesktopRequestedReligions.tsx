@@ -21,6 +21,7 @@ export function DesktopRequestedReligions({
   showTools,
   isTransitioningFromChat,
   lastSelectedReligion,
+  setShowRequestedReligions,
 }: DesktopRequestedReligionsProps) {
   return (
     <div
