@@ -15,7 +15,7 @@ export function DiscoveryTool() {
           Discovery
         </h3>
         <p className="text-white/60 text-sm">
-          SDK integration with heaven.xyz to discover upcoming token runners for better trading
+          heaven.xyz SDK + AI Integration: Smarter discovery. Better trading.
         </p>
       </div>
 
@@ -106,7 +106,7 @@ export function DiscoveryTool() {
               SDK Integration In Progress
             </h4>
             <p className="text-white/60 text-sm mb-6 leading-relaxed">
-              We're currently developing the SDK integration with heaven.xyz to bring you powerful 
+              We're currently awaiting the SDK integration with heaven.xyz to bring you powerful 
               token discovery and trading tools. This will enable real-time access to upcoming 
               token runners and advanced trading analytics.
             </p>
