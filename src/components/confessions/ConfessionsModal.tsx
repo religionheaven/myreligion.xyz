@@ -39,7 +39,7 @@ export function ConfessionsModal({
   if (!showConfessions) return null;
 
   return (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl mx-2 md:mx-4">
+    <div className="absolute bottom-72 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-4xl mx-2 md:mx-4">
       <div className="h-[50vh] md:h-[60vh] bg-black/50 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
         {/* Confessions Header */}
         <div className="bg-black/30 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 border-b border-white/20">
