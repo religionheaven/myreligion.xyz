@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Ban, UserX, Globe, Clock, AlertTriangle, Trash2, Eye } from 'lucide-react';
+import { Ban, UserX, Globe, Clock, AlertTriangle, Eye } from 'lucide-react';
 import { BanManagement, BannedUser, BannedIP, BanLog } from '../../services/banManagement';
 import { AdminAnalytics, LiveUser } from '../../services/adminAnalytics';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, TrendingUp, Zap, Globe, Code, ExternalLink } from 'lucide-react';
+import { Globe, ExternalLink } from 'lucide-react';
 
 export function DiscoveryTool() {
   const [searchQuery, setSearchQuery] = useState('');

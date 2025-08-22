@@ -123,7 +123,7 @@ export class AdminAnalytics {
       // Get unique user IDs
       const userIds = [...new Set(uniqueVisits.map(v => v.user_id).filter(Boolean))];
       
-      let usernameMap = new Map();
+      const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase
@@ -176,7 +176,7 @@ export class AdminAnalytics {
       // Get unique user IDs
       const userIds = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
       
-      let usernameMap = new Map();
+      const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase
@@ -229,7 +229,7 @@ export class AdminAnalytics {
       // Get unique user IDs
       const userIds = [...new Set(requests.map(r => r.user_id).filter(Boolean))];
       
-      let usernameMap = new Map();
+      const usernameMap = new Map();
       if (userIds.length > 0) {
         // Get user profiles for usernames
         const { data: profiles, error: profilesError } = await supabase

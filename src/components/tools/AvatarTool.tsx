@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Palette } from 'lucide-react';
 
 export function AvatarTool() {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);

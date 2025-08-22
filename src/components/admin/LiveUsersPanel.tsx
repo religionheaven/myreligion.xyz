@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, MapPin, Clock, Globe, Activity } from 'lucide-react';
+import { Users, MapPin, Clock, Globe } from 'lucide-react';
 import { AdminAnalytics, LiveUser } from '../../services/adminAnalytics';
 
 import { Globe2 } from 'lucide-react';

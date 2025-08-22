@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, MessageCircle } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { ReligionClickData } from '../../services/religionClicks';
 import { UserProfile } from '../../services/userProfile';
 import { Confession, SortOption } from '../../services/confessions';

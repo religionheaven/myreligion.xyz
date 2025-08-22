@@ -9,7 +9,6 @@ import { ProfileModal } from './ProfileModal';
 import { UserProfileService, UserProfile } from '../services/userProfile';
 import { useConfessions } from '../hooks/useConfessions';
 import { ConfessionsModal } from './confessions/ConfessionsModal';
-import { HomeContent } from './Home/HomeContent';
 
 // Import new components
 import { HomeHeader } from './home/HomeHeader';

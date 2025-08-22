@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Download, FileText, Code, Hash } from 'lucide-react';
+import { X, FileText, Code, Hash } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;

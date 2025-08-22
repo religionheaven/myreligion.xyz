@@ -5,7 +5,6 @@ import {
   BarChart3,
   Settings,
   Shield,
-  Database,
   MessageSquare,
   Eye,
   Activity,
