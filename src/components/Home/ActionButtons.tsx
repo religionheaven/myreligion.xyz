@@ -35,7 +35,7 @@ export function ActionButtons({
       </div>
 
       {/* Confessions Button - Desktop */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
         <button
           onClick={() => setShowConfessions(!showConfessions)}
           className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
