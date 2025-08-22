@@ -23,7 +23,7 @@ export function ActionButtons({
   return (
     <>
       {/* Requested Religion Button - Desktop */}
-      <div className={`absolute bottom-32 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
