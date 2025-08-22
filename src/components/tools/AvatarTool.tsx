@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { Upload, Palette } from 'lucide-react';
+import { Palette } from 'lucide-react';
 
 export function AvatarTool() {
-  const [avatarImage, setAvatarImage] = useState<string | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [backgroundType, setBackgroundType] = useState<'color' | 'image'>('color');
 
-  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setAvatarImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // Predefined avatar options from database
+  const avatarOptions = [
+    { id: 'christian', name: 'Christian', url: 'https://i.imgur.com/KLkXhhW.png' },
+    { id: 'jewish', name: 'Jewish', url: 'https://i.imgur.com/WaBoB1X.png' },
+    { id: 'islamic', name: 'Islamic', url: 'https://i.imgur.com/JkLEbS3.png' },
+    { id: 'hindu', name: 'Hindu', url: 'https://i.imgur.com/fhaXuTH.png' },
+    { id: 'nga', name: 'Nga', url: 'https://i.imgur.com/5eZqdQy.png' },
+  ];
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -53,17 +51,16 @@ export function AvatarTool() {
             className="w-[500px] h-[500px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
             style={getBackgroundStyle()}
           >
-            {avatarImage ? (
+            {selectedAvatar ? (
               <img
-                src={avatarImage}
+                src={selectedAvatar}
                 alt="Avatar"
                 className="max-w-full max-h-full object-contain"
               />
             ) : (
               <div className="text-white/60 text-center">
-                <Upload className="w-16 h-16 mx-auto mb-4" />
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  Upload your avatar image
+                  Select an avatar
                 </p>
               </div>
             )}
@@ -73,26 +70,35 @@ export function AvatarTool() {
 
       {/* Controls */}
       <div className="w-full lg:w-80 space-y-6">
-        {/* Avatar Upload */}
+        {/* Avatar Selection */}
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <h3
             className="text-white font-medium mb-4 text-lg"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
-            Avatar Image
+            Choose Avatar
           </h3>
-          <label className="block">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarUpload}
-              className="hidden"
-            />
-            <div className="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:scale-105 text-center">
-              <Upload className="w-6 h-6 text-white/80 mx-auto mb-2" />
-              <span className="text-white/80 text-sm">
-                {avatarImage ? 'Change Avatar' : 'Upload Avatar'}
-              </span>
+          <div className="grid grid-cols-2 gap-3">
+            {avatarOptions.map((avatar) => (
+              <button
+                key={avatar.id}
+                onClick={() => setSelectedAvatar(avatar.url)}
+                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                  selectedAvatar === avatar.url
+                    ? 'border-white/60 bg-white/20'
+                    : 'border-white/20 bg-white/10 hover:bg-white/20'
+                }`}
+              >
+                <img
+                  src={avatar.url}
+                  alt={avatar.name}
+                  className="w-full h-16 object-contain mb-2"
+                />
+                <span className="text-white/80 text-xs block">{avatar.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
             </div>
           </label>
         </div>
@@ -176,7 +182,7 @@ export function AvatarTool() {
         {/* Download Button */}
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <button
-            disabled={!avatarImage}
+            disabled={!selectedAvatar}
             className="w-full bg-white/80 hover:bg-white/90 text-black py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
