@@ -23,7 +23,7 @@ export function ActionButtons({
   return (
     <>
       {/* Requested Religion Button - Desktop */}
-      <div className={`absolute bottom-52 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-44 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -35,7 +35,7 @@ export function ActionButtons({
       </div>
 
       {/* Confessions Button - Desktop */}
-      <div className="absolute bottom-36 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
+      <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
         <button
           onClick={() => setShowConfessions(!showConfessions)}
           className="bg-black/50 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -47,7 +47,7 @@ export function ActionButtons({
       </div>
 
       {/* Live Chat Button */}
-      <div className={`absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-12 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
