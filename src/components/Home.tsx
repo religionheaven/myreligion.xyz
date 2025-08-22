@@ -261,6 +261,7 @@ export function Home({
         showTools={showTools}
         isTransitioningFromChat={isTransitioningFromChat}
         lastSelectedReligion={lastSelectedReligion}
+        setShowRequestedReligions={setShowRequestedReligions}
       />
 
       {/* Mobile Religion Cards */}
