@@ -595,17 +595,6 @@ function HomeContent({
         </button>
       </div>
 
-      {/* Tools Button - Desktop Only, positioned above cards */}
-      <div className="relative z-20 flex justify-center mt-8 hidden md:block">
-        <button
-          onClick={handleToolsClick}
-          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
-        >
-          <span className="text-lg font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            {showTools ? 'close tools' : 'tools'}
-          </span>
-        </button>
-      </div>
       {/* Mobile Requested Religion and Confessions Buttons - positioned below "powered by heaven" */}
       <div className="relative z-20 flex justify-center mt-4 md:hidden">
         <div className="flex flex-col items-center gap-2">
