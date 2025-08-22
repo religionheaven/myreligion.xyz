@@ -270,7 +270,7 @@ function OverviewTab({
           <div>
             <div className="text-2xl font-bold text-white">
               {Math.round(
-            {systemStats?.recentActivity || 0}
+                (systemStats?.recentActivity || 0)
               ) / 10}
             </div>
             <div className="text-white/60 text-sm">Msgs/User</div>
@@ -281,7 +281,7 @@ function OverviewTab({
                 10}
             </div>
             <div className="text-white/60 text-sm">Visits/User</div>
-          <div className="text-white/60 text-sm">Recent Activity</div>
+          </div>
         </div>
       </div>
     </div>
