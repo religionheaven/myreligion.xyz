@@ -490,12 +490,23 @@ function HomeContent({
   warningMessage,
   isWarningFadingOut,
 }: HomeContentProps) {
+  const [showTools, setShowTools] = React.useState(false);
+
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
     const found = clickCounts.find((item) => item.religion === religion);
     return found?.click_count || 0;
   };
 
+  const handleToolsClick = () => {
+    setShowTools(!showTools);
+    // Close other modals when tools is activated
+    if (!showTools) {
+      setShowRequestedReligions(false);
+      setShowConfessions(false);
+      setShowLiveChat(false);
+    }
+  };
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
       {/* Desktop background */}
@@ -571,6 +582,17 @@ function HomeContent({
         </p>
       </div>
 
+      {/* Tools Button - Desktop Only, positioned above cards */}
+      <div className="relative z-20 flex justify-center mt-8 hidden md:block">
+        <button
+          onClick={handleToolsClick}
+          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-2xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-lg font-medium" style={{ fontFamily: 'Poiret One, sans-serif' }}>
+            {showTools ? 'close tools' : 'tools'}
+          </span>
+        </button>
+      </div>
       {/* Mobile Requested Religion and Confessions Buttons - positioned below "powered by heaven" */}
       <div className="relative z-20 flex justify-center mt-4 md:hidden">
         <div className="flex flex-col items-center gap-2">
@@ -596,7 +618,7 @@ function HomeContent({
       {/* Center image in true middle of page */}
       {/* Desktop: Center images in grid */}
       <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning || showRequestedReligions || showConfessions ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${isTransitioning || showRequestedReligions || showConfessions || showTools ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}
       >
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -648,7 +670,7 @@ function HomeContent({
 
       {/* Requested Religions Cards - Desktop */}
       <div
-        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions && !showConfessions ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+        className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${showRequestedReligions && !showConfessions && !showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
       >
         <div className="flex items-center gap-8">
           <div className="relative">
@@ -681,7 +703,7 @@ function HomeContent({
       </div>
 
       {/* Requested Religion Button - positioned below religion cards */}
-      <div className={`absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -693,7 +715,7 @@ function HomeContent({
       </div>
 
       {/* Confessions Button - positioned below requested religions button */}
-      <div className="absolute bottom-56 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300">
+      <div className={`absolute bottom-56 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowConfessions(!showConfessions)}
           className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -705,7 +727,7 @@ function HomeContent({
       </div>
 
       {/* Live Chat Button - positioned below cards */}
-      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-40 left-1/2 transform -translate-x-1/2 z-20 transition-opacity duration-300 ${showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <button
           onClick={() => setShowLiveChat(true)}
           className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 md:px-6 md:py-3 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105 flex items-center gap-2"
@@ -781,7 +803,7 @@ function HomeContent({
       )}
 
       {/* Requests button at bottom */}
-      <div className={`absolute bottom-8 left-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-8 left-8 z-20 transition-opacity duration-300 ${showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex gap-3">
           <button
             onClick={onShowRequests || (() => {})}
@@ -812,7 +834,7 @@ function HomeContent({
       </div>
 
       {/* Image at bottom right */}
-      <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <a
           href="https://x.com/religionheaven"
           target="_blank"
