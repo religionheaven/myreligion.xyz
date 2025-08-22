@@ -7,3 +7,5 @@ export * from "./types";
 export * from "./constants";
 export * from "./utils";
 export { default } from "./LiveChat";
+
+export default from
