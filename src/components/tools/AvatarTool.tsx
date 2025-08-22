@@ -202,6 +202,14 @@ export function AvatarTool() {
           )}
         </div>
 
+        {/* GIF Image */}
+        <div className="flex justify-center">
+          <img
+            src="https://i.imgur.com/7iYbMnL.gif"
+            alt="Avatar Tool"
+            className="w-auto h-32 object-contain"
+          />
+        </div>
         {/* Download Button */}
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <button
