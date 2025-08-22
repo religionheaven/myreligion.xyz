@@ -242,7 +242,7 @@ export function AvatarTool() {
                   Select an avatar
                 </p>
                 <p className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  SDK Integration coming soon to help you find the best upcoming runners on heaven.xyz
+                  
                 </p>
               </div>
             )}
