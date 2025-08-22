@@ -305,6 +305,12 @@ export function Home({
         </div>
       )}
 
+        style={{
+          backgroundImage: 'url(https://i.imgur.com/ocIai0k.gif)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
       {/* Mobile Requested Religion Cards */}
       {showRequestedReligions && !showConfessions && (
         <div className="absolute inset-0 z-10 md:hidden flex items-center justify-center">
