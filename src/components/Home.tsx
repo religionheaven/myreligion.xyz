@@ -602,14 +602,25 @@ function HomeContent({
         }`}
       >
         <div className="p-8 h-full">
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center gap-8">
+              <button
+                className="text-white text-xl font-medium hover:text-white/80 transition-colors duration-200"
+                style={{ fontFamily: 'Poiret One, sans-serif' }}
+              >
+                Avatar
+              </button>
+              <span className="text-white/40 text-xl">|</span>
+              <button
+                className="text-white text-xl font-medium hover:text-white/80 transition-colors duration-200"
+                style={{ fontFamily: 'Poiret One, sans-serif' }}
+              >
+                Discovery
+              </button>
+            </div>
+          </div>
           <div className="text-center">
-            <h3
-              className="text-2xl text-white mb-4"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              Tools
-            </h3>
-            <p className="text-white/60">Tools content will go here...</p>
+            <p className="text-white/60">Select a tool above to get started...</p>
           </div>
         </div>
       </div>
