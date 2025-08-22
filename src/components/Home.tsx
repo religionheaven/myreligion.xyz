@@ -44,6 +44,7 @@ export function Home({
   const [showLiveChat, setShowLiveChat] = React.useState(false);
   const [showTools, setShowTools] = React.useState(false);
   const [selectedTool, setSelectedTool] = React.useState<'avatar' | 'discovery'>('avatar');
+  const [isTransitioningToChat, setIsTransitioningToChat] = React.useState(false);
 
   // Use confessions hook
   const {
@@ -128,6 +129,9 @@ export function Home({
   };
 
   const handleReligionClick = (religion: string) => {
+    // Start transition animation
+    setIsTransitioningToChat(true);
+    
     ReligionClickService.incrementClickCount(religion).then((success) => {
       if (success) {
         setClickCounts((prev) => {
@@ -143,7 +147,11 @@ export function Home({
       }
     });
 
-    setSelectedReligion(religion);
+    // Delay setting the religion to allow animation to start
+    setTimeout(() => {
+      setSelectedReligion(religion);
+      setIsTransitioningToChat(false);
+    }, 300);
   };
 
   const handleBackFromChat = () => {
@@ -174,7 +182,7 @@ export function Home({
       <ChatInterface
         religion={selectedReligion}
         onBack={handleBackFromChat}
-        isTransitioning={isTransitioning}
+        isTransitioning={false}
       />
     );
   }
@@ -223,7 +231,7 @@ export function Home({
       <DesktopReligionGrid
         onReligionClick={handleReligionClick}
         getClickCount={getClickCount}
-        isTransitioning={isTransitioning}
+        isTransitioning={isTransitioningToChat}
         showRequestedReligions={showRequestedReligions}
         showConfessions={showConfessions}
         showTools={showTools}
@@ -247,7 +255,7 @@ export function Home({
           <MobileReligionCards
             onReligionClick={handleReligionClick}
             getClickCount={getClickCount}
-            isTransitioning={isTransitioning}
+            isTransitioning={isTransitioningToChat}
           />
         </div>
       )}

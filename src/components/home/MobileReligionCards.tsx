@@ -45,7 +45,7 @@ export function MobileReligionCards({
   return (
     <div
       className={`absolute inset-0 z-10 md:hidden flex items-center justify-center transition-all duration-700 ease-in-out ${
-        isTransitioning ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+        isTransitioning ? 'opacity-0 scale-75 translate-y-8' : 'opacity-100 scale-100 translate-y-0'
       }`}
     >
       <div className="w-full h-full flex items-center justify-center px-8">

@@ -23,8 +23,8 @@ export function DesktopReligionGrid({
     <div
       className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${
         isTransitioning || showRequestedReligions || showConfessions || showTools
-          ? 'opacity-0 scale-50'
-          : 'opacity-100 scale-100'
+          ? 'opacity-0 scale-75 translate-y-8'
+          : 'opacity-100 scale-100 translate-y-0'
       }`}
     >
       <div className="flex items-center gap-8">
