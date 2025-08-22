@@ -10,6 +10,7 @@ interface DesktopRequestedReligionsProps {
   showTools: boolean;
   isTransitioningFromChat: boolean;
   lastSelectedReligion: string | null;
+  setShowRequestedReligions: (show: boolean) => void;
 }
 
 export function DesktopRequestedReligions({
@@ -30,6 +31,19 @@ export function DesktopRequestedReligions({
       }`}
     >
       <div className="flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 2xl:gap-12 px-4">
+        {/* Back Button */}
+        <button
+          onClick={() => setShowRequestedReligions(false)}
+          className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+        >
+          <span
+            className="text-sm lg:text-base font-medium"
+            style={{ fontFamily: "Poiret One, sans-serif" }}
+          >
+            back to religions
+          </span>
+        </button>
+        
         {REQUESTED_RELIGIONS.map((religion) => (
           <ReligionCard
             key={religion.name}
