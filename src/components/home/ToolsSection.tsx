@@ -34,11 +34,11 @@ export function ToolsSection({
 
       {/* Tool Navigation Buttons */}
       <div
-        className={`absolute top-23 left-14 z-25 hidden md:flex transition-all duration-500 ease-in-out ${
+        className={`absolute top-8 lg:top-10 xl:top-12 left-4 lg:left-6 xl:left-8 z-25 hidden md:flex transition-all duration-500 ease-in-out ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 lg:gap-6">
           <button
             onClick={() => setSelectedTool('avatar')}
             className={`text-xl font-medium transition-colors duration-200 ${
@@ -48,7 +48,7 @@ export function ToolsSection({
           >
             Avatar
           </button>
-          <span className="text-white/40 text-lg">|</span>
+          <span className="text-white/40 text-base lg:text-lg">|</span>
           <button
             onClick={() => setSelectedTool('discovery')}
             className={`text-xl font-medium transition-colors duration-200 ${
@@ -63,11 +63,11 @@ export function ToolsSection({
 
       {/* Tools Window */}
       <div
-        className={`absolute top-60 left-8 right-8 bottom-2 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block overflow-y-auto ${
+        className={`absolute top-[clamp(200px,25vh,300px)] left-4 lg:left-6 xl:left-8 right-4 lg:right-6 xl:right-8 bottom-4 lg:bottom-6 xl:bottom-8 z-15 bg-black/50 backdrop-blur-xl rounded-2xl lg:rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block overflow-y-auto ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className={`p-8 min-h-full ${showTools ? '' : 'pointer-events-none'}`}>
+        <div className={`p-4 lg:p-6 xl:p-8 min-h-full ${showTools ? '' : 'pointer-events-none'}`}>
           <div className="min-h-full">
             {selectedTool === 'avatar' && <AvatarTool />}
             {selectedTool === 'discovery' && <DiscoveryTool />}

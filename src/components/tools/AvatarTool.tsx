@@ -120,22 +120,22 @@ export function AvatarTool() {
   };
 
   return (
-    <div className="flex gap-8 h-full overflow-hidden">
+    <div className="flex flex-col xl:flex-row gap-4 lg:gap-6 xl:gap-8 h-full overflow-hidden">
       {/* Background Controls - Left Side */}
-      <div className="w-80 space-y-6 flex-shrink-0">
-        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
+      <div className="w-full xl:w-80 space-y-4 lg:space-y-6 flex-shrink-0">
+        <div className="bg-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/20">
           <h3
-            className="text-white font-medium mb-4 text-lg"
+            className="text-white font-medium mb-3 lg:mb-4 text-base lg:text-lg"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
             Background
           </h3>
 
           {/* Background Type Toggle */}
-          <div className="flex bg-white/20 backdrop-blur-sm rounded-xl p-1 mb-4 border border-white/20">
+          <div className="flex bg-white/20 backdrop-blur-sm rounded-lg lg:rounded-xl p-1 mb-3 lg:mb-4 border border-white/20">
             <button
               onClick={() => setBackgroundType('color')}
-              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 py-2 px-2 lg:px-3 rounded-md lg:rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ${
                 backgroundType === 'color'
                   ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
                   : 'text-white/80 hover:text-white hover:bg-white/10'
@@ -145,7 +145,7 @@ export function AvatarTool() {
             </button>
             <button
               onClick={() => setBackgroundType('image')}
-              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+              className={`flex-1 py-2 px-2 lg:px-3 rounded-md lg:rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ${
                 backgroundType === 'image'
                   ? 'bg-black/80 text-white shadow-lg backdrop-blur-sm border border-white/20'
                   : 'text-white/80 hover:text-white hover:bg-white/10'
@@ -157,20 +157,20 @@ export function AvatarTool() {
 
           {/* Color Picker */}
           {backgroundType === 'color' && (
-            <div className="space-y-3">
-              <label className="block text-white/80 text-sm">Background Color</label>
-              <div className="flex items-center gap-3">
+            <div className="space-y-2 lg:space-y-3">
+              <label className="block text-white/80 text-xs lg:text-sm">Background Color</label>
+              <div className="flex items-center gap-2 lg:gap-3">
                 <input
                   type="color"
                   value={backgroundColor}
                   onChange={(e) => setBackgroundColor(e.target.value)}
-                  className="w-12 h-12 rounded-lg border border-white/30 bg-transparent cursor-pointer"
+                  className="w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12 rounded-md lg:rounded-lg border border-white/30 bg-transparent cursor-pointer"
                 />
                 <input
                   type="text"
                   value={backgroundColor}
                   onChange={(e) => setBackgroundColor(e.target.value)}
-                  className="flex-1 px-3 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/60 text-sm"
+                  className="flex-1 px-2 lg:px-3 py-1.5 lg:py-2 bg-white/10 border border-white/30 rounded-md lg:rounded-lg text-white placeholder-white/60 text-xs lg:text-sm"
                   placeholder="#ffffff"
                 />
               </div>
@@ -187,13 +187,13 @@ export function AvatarTool() {
                   onChange={handleBackgroundImageUpload}
                   className="hidden"
                 />
-                <div className="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:scale-105 text-center">
+                <div className="bg-white/10 hover:bg-white/20 border border-white/30 rounded-lg lg:rounded-xl p-3 lg:p-4 cursor-pointer transition-all duration-300 hover:scale-105 text-center">
                   <img 
                     src="https://i.imgur.com/5YjvR61.png" 
                     alt="Upload" 
-                    className="w-6 h-6 mx-auto mb-2" 
+                    className="w-4 lg:w-5 xl:w-6 h-4 lg:h-5 xl:h-6 mx-auto mb-1 lg:mb-2" 
                   />
-                  <span className="text-white/80 text-sm">
+                  <span className="text-white/80 text-xs lg:text-sm">
                     {backgroundImage ? 'Change Background' : 'Upload Background'}
                   </span>
                 </div>
@@ -207,15 +207,15 @@ export function AvatarTool() {
           <img
             src="https://i.imgur.com/7iYbMnL.gif"
             alt="Avatar Tool"
-            className="w-auto h-32 object-contain max-w-full"
+            className="w-auto h-20 lg:h-24 xl:h-32 object-contain max-w-full"
           />
         </div>
         {/* Download Button */}
-        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
+        <div className="bg-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/20">
           <button
             onClick={downloadAvatar}
             disabled={!selectedAvatar}
-            className="w-full bg-white/80 hover:bg-white/90 text-black py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-white/80 hover:bg-white/90 text-black py-2 lg:py-3 rounded-lg lg:rounded-xl font-medium transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm lg:text-base"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
             Download Avatar
@@ -224,10 +224,10 @@ export function AvatarTool() {
       </div>
 
       {/* Avatar Preview - Center */}
-      <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden mt-4 xl:mt-0">
         <div className="relative">
           <div
-            className="w-[400px] h-[400px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
+            className="w-[clamp(250px,30vw,400px)] h-[clamp(250px,30vw,400px)] rounded-xl lg:rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
             style={getBackgroundStyle()}
           >
             {selectedAvatar ? (
@@ -241,9 +241,6 @@ export function AvatarTool() {
                 <p style={{ fontFamily: 'Poiret One, sans-serif' }}>
                   Select an avatar
                 </p>
-                <p className="text-white/60" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-                  
-                </p>
               </div>
             )}
           </div>
@@ -251,20 +248,20 @@ export function AvatarTool() {
       </div>
 
       {/* Avatar Selection - Right Side */}
-      <div className="w-80 flex-shrink-0 overflow-hidden">
-        <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
+      <div className="w-full xl:w-80 flex-shrink-0 overflow-hidden mt-4 xl:mt-0">
+        <div className="bg-white/10 rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/20">
           <h3
-            className="text-white font-medium mb-4 text-lg"
+            className="text-white font-medium mb-3 lg:mb-4 text-base lg:text-lg"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
             Choose Avatar
           </h3>
-          <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto custom-scrollbar">
+          <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 lg:gap-3 max-h-48 lg:max-h-64 overflow-y-auto custom-scrollbar">
             {avatarOptions.map((avatar) => (
               <button
                 key={avatar.id}
                 onClick={() => setSelectedAvatar(avatar.url)}
-                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer flex-shrink-0 ${
+                className={`relative p-2 lg:p-3 rounded-lg lg:rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer flex-shrink-0 ${
                   selectedAvatar === avatar.url
                     ? 'border-white/60 bg-white/20'
                     : 'border-white/20 bg-white/10 hover:bg-white/20'
@@ -273,9 +270,9 @@ export function AvatarTool() {
                 <img
                   src={avatar.url}
                   alt={avatar.name}
-                  className="w-full h-16 object-contain mb-2"
+                  className="w-full h-10 lg:h-12 xl:h-16 object-contain mb-1 lg:mb-2"
                 />
-                <span className="text-white/80 text-xs block">{avatar.name}</span>
+                <span className="text-white/80 text-xs lg:text-sm block">{avatar.name}</span>
               </button>
             ))}
           </div>

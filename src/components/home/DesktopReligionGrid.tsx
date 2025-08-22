@@ -31,7 +31,7 @@ export function DesktopReligionGrid({
           : 'opacity-100 scale-100 translate-y-0'
       }`}
     >
-      <div className="flex items-center gap-8">
+      <div className="flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 2xl:gap-12 px-4">
         {MAIN_RELIGIONS.map((religion) => (
           <ReligionCard
             key={religion.name}
@@ -39,6 +39,7 @@ export function DesktopReligionGrid({
             onClick={onReligionClick}
             getClickCount={getClickCount}
             isHighlighted={isTransitioningFromChat && lastSelectedReligion === religion.name}
+            className="w-[clamp(180px,15vw,280px)] h-auto"
           />
         ))}
       </div>

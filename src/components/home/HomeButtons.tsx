@@ -58,16 +58,16 @@ export function HomeButtons({
 
       {/* Desktop Requested Religion Button */}
       <div
-        className={`absolute top-1/2 left-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 left-4 lg:left-6 xl:left-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <button
           onClick={() => setShowRequestedReligions(!showRequestedReligions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span
-            className="text-base font-medium"
+            className="text-sm lg:text-base font-medium"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
             {showRequestedReligions ? 'back' : 'requested religions'}
@@ -77,16 +77,16 @@ export function HomeButtons({
 
       {/* Desktop Confessions Button */}
       <div
-        className={`absolute top-1/2 right-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 right-4 lg:right-6 xl:right-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
           showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <button
           onClick={() => setShowConfessions(!showConfessions)}
-          className="bg-black/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          className="bg-black/50 backdrop-blur-sm text-white px-4 lg:px-6 xl:px-8 py-3 lg:py-4 rounded-xl border border-white/20 hover:bg-black/60 transition-all duration-300 hover:scale-105 flex items-center gap-2"
         >
           <span
-            className="text-base font-medium"
+            className="text-sm lg:text-base font-medium"
             style={{ fontFamily: 'Poiret One, sans-serif' }}
           >
             {showConfessions ? 'close confessions' : 'confessions'}
@@ -116,17 +116,17 @@ export function HomeButtons({
 
       {/* Bottom Left Buttons */}
       <div
-        className={`absolute bottom-8 left-8 z-20 transition-opacity duration-300 ${
+        className={`absolute bottom-4 lg:bottom-6 xl:bottom-8 left-4 lg:left-6 xl:left-8 z-20 transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
-        <div className="flex gap-3">
+        <div className="flex gap-2 lg:gap-3">
           <button
             onClick={onShowRequests || (() => {})}
-            className="bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
+            className="bg-black/30 backdrop-blur-sm text-white px-3 lg:px-4 py-2 rounded-xl border border-white/20 hover:bg-black/40 transition-all duration-300 hover:scale-105"
           >
             <span
-              className="text-base font-medium"
+              className="text-sm lg:text-base font-medium"
               style={{ fontFamily: 'Poiret One, sans-serif' }}
             >
               requests
@@ -136,10 +136,10 @@ export function HomeButtons({
           {onShowAdmin && (
             <button
               onClick={onShowAdmin}
-              className="bg-red-500/30 backdrop-blur-sm text-white px-4 py-2 rounded-xl border border-red-400/20 hover:bg-red-500/40 transition-all duration-300 hover:scale-105"
+              className="bg-red-500/30 backdrop-blur-sm text-white px-3 lg:px-4 py-2 rounded-xl border border-red-400/20 hover:bg-red-500/40 transition-all duration-300 hover:scale-105"
             >
               <span
-                className="text-base font-medium"
+                className="text-sm lg:text-base font-medium"
                 style={{ fontFamily: 'Poiret One, sans-serif' }}
               >
                 admin
@@ -151,7 +151,7 @@ export function HomeButtons({
 
       {/* Bottom Right Image */}
       <div
-        className={`absolute bottom-8 right-8 z-20 transition-opacity duration-300 ${
+        className={`absolute bottom-4 lg:bottom-6 xl:bottom-8 right-4 lg:right-6 xl:right-8 z-20 transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -164,7 +164,7 @@ export function HomeButtons({
           <img
             src="https://i.imgur.com/HIhlm3m.png"
             alt="Religion Heaven Twitter"
-            className="w-auto h-12"
+            className="w-auto h-8 lg:h-10 xl:h-12"
           />
         </a>
       </div>
