@@ -621,51 +621,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   // Add transition overlay for going back too
-  if (isTransitioning) {
-    return (
-      <div
-        className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center"
-        style={{
-          backgroundImage:
-            'url(https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGNkanZobTJ2Y3FhNmJxdXdzaGw5NGl0aTh6bmVydHJ4aDB3MzRpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FESFit0BwFBkk9rkLb/giphy.gif)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <div className="text-center">
-          {/* Animated logo during transition */}
-          <div className="relative mb-3">
-            <img
-              src="https://i.imgur.com/PlWBSjs.gif"
-              alt="Religion Logo"
-              className="w-16 h-auto mx-auto animate-pulse"
-            />
-            {/* Radial glow effect */}
-            <div className="absolute inset-0 bg-white/20 rounded-full blur-xl animate-ping"></div>
-          </div>
-
-          {/* Loading text */}
-          <p className="text-white/90 text-sm" style={{ fontFamily: 'Poiret One, sans-serif' }}>
-            Returning to selection...
-          </p>
-
-          {/* Animated dots */}
-          <div className="flex justify-center space-x-1 mt-2">
-            <div className="w-1.5 h-1.5 bg-white/70 rounded-full animate-bounce"></div>
-            <div
-              className="w-1.5 h-1.5 bg-white/70 rounded-full animate-bounce"
-              style={{ animationDelay: '0.1s' }}
-            ></div>
-            <div
-              className="w-1.5 h-1.5 bg-white/70 rounded-full animate-bounce"
-              style={{ animationDelay: '0.2s' }}
-            ></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">

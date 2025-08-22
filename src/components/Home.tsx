@@ -143,12 +143,7 @@ export function Home({
       }
     });
 
-    setIsTransitioning(true);
-    setIsExiting(false);
     setSelectedReligion(religion);
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 1200);
   };
 
   const handleBackFromChat = () => {
