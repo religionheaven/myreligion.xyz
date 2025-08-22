@@ -147,12 +147,7 @@ export function Home({
   };
 
   const handleBackFromChat = () => {
-    setIsTransitioning(true);
-    setIsExiting(true);
-    setTimeout(() => {
-      setSelectedReligion(null);
-      setIsTransitioning(false);
-    }, 1200);
+    setSelectedReligion(null);
   };
 
   const handleToolsClick = () => {
@@ -176,54 +171,11 @@ export function Home({
 
   if (selectedReligion) {
     return (
-      <div className="relative">
-        {/* Transition overlay */}
-        <div
-          className={`absolute inset-0 z-30 flex items-end justify-center pb-32 transition-all duration-500 ease-in-out ${
-            isTransitioning ? 'opacity-100 delay-2000' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="text-center">
-            <div className="relative mb-4">
-              <img
-                src="https://i.imgur.com/PlWBSjs.gif"
-                alt="Religion Logo"
-                className="w-24 h-auto mx-auto animate-pulse"
-              />
-              <div className="absolute inset-0 bg-white/20 rounded-full blur-xl animate-ping"></div>
-            </div>
-            <p
-              className="text-white/80 text-sm animate-fade-in"
-              style={{ fontFamily: 'Poiret One, sans-serif' }}
-            >
-              {isExiting ? 'Exiting chat...' : `Opening ${selectedReligion} chat...`}
-            </p>
-            <div className="flex justify-center space-x-1 mt-2">
-              <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-              <div
-                className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.1s' }}
-              ></div>
-              <div
-                className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
-                style={{ animationDelay: '0.2s' }}
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-            isTransitioning ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'
-          }`}
-        >
-          <ChatInterface
-            religion={selectedReligion}
-            onBack={handleBackFromChat}
-            isTransitioning={isTransitioning}
-          />
-        </div>
-      </div>
+      <ChatInterface
+        religion={selectedReligion}
+        onBack={handleBackFromChat}
+        isTransitioning={isTransitioning}
+      />
     );
   }
 
