@@ -99,17 +99,17 @@ export class SessionTracking {
   // Get location data from IP
   private static async getLocationData(): Promise<any> {
     try {
-      // Use a free IP geolocation service
-      const response = await fetch('https://ipapi.co/json/');
+      // Use Supabase Edge Function to get location data
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-location-data`;
+      const headers = {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      };
+      
+      const response = await fetch(apiUrl, { headers });
       if (response.ok) {
         const data = await response.json();
-        return {
-          country: data.country_name,
-          city: data.city,
-          region: data.region,
-          ip: data.ip,
-          timezone: data.timezone,
-        };
+        return data;
       }
     } catch (error) {
       console.error('Error getting location data:', error);
