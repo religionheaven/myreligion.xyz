@@ -10,6 +10,7 @@ import LiveChat from './LiveChat';
 import { ConfessionsModal } from './confessions/ConfessionsModal';
 import { useConfessions } from '../hooks/useConfessions';
 import { AvatarTool } from './tools/AvatarTool';
+import { DiscoveryTool } from './tools/DiscoveryTool';
 
 interface HomeProps {
   showRequests?: boolean;
@@ -634,9 +635,7 @@ function HomeContent({
           <div className={`h-full pb-16 ${showTools ? '' : 'pointer-events-none'}`}>
             {selectedTool === 'avatar' && <AvatarTool />}
             {selectedTool === 'discovery' && (
-              <div className="text-center">
-                <p className="text-white/60">Discovery tool coming soon...</p>
-              </div>
+              <DiscoveryTool />
             )}
           </div>
         </div>
