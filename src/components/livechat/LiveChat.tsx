@@ -1,26 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Users } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
-
-// Import organized components & utils
-import { LiveChatProps, ChatMessage } from './livechat/types';
-import { SPAM_DETECTION_CONFIG } from './livechat/constants';
-import { getCachedMessages, cacheMessages } from './livechat/utils';
-import { detectSpam, detectProhibitedContent, checkRateLimit } from './livechat/SpamDetection';
-import { ChatMessage as ChatMessageComponent } from './livechat/ChatMessage';
-import { ChatInput } from './livechat/ChatInput';
-import { WarningPopup } from './livechat/WarningPopup';
-import { BanCheck } from '../services/banCheck';
-
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { LiveChatProps, ChatMessage } from './types';
+import { SPAM_DETECTION_CONFIG } from './constants';
+import { getCachedMessages, cacheMessages } from './utils';
+import { detectSpam, detectProhibitedContent, checkRateLimit } from './SpamDetection';
+import { ChatMessage as ChatMessageComponent } from './ChatMessage';
+import { ChatInput } from './ChatInput';
+import { WarningPopup } from './WarningPopup';
+import { BanCheck } from '../../services/banCheck';
 
 const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const { user } = useAuth();
 
-  // ---------------- State ----------------
+  // State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,23 +27,19 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   const [recentMessages, setRecentMessages] = useState<string[]>([]);
   const [lastMessageTime, setLastMessageTime] = useState<number>(0);
 
-  // ---------------- Refs ----------------
+  // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // ---------------- Mobile Detection ----------------
+  // Mobile Detection
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkScreen = () => setIsMobile(window.innerWidth < 768); // Tailwind "md"
+    const checkScreen = () => setIsMobile(window.innerWidth < 768);
     checkScreen();
     window.addEventListener('resize', checkScreen);
     return () => window.removeEventListener('resize', checkScreen);
   }, []);
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
 
   // Cooldown countdown
   useEffect(() => {
@@ -81,14 +71,12 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
   useEffect(() => {
     if (!isVisible) return;
     
-    // Check if user is banned before loading chat
     const checkBanStatus = async () => {
       if (!user) return;
       
       try {
         const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
         if (isBanned) {
-          // User is banned, don't load chat
           return;
         }
       } catch (error) {
@@ -122,10 +110,6 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
     }
   }, [user]);
 
-  // ============================================================================
-  // HANDLERS
-  // ============================================================================
-
   const handleScroll = () => {
     if (!messagesContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
@@ -158,10 +142,6 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
       return updated.slice(-SPAM_DETECTION_CONFIG.DUPLICATE_CHECK_LIMIT);
     });
   };
-
-  // ============================================================================
-  // API FUNCTIONS
-  // ============================================================================
 
   const loadMessages = async () => {
     try {
@@ -256,11 +236,10 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
     e.preventDefault();
     if (!inputValue.trim() || !user || isLoading || cooldownTime > 0) return;
     
-    // Check if user is banned before allowing message
     try {
       const isBanned = await BanCheck.checkAndEnforceBan(user.id, false);
       if (isBanned) {
-        return; // User is banned, don't allow message
+        return;
       }
     } catch (error) {
       console.error('Error checking ban status:', error);
@@ -271,7 +250,6 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
       return;
     }
 
-    // Enhanced rate limiting check
     const rateLimitCheck = checkRateLimit(user.id);
     if (rateLimitCheck.isRateLimited) {
       showWarning(rateLimitCheck.message);
@@ -279,14 +257,12 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
       return;
     }
 
-    // Spam detection
     const spamCheck = detectSpam(inputValue.trim(), recentMessages, lastMessageTime);
     if (spamCheck.isSpam) {
       showWarning(spamCheck.message);
       return;
     }
 
-    // Prohibited content
     const prohibitedCheck = detectProhibitedContent(inputValue.trim());
     if (prohibitedCheck.isProhibited) {
       showWarning(prohibitedCheck.message);
@@ -314,8 +290,6 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
           alert('Failed to send message. Please try again.');
         }
       } else {
-        // Don't set additional cooldown since there's already a base 3s cooldown
-        // setCooldownTime(SPAM_DETECTION_CONFIG.COOLDOWN_DURATION / 1000);
         updateSpamTracking(messageContent);
         scrollToBottomForced();
         setTimeout(loadMessages, 100);
@@ -329,13 +303,8 @@ const LiveChat: React.FC<LiveChatProps> = ({ isVisible }) => {
     }
   };
 
-  // ============================================================================
-  // RENDER
-  // ============================================================================
-
   if (!isVisible) return null;
 
-  // Show mobile-only warning
   if (isMobile) {
     return (
       <div className="w-full max-w-md mx-auto p-6 text-center bg-black/40 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl">
