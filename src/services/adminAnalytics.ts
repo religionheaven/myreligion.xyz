@@ -261,23 +261,16 @@ export class AdminAnalytics {
   // Get comprehensive admin statistics
   static async getAdminStats(): Promise<AdminStats> {
     try {
-      const [usersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
-        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/user-lookup?action=getTotalUserCount`, {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        }).then(res => res.json()),
+      const [totalUsersResult, visitsResult, messagesResult, requestsResult] = await Promise.all([
+        supabase.from('user_profiles').select('*', { count: 'exact', head: true }),
         supabase.from('site_visits').select('*', { count: 'exact', head: true }),
         supabase.from('message_analytics').select('*', { count: 'exact', head: true }),
         supabase.from('user_requests').select('*', { count: 'exact', head: true }),
       ]);
 
-      const { count: activeUsers } = await supabase
-        .from('user_sessions')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true)
-        .gte('last_activity', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+      // Get total registered users (same as totalUsers for now)
+      const totalUsers = totalUsersResult.count || 0;
+      const activeUsers = totalUsers; // Show total registered users as "active users"
 
       // Get top countries
       const { data: countryData } = await supabase
@@ -321,8 +314,8 @@ export class AdminAnalytics {
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
 
       return {
-        totalUsers: usersResult?.count || 0,
-        activeUsers: activeUsers || 0,
+        totalUsers: totalUsers,
+        activeUsers: activeUsers,
         totalVisits: visitsResult.count || 0,
         totalMessages: messagesResult.count || 0,
         totalRequests: requestsResult.count || 0,

@@ -99,23 +99,39 @@ export class SessionTracking {
   // Get location data from IP
   private static async getLocationData(): Promise<any> {
     try {
-      // Use a free IP geolocation service
-      const response = await fetch('https://ipapi.co/json/');
+      // Check if Supabase environment variables are available
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        console.warn('Supabase environment variables not configured');
+        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
+      }
+
+      // Use Supabase Edge Function to get location data
+      const apiUrl = `${supabaseUrl}/functions/v1/get-location-data`;
+      const headers = {
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      };
+      
+      const response = await fetch(apiUrl, { 
+        headers,
+        method: 'GET',
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      
       if (response.ok) {
         const data = await response.json();
-        return {
-          country: data.country_name,
-          city: data.city,
-          region: data.region,
-          ip: data.ip,
-          timezone: data.timezone,
-        };
+        return data;
+      } else {
+        console.warn('Edge function returned non-OK status:', response.status);
+        return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
       }
     } catch (error) {
-      console.error('Error getting location data:', error);
+      console.warn('Error getting location data, using fallback:', error);
+      return { ip: 'unknown', country: null, city: null, region: null, timezone: null };
     }
-
-    return {};
   }
 
   // Setup activity tracking
