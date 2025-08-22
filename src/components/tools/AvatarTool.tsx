@@ -120,9 +120,9 @@ export function AvatarTool() {
   };
 
   return (
-    <div className="flex gap-8 h-full">
+    <div className="flex gap-8 h-full overflow-hidden">
       {/* Background Controls - Left Side */}
-      <div className="w-80 space-y-6">
+      <div className="w-80 space-y-6 flex-shrink-0">
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <h3
             className="text-white font-medium mb-4 text-lg"
@@ -203,11 +203,11 @@ export function AvatarTool() {
         </div>
 
         {/* GIF Image */}
-        <div className="flex justify-center">
+        <div className="flex justify-center overflow-hidden">
           <img
             src="https://i.imgur.com/7iYbMnL.gif"
             alt="Avatar Tool"
-            className="w-auto h-32 object-contain"
+            className="w-auto h-32 object-contain max-w-full"
           />
         </div>
         {/* Download Button */}
@@ -224,10 +224,10 @@ export function AvatarTool() {
       </div>
 
       {/* Avatar Preview - Center */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
         <div className="relative">
           <div
-            className="w-[500px] h-[500px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
+            className="w-[400px] h-[400px] rounded-2xl border-2 border-white/20 overflow-hidden flex items-center justify-center"
             style={getBackgroundStyle()}
           >
             {selectedAvatar ? (
@@ -251,7 +251,7 @@ export function AvatarTool() {
       </div>
 
       {/* Avatar Selection - Right Side */}
-      <div className="w-80">
+      <div className="w-80 flex-shrink-0 overflow-hidden">
         <div className="bg-white/10 rounded-2xl p-6 border border-white/20">
           <h3
             className="text-white font-medium mb-4 text-lg"
@@ -259,22 +259,21 @@ export function AvatarTool() {
           >
             Choose Avatar
           </h3>
-          <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
+          <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto custom-scrollbar">
             {avatarOptions.map((avatar) => (
               <button
                 key={avatar.id}
                 onClick={() => setSelectedAvatar(avatar.url)}
-                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
+                className={`relative p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer flex-shrink-0 ${
                   selectedAvatar === avatar.url
                     ? 'border-white/60 bg-white/20'
                     : 'border-white/20 bg-white/10 hover:bg-white/20'
-                } z-10`}
-                style={{ pointerEvents: 'auto' }}
+                }`}
               >
                 <img
                   src={avatar.url}
                   alt={avatar.name}
-                  className="w-full h-16 object-contain mb-2 pointer-events-none"
+                  className="w-full h-16 object-contain mb-2"
                 />
                 <span className="text-white/80 text-xs block">{avatar.name}</span>
               </button>
