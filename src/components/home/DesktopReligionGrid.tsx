@@ -9,6 +9,8 @@ interface DesktopReligionGridProps {
   showRequestedReligions: boolean;
   showConfessions: boolean;
   showTools: boolean;
+  isTransitioningFromChat: boolean;
+  lastSelectedReligion: string | null;
 }
 
 export function DesktopReligionGrid({
@@ -18,12 +20,14 @@ export function DesktopReligionGrid({
   showRequestedReligions,
   showConfessions,
   showTools,
+  isTransitioningFromChat,
+  lastSelectedReligion,
 }: DesktopReligionGridProps) {
   return (
     <div
       className={`absolute inset-0 z-10 hidden md:flex items-center justify-center transition-all duration-700 ease-in-out ${
-        isTransitioning || showRequestedReligions || showConfessions || showTools
-          ? 'opacity-0 scale-75 translate-y-8'
+        (isTransitioning && !isTransitioningFromChat) || showRequestedReligions || showConfessions || showTools
+          ? 'opacity-0 scale-75 translate-y-8' 
           : 'opacity-100 scale-100 translate-y-0'
       }`}
     >
@@ -34,6 +38,7 @@ export function DesktopReligionGrid({
             religion={religion}
             onClick={onReligionClick}
             getClickCount={getClickCount}
+            isHighlighted={isTransitioningFromChat && lastSelectedReligion === religion.name}
           />
         ))}
       </div>

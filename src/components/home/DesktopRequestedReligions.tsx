@@ -8,6 +8,8 @@ interface DesktopRequestedReligionsProps {
   showRequestedReligions: boolean;
   showConfessions: boolean;
   showTools: boolean;
+  isTransitioningFromChat: boolean;
+  lastSelectedReligion: string | null;
 }
 
 export function DesktopRequestedReligions({
@@ -16,6 +18,8 @@ export function DesktopRequestedReligions({
   showRequestedReligions,
   showConfessions,
   showTools,
+  isTransitioningFromChat,
+  lastSelectedReligion,
 }: DesktopRequestedReligionsProps) {
   return (
     <div
@@ -32,6 +36,7 @@ export function DesktopRequestedReligions({
             religion={religion}
             onClick={onReligionClick}
             getClickCount={getClickCount}
+            isHighlighted={isTransitioningFromChat && lastSelectedReligion === religion.name}
           />
         ))}
         <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-8 w-60 h-40 flex items-center justify-center">

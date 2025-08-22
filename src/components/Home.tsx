@@ -45,6 +45,8 @@ export function Home({
   const [showTools, setShowTools] = React.useState(false);
   const [selectedTool, setSelectedTool] = React.useState<'avatar' | 'discovery'>('avatar');
   const [isTransitioningToChat, setIsTransitioningToChat] = React.useState(false);
+  const [isTransitioningFromChat, setIsTransitioningFromChat] = React.useState(false);
+  const [lastSelectedReligion, setLastSelectedReligion] = React.useState<string | null>(null);
 
   // Use confessions hook
   const {
@@ -150,11 +152,21 @@ export function Home({
     // Delay setting the religion to allow animation to start
     setTimeout(() => {
       setSelectedReligion(religion);
+      setLastSelectedReligion(religion);
       setIsTransitioningToChat(false);
     }, 300);
   };
 
   const handleBackFromChat = () => {
+    // Start back transition animation
+    setIsTransitioningFromChat(true);
+    
+    // Clear the selected religion after a delay to show the animation
+    setTimeout(() => {
+      setIsTransitioningFromChat(false);
+      setLastSelectedReligion(null);
+    }, 600); // Longer delay to show the animation
+    
     setSelectedReligion(null);
   };
 
@@ -235,6 +247,8 @@ export function Home({
         showRequestedReligions={showRequestedReligions}
         showConfessions={showConfessions}
         showTools={showTools}
+        isTransitioningFromChat={isTransitioningFromChat}
+        lastSelectedReligion={lastSelectedReligion}
       />
 
       <DesktopRequestedReligions
@@ -243,6 +257,8 @@ export function Home({
         showRequestedReligions={showRequestedReligions}
         showConfessions={showConfessions}
         showTools={showTools}
+        isTransitioningFromChat={isTransitioningFromChat}
+        lastSelectedReligion={lastSelectedReligion}
       />
 
       {/* Mobile Religion Cards */}
