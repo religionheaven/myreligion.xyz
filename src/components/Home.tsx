@@ -598,41 +598,47 @@ function HomeContent({
         </button>
       </div>
 
+      {/* Tool Navigation Buttons - Only show when tools window is open */}
+      <div
+        className={`relative z-20 flex justify-center mt-4 hidden md:flex transition-all duration-500 ease-in-out ${
+          showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center gap-8">
+          <button
+            onClick={() => setSelectedTool('avatar')}
+            className={`text-xl font-medium transition-colors duration-200 ${
+              selectedTool === 'avatar'
+                ? 'text-white'
+                : 'text-white/60 hover:text-white'
+            }`}
+            style={{ fontFamily: 'Poiret One, sans-serif' }}
+          >
+            Avatar
+          </button>
+          <span className="text-white/40 text-xl">|</span>
+          <button
+            onClick={() => setSelectedTool('discovery')}
+            className={`text-xl font-medium transition-colors duration-200 ${
+              selectedTool === 'discovery'
+                ? 'text-white'
+                : 'text-white/60 hover:text-white'
+            }`}
+            style={{ fontFamily: 'Poiret One, sans-serif' }}
+          >
+            Discovery
+          </button>
+        </div>
+      </div>
+
       {/* Tools Window - Large black window that opens below tools button */}
       <div
-        className={`absolute top-64 left-8 right-8 bottom-16 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block ${
+        className={`absolute top-80 left-8 right-8 bottom-16 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
         <div className={`p-8 h-full ${showTools ? '' : 'pointer-events-none'}`}>
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center gap-8">
-              <button
-                onClick={() => setSelectedTool('avatar')}
-                className={`text-xl font-medium transition-colors duration-200 ${
-                  selectedTool === 'avatar'
-                    ? 'text-white'
-                    : 'text-white/60 hover:text-white'
-                }`}
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
-              >
-                Avatar
-              </button>
-              <span className="text-white/40 text-xl">|</span>
-              <button
-                onClick={() => setSelectedTool('discovery')}
-                className={`text-xl font-medium transition-colors duration-200 ${
-                  selectedTool === 'discovery'
-                    ? 'text-white'
-                    : 'text-white/60 hover:text-white'
-                }`}
-                style={{ fontFamily: 'Poiret One, sans-serif' }}
-              >
-                Discovery
-              </button>
-            </div>
-          </div>
-          <div className="h-full pb-16">
+          <div className="h-full">
             {selectedTool === 'avatar' && <AvatarTool />}
             {selectedTool === 'discovery' && <DiscoveryTool />}
           </div>
