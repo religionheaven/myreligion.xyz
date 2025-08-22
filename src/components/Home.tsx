@@ -607,22 +607,37 @@ function HomeContent({
           <div className="flex justify-center mb-8">
             <div className="flex items-center gap-8">
               <button
-                className="text-white text-xl font-medium hover:text-white/80 transition-colors duration-200"
+                onClick={() => setSelectedTool('avatar')}
+                className={`text-xl font-medium transition-colors duration-200 ${
+                  selectedTool === 'avatar'
+                    ? 'text-white'
+                    : 'text-white/60 hover:text-white'
+                }`}
                 style={{ fontFamily: 'Poiret One, sans-serif' }}
               >
                 Avatar
               </button>
               <span className="text-white/40 text-xl">|</span>
               <button
-                className="text-white text-xl font-medium hover:text-white/80 transition-colors duration-200"
+                onClick={() => setSelectedTool('discovery')}
+                className={`text-xl font-medium transition-colors duration-200 ${
+                  selectedTool === 'discovery'
+                    ? 'text-white'
+                    : 'text-white/60 hover:text-white'
+                }`}
                 style={{ fontFamily: 'Poiret One, sans-serif' }}
               >
                 Discovery
               </button>
             </div>
           </div>
-          <div className="text-center">
-            <p className="text-white/60">Select a tool above to get started...</p>
+          <div className="h-full pb-16">
+            {selectedTool === 'avatar' && <AvatarTool />}
+            {selectedTool === 'discovery' && (
+              <div className="text-center">
+                <p className="text-white/60">Discovery tool coming soon...</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -818,34 +833,18 @@ function HomeContent({
               <div className="flex transition-transform duration-300 ease-out h-full">
                 <div className="w-full flex-shrink-0 h-full flex items-center justify-center">
                   <div className="relative w-3/4 h-3/4">
-                  onClick={() => setSelectedTool('avatar')}
-                  className={`text-xl font-medium transition-colors duration-200 ${
-                    selectedTool === 'avatar'
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white'
-                  }`}
+                    <img
                       src="https://i.imgur.com/5eZqdQy.png"
                       alt="Nga"
                       className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
                       onClick={() => onReligionClick('Nga')}
                     />
                     <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
-                  onClick={() => setSelectedTool('discovery')}
-                  className={`text-xl font-medium transition-colors duration-200 ${
-                    selectedTool === 'discovery'
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white'
-                  }`}
+                      {getClickCount('Nga')}
                     </div>
                   </div>
                 </div>
-            <div className="h-full pb-16">
-              {selectedTool === 'avatar' && <AvatarTool />}
-              {selectedTool === 'discovery' && (
-                <div className="text-center">
-                  <p className="text-white/60">Discovery tool coming soon...</p>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
