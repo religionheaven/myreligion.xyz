@@ -46,7 +46,7 @@ export function DesktopReligionGrid({
             className="text-sm lg:text-base font-medium"
             style={{ fontFamily: "Poiret One, sans-serif" }}
           >
-            requested religions
+            {showRequestedReligions ? "religions" : "requested religions"}
           </span>
         </button>
         
