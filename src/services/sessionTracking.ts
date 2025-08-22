@@ -127,7 +127,7 @@ export class SessionTracking {
       const response = await fetch(apiUrl, {
         headers,
         method: "GET",
-        signal: AbortSignal.timeout(10000), // 10 second timeout
+        signal: AbortSignal.timeout(5000), // 5 second timeout
       });
 
       if (response.ok) {
@@ -138,7 +138,13 @@ export class SessionTracking {
         return { ip: "unknown", country: null, city: null, region: null, timezone: null };
       }
     } catch (error) {
-      console.warn("Error getting location data, using fallback:", error);
+      if (error.name === 'AbortError') {
+        console.warn("Location data request timed out, using fallback");
+      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        console.warn("Network error fetching location data, using fallback");
+      } else {
+        console.warn("Error getting location data, using fallback:", error);
+      }
       return { ip: "unknown", country: null, city: null, region: null, timezone: null };
     }
   }
