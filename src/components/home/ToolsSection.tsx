@@ -63,7 +63,7 @@ export function ToolsSection({
 
       {/* Tools Window */}
       <div
-        className={`absolute top-80 left-8 right-8 bottom-4 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block overflow-y-auto ${
+        className={`absolute top-60 left-8 right-8 bottom-2 z-15 bg-black/50 backdrop-blur-xl rounded-3xl border border-white/30 transition-all duration-500 ease-in-out hidden md:block overflow-y-auto ${
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
