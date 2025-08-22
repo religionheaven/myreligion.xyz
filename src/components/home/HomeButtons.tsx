@@ -42,7 +42,7 @@ export function HomeButtons({
 
       {/* Desktop Requested Religion Button */}
       <div
-        className={`absolute top-1/2 left-1/2 transform -translate-x-[120px] -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px] z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 left-1/2 transform -translate-x-[60px] -translate-y-[200px] lg:-translate-y-[240px] xl:-translate-y-[280px] 2xl:-translate-y-[320px] z-20 hidden md:block transition-opacity duration-300 ${
           showConfessions || showTools ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
