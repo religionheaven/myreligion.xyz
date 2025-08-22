@@ -58,7 +58,7 @@ export function HomeButtons({
 
       {/* Desktop Requested Religion Button */}
       <div
-        className={`absolute bottom-72 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 left-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
           showConfessions || showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -77,7 +77,7 @@ export function HomeButtons({
 
       {/* Desktop Confessions Button */}
       <div
-        className={`absolute bottom-56 left-1/2 transform -translate-x-1/2 z-20 hidden md:block transition-opacity duration-300 ${
+        className={`absolute top-1/2 right-8 transform -translate-y-1/2 z-20 hidden md:block transition-opacity duration-300 ${
           showTools ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
