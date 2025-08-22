@@ -603,7 +603,7 @@ function HomeContent({
           showTools ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="p-8 h-full">
+        <div className={`p-8 h-full ${showTools ? '' : 'pointer-events-none'}`}>
           <div className="flex justify-center mb-8">
             <div className="flex items-center gap-8">
               <button
@@ -631,7 +631,7 @@ function HomeContent({
               </button>
             </div>
           </div>
-          <div className="h-full pb-16">
+          <div className={`h-full pb-16 ${showTools ? '' : 'pointer-events-none'}`}>
             {selectedTool === 'avatar' && <AvatarTool />}
             {selectedTool === 'discovery' && (
               <div className="text-center">
