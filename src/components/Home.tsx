@@ -9,6 +9,7 @@ import { UserProfileService, UserProfile } from '../services/userProfile';
 import LiveChat from './LiveChat';
 import { ConfessionsModal } from './confessions/ConfessionsModal';
 import { useConfessions } from '../hooks/useConfessions';
+import { AvatarTool } from './tools/AvatarTool';
 
 interface HomeProps {
   showRequests?: boolean;
@@ -491,6 +492,7 @@ function HomeContent({
   isWarningFadingOut,
 }: HomeContentProps) {
   const [showTools, setShowTools] = React.useState(false);
+  const [selectedTool, setSelectedTool] = React.useState<'avatar' | 'discovery'>('avatar');
 
   const getClickCount = (religion: string) => {
     if (loadingCounts) return '...';
@@ -816,19 +818,34 @@ function HomeContent({
               <div className="flex transition-transform duration-300 ease-out h-full">
                 <div className="w-full flex-shrink-0 h-full flex items-center justify-center">
                   <div className="relative w-3/4 h-3/4">
-                    <img
+                  onClick={() => setSelectedTool('avatar')}
+                  className={`text-xl font-medium transition-colors duration-200 ${
+                    selectedTool === 'avatar'
+                      ? 'text-white'
+                      : 'text-white/60 hover:text-white'
+                  }`}
                       src="https://i.imgur.com/5eZqdQy.png"
                       alt="Nga"
                       className="w-full h-full object-contain cursor-pointer transition-all duration-300 hover:scale-105"
                       onClick={() => onReligionClick('Nga')}
                     />
                     <div className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm text-black text-sm font-bold px-3 py-2 rounded-full border border-white/50 shadow-lg">
-                      {getClickCount('Nga')}
+                  onClick={() => setSelectedTool('discovery')}
+                  className={`text-xl font-medium transition-colors duration-200 ${
+                    selectedTool === 'discovery'
+                      ? 'text-white'
+                      : 'text-white/60 hover:text-white'
+                  }`}
                     </div>
                   </div>
                 </div>
-                {/* Add more cards here as they become available */}
-              </div>
+            <div className="h-full pb-16">
+              {selectedTool === 'avatar' && <AvatarTool />}
+              {selectedTool === 'discovery' && (
+                <div className="text-center">
+                  <p className="text-white/60">Discovery tool coming soon...</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
