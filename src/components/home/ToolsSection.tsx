@@ -31,7 +31,7 @@ export function ToolsSection({
 
       {/* Tool Navigation Buttons */}
       <div
-        className={`absolute top-8 lg:top-10 xl:top-12 left-4 lg:left-6 xl:left-8 z-25 hidden md:flex transition-all duration-500 ease-in-out ${
+        className={`absolute top-32 lg:top-36 xl:top-40 left-4 lg:left-6 xl:left-8 z-25 hidden md:flex transition-all duration-500 ease-in-out ${
           showTools ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
         }`}
       >
