@@ -14,4 +14,5 @@ export const REQUESTED_RELIGIONS: Religion[] = [
   { name: "Nga", image: "https://i.imgur.com/5eZqdQy.png" },
   { name: "YZY", image: "https://i.imgur.com/OZ097br.png" },
   { name: "Degen", image: "https://i.imgur.com/kyc0s9S.png" },
+  { name: "Atheism", image: "https://i.imgur.com/he4T80b.png" },
 ];

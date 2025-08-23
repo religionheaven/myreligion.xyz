@@ -90,6 +90,7 @@ export function AvatarTool() {
     { id: "nga", name: "Nigga", url: "https://i.imgur.com/5eZqdQy.png" },
     { id: "yzy", name: "YZY", url: "https://i.imgur.com/OZ097br.png" },
     { id: "degen", name: "Degenerate", url: "https://i.imgur.com/kyc0s9S.png" },
+    { id: "atheism", name: "Atheism", url: "https://i.imgur.com/he4T80b.png" },
   ];
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -55,14 +55,6 @@ export function DesktopRequestedReligions({
             className="w-[clamp(180px,15vw,280px)] h-auto"
           />
         ))}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/30 rounded-2xl p-4 lg:p-6 xl:p-8 w-[clamp(180px,15vw,280px)] h-[clamp(120px,12vw,200px)] flex items-center justify-center">
-          <span
-            className="text-white/60 text-center text-sm lg:text-base"
-            style={{ fontFamily: "Poiret One, sans-serif" }}
-          >
-            Vote for the next religion on X
-          </span>
-        </div>
       </div>
     </div>
   );
